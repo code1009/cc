@@ -1,0 +1,709 @@
+﻿/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#include "test_cc.hpp"
+
+#include <iostream>
+#include <chrono>
+#include <random>
+#include <vector>
+#include <algorithm>
+#include <unordered_map>
+#include <cstdlib>
+
+#include <ostream>
+#include <sstream>
+#include <string>
+#include <iomanip>
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+class test_stop_watch
+{
+public:
+    using clock_t = std::chrono::steady_clock;
+    using rep_t = std::chrono::steady_clock::duration;
+
+    test_stop_watch() noexcept : running_(false), elapsed_(rep_t::zero()) {}
+
+    void start() noexcept
+    {
+        if (!running_)
+        {
+            start_time_ = clock_t::now();
+            running_ = true;
+        }
+    }
+
+    void stop() noexcept
+    {
+        if (running_)
+        {
+            elapsed_ += clock_t::now() - start_time_;
+            running_ = false;
+        }
+    }
+
+    void reset() noexcept
+    {
+        elapsed_ = rep_t::zero();
+        if (running_)
+        {
+            start_time_ = clock_t::now();
+        }
+    }
+
+    void restart() noexcept
+    {
+        elapsed_ = rep_t::zero();
+        start_time_ = clock_t::now();
+        running_ = true;
+    }
+
+    bool is_running() const noexcept { return running_; }
+
+    double elapsed_seconds() const noexcept
+    {
+        return std::chrono::duration<double>(current_elapsed()).count();
+    }
+
+    double elapsed_milliseconds() const noexcept
+    {
+        return std::chrono::duration<double, std::milli>(current_elapsed()).count();
+    }
+
+    double elapsed_microseconds() const noexcept
+    {
+        return std::chrono::duration<double, std::micro>(current_elapsed()).count();
+    }
+
+private:
+    rep_t current_elapsed() const noexcept
+    {
+        if (running_)
+        {
+            return elapsed_ + (clock_t::now() - start_time_);
+        }
+        return elapsed_;
+    }
+
+    bool running_;
+    clock_t::time_point start_time_;
+    rep_t elapsed_;
+};
+
+class test_scoped_timer
+{
+public:
+    test_scoped_timer(std::ostream& os, const std::string& label = "", int precision_ms = 3)
+        : os_(os), label_(label), precision_(precision_ms)
+    {
+        sw_.start();
+    }
+
+    ~test_scoped_timer()
+    {
+        sw_.stop();
+        os_ << label_;
+        if (!label_.empty()) os_ << " : ";
+        os_ << std::fixed << std::setprecision(precision_) << sw_.elapsed_milliseconds() << " ms" << std::endl;
+    }
+
+    void stop_and_report()
+    {
+        if (sw_.is_running()) sw_.stop();
+        os_ << label_;
+        if (!label_.empty()) os_ << " : ";
+        os_ << std::fixed << std::setprecision(precision_) << sw_.elapsed_milliseconds() << " ms" << std::endl;
+    }
+
+    test_stop_watch& stopwatch() noexcept { return sw_; }
+
+private:
+    std::ostream& os_;
+    std::string label_;
+    int precision_;
+    test_stop_watch sw_;
+};
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+typedef struct _item_t
+{
+	uint32_t key;
+	uint32_t value;
+} item_t;
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#define item_max_count 65536
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 
+// source
+// 
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static uint32_t source_generate_random_key(uint32_t min_inclusive, uint32_t max_inclusive)
+{
+    static std::random_device rd;
+    static std::mt19937 mt(rd());
+    std::uniform_int_distribution<uint32_t> dist(min_inclusive, max_inclusive);
+    return dist(mt);
+}
+
+static std::vector<item_t> source_generate_items(size_t count)
+{
+    std::vector<item_t> items;
+    items.reserve(count);
+
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        item_t item;
+
+        //item.key = i*10;
+        item.key = source_generate_random_key(0, item_max_count - 1);
+        item.value = static_cast<uint32_t>(i);
+
+        items.push_back(item);
+    }
+
+    return items;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 
+// cc
+// 
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+cc_api static inline uint32_t cc_item_key(const item_t* item_pointer)
+{
+	return item_pointer->key;
+}
+
+cc_api static cc_hash_value_t cc_item_key_hash(const void* pointer)
+{
+#if (1==cc_config_compiler_msvc)
+#pragma warning(disable:4311)
+#pragma warning(disable:4302)
+#endif
+	uint32_t key = (uint32_t)pointer;
+#if (1==cc_config_compiler_msvc)
+#pragma warning(default:4302)
+#pragma warning(default:4311)
+#endif
+
+    return key;
+    //return cc_hash_djb2(&key, sizeof(key));
+}
+
+cc_api static bool cc_item_key_equal(const void* left, const void* right)
+{
+#if (1==cc_config_compiler_msvc)
+#pragma warning(disable:4311)
+#pragma warning(disable:4302)
+#endif
+	uint32_t lkey = (uint32_t)left;
+	uint32_t rkey = (uint32_t)right;
+#if (1==cc_config_compiler_msvc)
+#pragma warning(default:4302)
+#pragma warning(default:4311)
+#endif
+
+
+	if (lkey == rkey)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+typedef struct _cc_item_pool_t
+{
+	cc_simple_segregated_storage_t storage;
+	item_t* memory;
+	cc_allocator_t allocator;
+}
+cc_item_pool_t;
+
+//===========================================================================
+static cc_item_pool_t _cc_item_pool;
+
+//===========================================================================
+static bool cc_item_pool_initialize()
+{
+	size_t memory_size = sizeof(item_t) * item_max_count;
+	_cc_item_pool.memory = (item_t*)malloc(memory_size);
+
+
+	bool rv;
+	rv = cc_simple_segregated_storage_allocator_initialize(
+		&_cc_item_pool.allocator,
+		&_cc_item_pool.storage, _cc_item_pool.memory, memory_size, sizeof(item_t), item_max_count
+	);
+	if (rv == false)
+	{
+		test_out << "cc_simple_segregated_storage_allocator_initialize() failed" << test_tendl;
+		test_assert(0);
+		return false;
+	}
+	return true;
+}
+
+static void cc_item_pool_uninitialize()
+{
+	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_cc_item_pool.storage) << test_tendl;
+
+
+	free(_cc_item_pool.memory);
+}
+
+static item_t* cc_item_pool_alloc()
+{
+	item_t* item_pointer = (item_t*)_cc_item_pool.allocator.alloc(&_cc_item_pool.storage);
+	if (item_pointer == NULL)
+	{
+		test_out << "_cc_item_pool.allocator.alloc() failed" << test_tendl;
+		//test_assert(0);
+	}
+	return item_pointer;
+}
+
+static void cc_item_pool_free(item_t* item)
+{
+	bool rv;
+	
+	rv = _cc_item_pool.allocator.free(&_cc_item_pool.storage, item);
+	if (rv == false)
+	{
+		test_out << "_cc_item_pool.allocator.free() failed" << test_tendl;
+		test_assert(0);
+	}
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+typedef struct _cc_items_t
+{
+	cc_pair_bucket_t elements[item_max_count];
+	cc_unordered_map_t container;
+}
+cc_items_t;
+
+//===========================================================================
+static cc_items_t _cc_items;
+
+//===========================================================================
+static bool cc_items_initialize()
+{
+	bool rv;
+
+	rv = cc_item_pool_initialize();
+	if (rv == false)
+	{
+		test_assert(0);
+		return false;
+	}
+
+	cc_unordered_map_initialize(
+		&_cc_items.container,
+		cc_item_key_hash, cc_item_key_equal, _cc_items.elements, item_max_count, sizeof(item_t));
+
+	return true;
+}
+
+static void cc_items_uninitialize()
+{
+	test_out << "elements count:" << cc_unordered_map_count(&_cc_items.container) << test_tendl;
+
+	cc_item_pool_uninitialize();
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 
+// STL
+// 
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static std::unordered_map<uint32_t, item_t*> _stl_items;
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static void cc_insert(std::vector<item_t>& source_items)
+{
+	size_t count = source_items.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+        item_t* item_pointer = cc_item_pool_alloc();
+        if (item_pointer == NULL)
+        {
+            continue;
+        }
+        item_pointer->key = source_items[i].key;
+		item_pointer->value = source_items[i].value;
+
+        bool rv;
+        rv = cc_unordered_map_add(&_cc_items.container, (void*)(uintptr_t)cc_item_key(item_pointer), item_pointer);
+        if (rv == false)
+        {
+            cc_item_pool_free(item_pointer);
+        }
+	}
+}
+
+static void stl_insert(std::vector<item_t>& source_items)
+{
+    size_t count = source_items.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+		item_t* item_pointer = new(std::nothrow) item_t();
+        if (item_pointer == NULL)
+        {
+            continue;
+        }
+        item_pointer->key = source_items[i].key;
+        item_pointer->value = source_items[i].value;
+
+        _stl_items.insert(std::make_pair(cc_item_key(item_pointer), item_pointer));
+    }
+}
+
+//===========================================================================
+static void cc_clear()
+{
+	size_t count = cc_unordered_map_size(&_cc_items.container);
+    for (size_t i = 0; i < count; i++)
+    {
+        item_t* item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, i);
+        if (item_pointer != NULL)
+        {
+            cc_item_pool_free(item_pointer);
+        }
+	}
+
+    cc_unordered_map_clear(&_cc_items.container);
+}
+
+static void stl_clear()
+{
+    for (auto& pair : _stl_items)
+    {
+        delete pair.second;
+    }
+    _stl_items.clear();
+}
+
+//===========================================================================
+static void cc_find(std::vector<item_t>& source_items)
+{
+    size_t count = source_items.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+        uint32_t key = source_items[i].key;
+        //uint32_t value = source_items[i].value;
+        item_t* item_pointer = (item_t*)cc_unordered_map_element_second_by_first(&_cc_items.container, (void*)(uintptr_t)key);
+        if (item_pointer != NULL)
+        {
+            test_assert(item_pointer->key == key);
+            //test_assert(item_pointer->value == value);
+        }
+    }
+}
+
+static void stl_find(std::vector<item_t>& source_items)
+{
+    size_t count = source_items.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+        uint32_t key = source_items[i].key;
+        //uint32_t value = source_items[i].value;
+        auto it = _stl_items.find(key);
+        if (it != _stl_items.end())
+        {
+            item_t* item_pointer = it->second;
+            test_assert(item_pointer->key == key);
+            //test_assert(item_pointer->value == value);
+        }
+    }
+}
+
+//===========================================================================
+static void cc_remove(std::vector<item_t>& source_items)
+{
+    size_t count = source_items.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+        uint32_t key = source_items[i].key;
+		//uint32_t value = source_items[i].value;
+        size_t index = cc_unordered_map_find(&_cc_items.container, (void*)(uintptr_t)key);
+        if (index != cc_invalid_index)
+        {
+            item_t* item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, index);
+            test_assert(item_pointer->key == key);
+            //test_assert(item_pointer->value == value);
+
+
+#if 0
+            _cc_items.container.table[index].status = cc_bucket_status_removed;
+            _cc_items.container.table[index].element.first.pointer = NULL;
+            _cc_items.container.table[index].element.second.pointer = NULL;
+			_cc_items.container.count--;
+#endif
+
+#if 1
+            bool rv;
+            rv = cc_unordered_map_erase(&_cc_items.container, index);
+            test_assert(rv == true);
+#endif
+
+			cc_item_pool_free(item_pointer);
+        }
+    }
+}
+
+static void stl_remove(std::vector<item_t>& source_items)
+{
+    size_t count = source_items.size();
+    for (size_t i = 0; i < count; ++i)
+    {
+        uint32_t key = source_items[i].key;
+        //uint32_t value = source_items[i].value;
+        auto it = _stl_items.find(key);
+        if (it != _stl_items.end())
+        {
+            item_t* item_pointer = it->second;
+            test_assert(item_pointer->key == key);
+            //test_assert(item_pointer->value == value);
+
+
+            _stl_items.erase(it);
+            delete item_pointer;
+        }
+    }
+}
+
+//===========================================================================
+static void cc_print_items(size_t items_count, size_t percent)
+{
+    test_out
+        << "@ count=" << items_count
+        << "(" << percent << "%%)"
+        << test_tendl;
+
+
+    item_t* item_pointer;
+    cc_hash_value_t hash_value;
+    uint32_t key;
+
+
+    const size_t max_printed_items = 32;
+    size_t printed = 0;
+
+
+    size_t i;
+    size_t count;
+
+
+    count = cc_unordered_map_size(&_cc_items.container);
+    for (i = 0; i < count; i++)
+    {
+        item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, i);
+
+        if (item_pointer != NULL)
+        {
+            key = cc_item_key(item_pointer);
+#if (1==cc_config_compiler_msvc)
+#pragma warning(disable:4312)
+#endif
+            hash_value = cc_item_key_hash((void*)key);
+#if (1==cc_config_compiler_msvc)
+#pragma warning(default:4312)
+#endif
+            test_out
+                << test_tindex(cc_hash_value_index(hash_value, cc_unordered_map_size(&_cc_items.container)))
+                << "+"
+                << cc_hash_calc_attempt(hash_value, cc_unordered_map_size(&_cc_items.container), i)
+                << "->"
+                << test_tindex(i)
+                << "="
+                << item_pointer->key << ","
+                << item_pointer->value << ","
+                << " hash="
+                << hash_value
+                << test_tendl
+                ;
+
+            printed++;
+
+            if (printed > max_printed_items)
+            {
+                break;
+            }
+        }
+    }
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 
+// 성능 비교 시험
+// 
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static void performance(std::ostream& oss, size_t count)
+{
+    std::vector<item_t> source_items = source_generate_items(count);
+
+    size_t percent;
+    percent = (count * 100) / item_max_count;
+
+    oss
+        << "@" << percent << "%%:"
+        << std::endl
+        ;
+
+
+    {
+        test_scoped_timer timer(oss, " cc insert");
+        cc_insert(source_items);
+    }
+    {
+        test_scoped_timer timer(oss, "stl insert");
+        stl_insert(source_items);
+    }
+
+
+    test_assert(_stl_items.size() == cc_unordered_map_count(&_cc_items.container));
+
+
+    size_t real_count;
+    size_t real_percent;
+    real_count = cc_unordered_map_count(&_cc_items.container);
+    real_percent = (real_count * 100) / item_max_count;
+
+    oss
+        << "             "
+		<< "count=" << count << " -> real_count=" << real_count << "(" << real_percent << "%%)"
+        << std::endl;
+
+
+    cc_print_items(count, percent);
+
+
+    {
+        test_scoped_timer timer(oss, " cc find  ");
+        cc_find(source_items);
+    }
+    {
+        test_scoped_timer timer(oss, "stl find  ");
+        stl_find(source_items);
+    }
+    {
+        test_scoped_timer timer(oss, " cc remove");
+        cc_remove(source_items);
+    }
+    {
+        test_scoped_timer timer(oss, "stl remove");
+        stl_remove(source_items);
+    }
+
+
+    oss 
+        << "             "
+        << " cc=" << cc_unordered_map_count(&_cc_items.container)
+		<< std::endl;
+
+    oss
+        << "             "
+		<< "stl=" << _stl_items.size()
+        << std::endl;
+
+
+    {
+        test_scoped_timer timer(oss, " cc clear ");
+        cc_clear();
+    }
+    {
+        test_scoped_timer timer(oss, "stl clear ");
+        stl_clear();
+    }
+
+
+    test_assert(cc_unordered_map_count(&_cc_items.container) == _stl_items.size());
+
+
+	oss << std::endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static void run(void)
+{
+    std::ostringstream oss;
+
+    oss << std::endl;
+    oss << "# cc_unordered_map vs std::unordered_map performance" << std::endl;
+    oss << std::endl;
+
+    performance(oss, item_max_count / 4);
+    performance(oss, item_max_count / 2);
+    performance(oss, item_max_count * 3 / 4);
+    performance(oss, item_max_count);
+
+	test_out << oss.str().c_str();
+}
+
+//===========================================================================
+void test_case_cc_unordered_map_2()
+{
+	if (!cc_items_initialize())
+	{
+		return;
+	}
+
+	run();
+
+	cc_items_uninitialize();
+}
