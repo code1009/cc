@@ -273,7 +273,7 @@ static std::unordered_map<uint32_t, item_t*> _stl_items;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static void cc_insert(std::vector<item_t>& source_items)
+static void cc_add(std::vector<item_t>& source_items)
 {
 	size_t count = source_items.size();
     for (size_t i = 0; i < count; ++i)
@@ -295,7 +295,7 @@ static void cc_insert(std::vector<item_t>& source_items)
 	}
 }
 
-static void stl_insert(std::vector<item_t>& source_items)
+static void stl_add(std::vector<item_t>& source_items)
 {
     size_t count = source_items.size();
     for (size_t i = 0; i < count; ++i)
@@ -377,7 +377,7 @@ static void stl_find(std::vector<item_t>& source_items)
 }
 
 //===========================================================================
-static void cc_remove(std::vector<item_t>& source_items)
+static void cc_erase(std::vector<item_t>& source_items)
 {
     size_t count = source_items.size();
     for (size_t i = 0; i < count; ++i)
@@ -404,7 +404,7 @@ static void cc_remove(std::vector<item_t>& source_items)
     }
 }
 
-static void stl_remove(std::vector<item_t>& source_items)
+static void stl_erase(std::vector<item_t>& source_items)
 {
     size_t count = source_items.size();
     for (size_t i = 0; i < count; ++i)
@@ -515,12 +515,12 @@ static void performance(std::ostream& oss, size_t count)
 
 
     {
-        test_scoped_timer timer(oss, " cc insert");
-        cc_insert(source_items);
+        test_scoped_timer timer(oss, " cc add   ");
+        cc_add(source_items);
     }
     {
-        test_scoped_timer timer(oss, "stl insert");
-        stl_insert(source_items);
+        test_scoped_timer timer(oss, "stl add   ");
+        stl_add(source_items);
     }
     test_assert(count == _stl_items.size());
     test_assert(count == cc_unordered_map_count(&_cc_items.container));
@@ -530,31 +530,31 @@ static void performance(std::ostream& oss, size_t count)
 
 
     {
-        test_scoped_timer timer(oss, " cc find  ");
+        test_scoped_timer timer(oss, " cc find ");
         cc_find(source_items);
     }
     {
-        test_scoped_timer timer(oss, "stl find  ");
+        test_scoped_timer timer(oss, "stl find ");
         stl_find(source_items);
     }
     {
-        test_scoped_timer timer(oss, " cc remove");
-        cc_remove(source_items);
+        test_scoped_timer timer(oss, " cc erase");
+        cc_erase(source_items);
     }
     {
-        test_scoped_timer timer(oss, "stl remove");
-        stl_remove(source_items);
+        test_scoped_timer timer(oss, "stl erase");
+        stl_erase(source_items);
     }
     test_assert(0 == _stl_items.size());
     test_assert(0 == cc_unordered_map_count(&_cc_items.container));
 
 
     {
-        test_scoped_timer timer(oss, " cc clear ");
+        test_scoped_timer timer(oss, " cc clear");
         cc_clear();
     }
     {
-        test_scoped_timer timer(oss, "stl clear ");
+        test_scoped_timer timer(oss, "stl clear");
         stl_clear();
     }
 
