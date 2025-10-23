@@ -499,12 +499,12 @@ static void performance(std::ostream& oss, size_t count)
 
 
     {
-        test_scoped_timer timer(oss, " cc add   ");
-        cc_add(source_items);
-    }
-    {
-        test_scoped_timer timer(oss, "stl add   ");
-        stl_add(source_items);
+        test_scoped_timer timer(oss, " cc add  ");
+        cc_add(source_items);                  
+    }                                          
+    {                                          
+        test_scoped_timer timer(oss, "stl add  ");
+        stl_add(source_items);                 
     }
     test_assert(count == _stl_items.size());
     test_assert(count == cc_map_count(&_cc_items.container));

@@ -99,17 +99,31 @@ test_scoped_timer::test_scoped_timer(std::ostream& os, const std::string& label,
 test_scoped_timer::~test_scoped_timer()
 {
     sw_.stop();
-    os_ << label_;
-    if (!label_.empty()) os_ << " : ";
-    os_ << std::fixed << std::setprecision(precision_) << sw_.elapsed_milliseconds() << " ms" << std::endl;
+
+
+    if (!label_.empty())
+    {
+        os_ << label_;
+        os_ << " : ";
+    }
+
+    os_ << std::fixed << std::setprecision(precision_) << sw_.elapsed_milliseconds() << "msec" << std::endl;
 }
 
 void test_scoped_timer::stop_and_report()
 {
-    if (sw_.is_running()) sw_.stop();
-    os_ << label_;
-    if (!label_.empty()) os_ << " : ";
-    os_ << std::fixed << std::setprecision(precision_) << sw_.elapsed_milliseconds() << " ms" << std::endl;
+    if (sw_.is_running())
+    {
+        sw_.stop();
+    }
+
+    if (!label_.empty())
+    {
+        os_ << label_;
+        os_ << " : ";
+    }
+
+    os_ << std::fixed << std::setprecision(precision_) << sw_.elapsed_milliseconds() << "msec" << std::endl;
 }
 
 test_stop_watch& test_scoped_timer::stopwatch() noexcept

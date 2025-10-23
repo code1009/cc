@@ -474,7 +474,7 @@ static void cc_print_items(size_t items_count, size_t percent)
                 << test_tindex(i)
                 << "="
                 << item_pointer->key << ","
-                << item_pointer->value << ","
+                << item_pointer->value
                 << " hash="
                 << hash_value
                 << test_tendl

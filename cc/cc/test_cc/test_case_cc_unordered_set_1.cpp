@@ -225,7 +225,7 @@ static void print(void)
 				<< "="
 				<< item_pointer->key1  << ","
 				<< item_pointer->key2  << ","
-				<< item_pointer->value << ","
+				<< item_pointer->value
 				<< " hash="
 				<< hash_value
 				<< test_tendl
