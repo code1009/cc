@@ -24,6 +24,7 @@ void test_case_cc_set_1();
 
 void test_case_cc_map_1();
 void test_case_cc_map_2();
+void test_case_cc_map_3();
 
 void test_case_cc_forward_list_1();
 void test_case_cc_list_1();
@@ -195,6 +196,7 @@ static void test_suite_cc_map()
 	{
 		{ "test_case_cc_map_1", test_case_cc_map_1 },
 		{ "test_case_cc_map_2", test_case_cc_map_2 },
+		{ "test_case_cc_map_3", test_case_cc_map_3 },
 		{ NULL, NULL }
 	};
 

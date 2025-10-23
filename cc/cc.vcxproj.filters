@@ -168,6 +168,12 @@
     <ClCompile Include="cc\main.cpp">
       <Filter>cc</Filter>
     </ClCompile>
+    <ClCompile Include="cc\tester\test_timer.cpp">
+      <Filter>cc\tester</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_map_3.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">

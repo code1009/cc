@@ -47,7 +47,7 @@ test_text_index::test_text_index(size_t v) : _value(v) {}
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#if 0
+#if 1
 static void debug_printf(const char* format, ...)
 {
 	static char buffer[1024];
@@ -65,7 +65,7 @@ static void debug_printf(const char* format, ...)
 #endif
 }
 #endif
-#if 1
+#if 0
 #define debug_printf    printf
 #endif
 

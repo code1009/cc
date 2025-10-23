@@ -53,6 +53,7 @@ In-place quicksort with tail-recursion elimination:
 - log2(65536) * 48 = 16 * 48 = 768 bytes
 
 */
+#if (1==cc_config_algorithm_quicksort)
 static void cc_collection_quicksort_range(cc_collection_t* ctx, const cc_less_t less, ptrdiff_t left, ptrdiff_t right)
 {
 	while (left < right)
@@ -129,6 +130,7 @@ cc_api void cc_collection_quicksort(cc_collection_t* ctx, const cc_less_t less)
 
 	cc_collection_quicksort_range(ctx, less, 0, (ptrdiff_t)ctx->count - 1);
 }
+#endif
 
 
 

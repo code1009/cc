@@ -17,7 +17,10 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+#if (1==cc_config_algorithm_quicksort)
 cc_api void cc_collection_quicksort(cc_collection_t* ctx, const cc_less_t less);
+#endif
+
 cc_api void cc_collection_heapsort(cc_collection_t* ctx, const cc_less_t less);
 
 

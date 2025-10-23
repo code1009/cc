@@ -13,7 +13,7 @@
 #include <sstream>
 
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 #include "../tester/test_timer.hpp"
 
@@ -75,7 +75,7 @@ static std::vector<item_t> generate_source_items(size_t count)
     uint32_t key = 0;
     for (uint32_t i = 0; i < item_max_count; ++i)
     {
-        key = random_range_uint32_t(key + 1, key + 9);
+        key = random_range_uint32_t(key+1, key + 9);
         keys.push_back(key);
     }
 
@@ -114,22 +114,6 @@ cc_api static inline uint32_t cc_item_key(const item_t* item_pointer)
 	return item_pointer->key;
 }
 
-cc_api static cc_hash_value_t cc_item_key_hash(const void* pointer)
-{
-#if (1==cc_config_compiler_msvc)
-#pragma warning(disable:4311)
-#pragma warning(disable:4302)
-#endif
-	uint32_t key = (uint32_t)pointer;
-#if (1==cc_config_compiler_msvc)
-#pragma warning(default:4302)
-#pragma warning(default:4311)
-#endif
-
-    return key;
-    //return cc_hash_djb2(&key, sizeof(key));
-}
-
 cc_api static bool cc_item_key_equal(const void* left, const void* right)
 {
 #if (1==cc_config_compiler_msvc)
@@ -150,6 +134,22 @@ cc_api static bool cc_item_key_equal(const void* left, const void* right)
 	}
 
 	return false;
+}
+
+cc_api static bool cc_item_key_less(const void* left, const void* right)
+{
+#if (1==cc_config_compiler_msvc)
+#pragma warning(disable:4311)
+#pragma warning(disable:4302)
+#endif
+    uint32_t lkey = (uint32_t)left;
+    uint32_t rkey = (uint32_t)right;
+#if (1==cc_config_compiler_msvc)
+#pragma warning(default:4302)
+#pragma warning(default:4311)
+#endif
+
+    return (lkey < rkey) ? true : false;
 }
 
 
@@ -229,8 +229,8 @@ static void cc_item_pool_free(item_t* item)
 //===========================================================================
 typedef struct _cc_items_t
 {
-	cc_pair_bucket_t elements[item_max_count];
-	cc_unordered_map_t container;
+	cc_pair_t elements[item_max_count];
+	cc_map_t container;
 }
 cc_items_t;
 
@@ -249,16 +249,16 @@ static bool cc_items_initialize()
 		return false;
 	}
 
-	cc_unordered_map_initialize(
+	cc_map_initialize(
 		&_cc_items.container,
-		cc_item_key_hash, cc_item_key_equal, _cc_items.elements, item_max_count, sizeof(item_t));
+        cc_item_key_equal, cc_item_key_less, _cc_items.elements, item_max_count, sizeof(item_t));
 
 	return true;
 }
 
 static void cc_items_uninitialize()
 {
-	test_out << "elements count:" << cc_unordered_map_count(&_cc_items.container) << test_tendl;
+	test_out << "elements count:" << cc_map_count(&_cc_items.container) << test_tendl;
 
 	cc_item_pool_uninitialize();
 }
@@ -273,7 +273,7 @@ static void cc_items_uninitialize()
 // 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static std::unordered_map<uint32_t, item_t*> _stl_items;
+static std::map<uint32_t, item_t*> _stl_items;
 
 
 
@@ -294,7 +294,7 @@ static void cc_insert(std::vector<item_t>& source_items)
 		item_pointer->value = source_items[i].value;
 
         bool rv;
-        rv = cc_unordered_map_add(&_cc_items.container, (void*)(uintptr_t)cc_item_key(item_pointer), item_pointer);
+        rv = cc_map_add(&_cc_items.container, (void*)(uintptr_t)cc_item_key(item_pointer), item_pointer);
         if (rv == false)
         {
             cc_item_pool_free(item_pointer);
@@ -322,17 +322,17 @@ static void stl_insert(std::vector<item_t>& source_items)
 //===========================================================================
 static void cc_clear()
 {
-	size_t count = cc_unordered_map_size(&_cc_items.container);
+	size_t count = cc_map_count(&_cc_items.container);
     for (size_t i = 0; i < count; i++)
     {
-        item_t* item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, i);
+        item_t* item_pointer = (item_t*)cc_map_element_second(&_cc_items.container, i);
         if (item_pointer != NULL)
         {
             cc_item_pool_free(item_pointer);
         }
 	}
 
-    cc_unordered_map_clear(&_cc_items.container);
+    cc_map_clear(&_cc_items.container);
 }
 
 static void stl_clear()
@@ -353,7 +353,7 @@ static void cc_find(std::vector<item_t>& source_items)
         uint32_t key = source_items[i].key;
         uint32_t value = source_items[i].value;
 
-        item_t* item_pointer = (item_t*)cc_unordered_map_element_second_by_first(&_cc_items.container, (void*)(uintptr_t)key);
+        item_t* item_pointer = (item_t*)cc_map_element_second_by_first(&_cc_items.container, (void*)(uintptr_t)key);
         if (item_pointer != NULL)
         {
             test_assert(item_pointer->key == key);
@@ -392,17 +392,17 @@ static void cc_remove(std::vector<item_t>& source_items)
         uint32_t key = source_items[i].key;
 		uint32_t value = source_items[i].value;
 
-        size_t index = cc_unordered_map_find(&_cc_items.container, (void*)(uintptr_t)key);
+        size_t index = cc_map_find(&_cc_items.container, (void*)(uintptr_t)key);
         if (index != cc_invalid_index)
         {
-            item_t* item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, index);
-            
+            item_t* item_pointer = (item_t*)cc_map_element_second(&_cc_items.container, index);
+        
             test_assert(item_pointer->key == key);
             test_assert(item_pointer->value == value);
 
 
             bool rv;
-            rv = cc_unordered_map_erase(&_cc_items.container, index);
+            rv = cc_map_erase(&_cc_items.container, index);
             test_assert(rv == true);
 
 
@@ -446,8 +446,6 @@ static void cc_print_items(size_t items_count, size_t percent)
 
 
     item_t* item_pointer;
-    cc_hash_value_t hash_value;
-    uint32_t key;
 
 
     const size_t max_printed_items = 32;
@@ -458,32 +456,18 @@ static void cc_print_items(size_t items_count, size_t percent)
     size_t count;
 
 
-    count = cc_unordered_map_size(&_cc_items.container);
+    count = cc_map_count(&_cc_items.container);
     for (i = 0; i < count; i++)
     {
-        item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, i);
+        item_pointer = (item_t*)cc_map_element_second(&_cc_items.container, i);
 
         if (item_pointer != NULL)
         {
-            key = cc_item_key(item_pointer);
-#if (1==cc_config_compiler_msvc)
-#pragma warning(disable:4312)
-#endif
-            hash_value = cc_item_key_hash((void*)key);
-#if (1==cc_config_compiler_msvc)
-#pragma warning(default:4312)
-#endif
             test_out
-                << test_tindex(cc_hash_value_index(hash_value, cc_unordered_map_size(&_cc_items.container)))
-                << "+"
-                << cc_hash_calc_attempt(hash_value, cc_unordered_map_size(&_cc_items.container), i)
-                << "->"
                 << test_tindex(i)
                 << "="
                 << item_pointer->key << ","
-                << item_pointer->value << ","
-                << " hash="
-                << hash_value
+                << item_pointer->value
                 << test_tendl
                 ;
 
@@ -530,12 +514,12 @@ static void performance(std::ostream& oss, size_t count)
     }
 
 
-    test_assert(_stl_items.size() == cc_unordered_map_count(&_cc_items.container));
+    test_assert(_stl_items.size() == cc_map_count(&_cc_items.container));
 
 
     size_t real_count;
     size_t real_percent;
-    real_count = cc_unordered_map_count(&_cc_items.container);
+    real_count = cc_map_count(&_cc_items.container);
     real_percent = (real_count * 100) / item_max_count;
 
     oss
@@ -567,7 +551,7 @@ static void performance(std::ostream& oss, size_t count)
 
     oss 
         << "             "
-        << " cc=" << cc_unordered_map_count(&_cc_items.container)
+        << " cc=" << cc_map_count(&_cc_items.container)
 		<< std::endl;
 
     oss
@@ -586,7 +570,7 @@ static void performance(std::ostream& oss, size_t count)
     }
 
 
-    test_assert(cc_unordered_map_count(&_cc_items.container) == _stl_items.size());
+    test_assert(cc_map_count(&_cc_items.container) == _stl_items.size());
 
 
 	oss << std::endl;
@@ -599,7 +583,7 @@ static void run(void)
     std::ostringstream oss;
 
     oss << std::endl;
-    oss << "# cc_unordered_map vs std::unordered_map performance" << std::endl;
+    oss << "# cc_map vs std::map performance" << std::endl;
     oss << std::endl;
 
     performance(oss, item_max_count / 4);
@@ -611,7 +595,7 @@ static void run(void)
 }
 
 //===========================================================================
-void test_case_cc_unordered_map_2()
+void test_case_cc_map_3()
 {
 	if (!cc_items_initialize())
 	{

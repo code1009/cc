@@ -218,6 +218,7 @@ cc_api static bool item_less(const void* left, const void* right)
 	return false;
 }
 
+#if (1==cc_config_algorithm_quicksort)
 static void quicksort(void)
 {
 	cc_collection_quicksort(
@@ -225,6 +226,7 @@ static void quicksort(void)
 		item_less
 	);
 }
+#endif
 
 static void heapsort(void)
 {
@@ -264,11 +266,15 @@ static void run(void)
 {
 	add();
 	print();
+
+#if (1==cc_config_algorithm_quicksort)
 	quicksort();
 	print();
 	release();
 
+
 	add();
+#endif
 	heapsort();
 	print();
 	release();
