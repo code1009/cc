@@ -522,9 +522,8 @@ static void performance(std::ostream& oss, size_t count)
         test_scoped_timer timer(oss, "stl insert");
         stl_insert(source_items);
     }
-
-
-    test_assert(_stl_items.size() == cc_unordered_map_count(&_cc_items.container));
+    test_assert(count == _stl_items.size());
+    test_assert(count == cc_unordered_map_count(&_cc_items.container));
 
 
     cc_print_items(count, percent);
@@ -546,17 +545,8 @@ static void performance(std::ostream& oss, size_t count)
         test_scoped_timer timer(oss, "stl remove");
         stl_remove(source_items);
     }
-
-
-    oss 
-        << "             "
-        << " cc=" << cc_unordered_map_count(&_cc_items.container)
-		<< std::endl;
-
-    oss
-        << "             "
-		<< "stl=" << _stl_items.size()
-        << std::endl;
+    test_assert(0 == _stl_items.size());
+    test_assert(0 == cc_unordered_map_count(&_cc_items.container));
 
 
     {
