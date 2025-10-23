@@ -161,7 +161,7 @@ cc_api static bool cc_item_key_equal(const void* left, const void* right)
 typedef struct _cc_item_pool_t
 {
 	cc_simple_segregated_storage_t storage;
-	item_t* memory;
+	item_t memory[item_max_count];
 	cc_allocator_t allocator;
 }
 cc_item_pool_t;
@@ -172,14 +172,10 @@ static cc_item_pool_t _cc_item_pool;
 //===========================================================================
 static bool cc_item_pool_initialize()
 {
-	size_t memory_size = sizeof(item_t) * item_max_count;
-	_cc_item_pool.memory = (item_t*)malloc(memory_size);
-
-
 	bool rv;
 	rv = cc_simple_segregated_storage_allocator_initialize(
 		&_cc_item_pool.allocator,
-		&_cc_item_pool.storage, _cc_item_pool.memory, memory_size, sizeof(item_t), item_max_count
+		&_cc_item_pool.storage, &_cc_item_pool.memory[0], sizeof(_cc_item_pool.memory), sizeof(item_t), item_max_count
 	);
 	if (rv == false)
 	{
@@ -193,9 +189,6 @@ static bool cc_item_pool_initialize()
 static void cc_item_pool_uninitialize()
 {
 	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_cc_item_pool.storage) << test_tendl;
-
-
-	free(_cc_item_pool.memory);
 }
 
 static item_t* cc_item_pool_alloc()
@@ -516,6 +509,7 @@ static void performance(std::ostream& oss, size_t count)
 
     oss
         << "@" << percent << "%%:"
+        << "count=" << count
         << std::endl
         ;
 
@@ -531,17 +525,6 @@ static void performance(std::ostream& oss, size_t count)
 
 
     test_assert(_stl_items.size() == cc_unordered_map_count(&_cc_items.container));
-
-
-    size_t real_count;
-    size_t real_percent;
-    real_count = cc_unordered_map_count(&_cc_items.container);
-    real_percent = (real_count * 100) / item_max_count;
-
-    oss
-        << "             "
-		<< "count=" << count << " -> real_count=" << real_count << "(" << real_percent << "%%)"
-        << std::endl;
 
 
     cc_print_items(count, percent);
@@ -602,10 +585,10 @@ static void run(void)
     oss << "# cc_unordered_map vs std::unordered_map performance" << std::endl;
     oss << std::endl;
 
-    performance(oss, item_max_count / 4);
-    performance(oss, item_max_count / 2);
+    performance(oss, item_max_count * 4 / 4);
     performance(oss, item_max_count * 3 / 4);
-    performance(oss, item_max_count);
+    performance(oss, item_max_count * 2 / 4);
+    performance(oss, item_max_count * 1 / 4);
 
 	test_out << oss.str().c_str();
 }
