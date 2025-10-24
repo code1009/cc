@@ -51,7 +51,7 @@ cc_api void* cc_unordered_set_element_by_key(cc_unordered_set_t* ctx, const void
 cc_api size_t cc_unordered_set_count(cc_unordered_set_t* ctx);
 cc_api bool cc_unordered_set_empty(cc_unordered_set_t* ctx);
 
-cc_api size_t cc_unordered_set_size(cc_unordered_set_t* ctx);
+cc_api size_t cc_unordered_set_table_size(cc_unordered_set_t* ctx);
 
 
 

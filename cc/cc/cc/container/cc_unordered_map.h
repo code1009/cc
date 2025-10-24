@@ -52,7 +52,7 @@ cc_api void* cc_unordered_map_element_second_by_first(cc_unordered_map_t* ctx, c
 cc_api size_t cc_unordered_map_count(cc_unordered_map_t* ctx);
 cc_api bool cc_unordered_map_empty(cc_unordered_map_t* ctx);
 
-cc_api size_t cc_unordered_map_size(cc_unordered_map_t* ctx);
+cc_api size_t cc_unordered_map_table_size(cc_unordered_map_t* ctx);
 
 
 

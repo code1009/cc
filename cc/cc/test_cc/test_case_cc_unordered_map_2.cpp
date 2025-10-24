@@ -315,7 +315,7 @@ static void stl_add(std::vector<item_t>& source_items)
 //===========================================================================
 static void cc_clear()
 {
-	size_t count = cc_unordered_map_size(&_cc_items.container);
+	size_t count = cc_unordered_map_table_size(&_cc_items.container);
     for (size_t i = 0; i < count; i++)
     {
         item_t* item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, i);
@@ -451,7 +451,7 @@ static void cc_print_items(size_t items_count, size_t percent)
     size_t count;
 
 
-    count = cc_unordered_map_size(&_cc_items.container);
+    count = cc_unordered_map_table_size(&_cc_items.container);
     for (i = 0; i < count; i++)
     {
         item_pointer = (item_t*)cc_unordered_map_element_second(&_cc_items.container, i);
@@ -467,9 +467,9 @@ static void cc_print_items(size_t items_count, size_t percent)
 #pragma warning(default:4312)
 #endif
             test_out
-                << test_tindex(cc_hash_value_index(hash_value, cc_unordered_map_size(&_cc_items.container)))
+                << test_tindex(cc_hash_value_index(hash_value, cc_unordered_map_table_size(&_cc_items.container)))
                 << "+"
-                << cc_hash_calc_attempt(hash_value, cc_unordered_map_size(&_cc_items.container), i)
+                << cc_hash_calc_attempt(hash_value, cc_unordered_map_table_size(&_cc_items.container), i)
                 << "->"
                 << test_tindex(i)
                 << "="

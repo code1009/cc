@@ -236,7 +236,7 @@ static void print(void)
 	size_t i;
 	size_t count;
 
-	count = cc_unordered_map_size(&_items.container);
+	count = cc_unordered_map_table_size(&_items.container);
 	for (i = 0; i < count; i++)
 	{
 		item_pointer = (item_t*)cc_unordered_map_element_second(&_items.container, i);
@@ -252,9 +252,9 @@ static void print(void)
 #pragma warning(default:4312)
 #endif
 			test_out
-				<< test_tindex(cc_hash_value_index(hash_value, cc_unordered_map_size(&_items.container)))
+				<< test_tindex(cc_hash_value_index(hash_value, cc_unordered_map_table_size(&_items.container)))
 				<< "+"
-				<< cc_hash_calc_attempt(hash_value, cc_unordered_map_size(&_items.container), i)
+				<< cc_hash_calc_attempt(hash_value, cc_unordered_map_table_size(&_items.container), i)
 				<< "->"
 				<< test_tindex(i)
 				<< "="
@@ -277,7 +277,7 @@ static void release(void)
 	size_t i;
 	size_t count;
 
-	count = cc_unordered_map_size(&_items.container);
+	count = cc_unordered_map_table_size(&_items.container);
 	for (i = 0; i < count; i++)
 	{
 		item_pointer = (item_t*)cc_unordered_map_element_second(&_items.container, i);

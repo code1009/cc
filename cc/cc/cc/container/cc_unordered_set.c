@@ -256,7 +256,7 @@ cc_api bool cc_unordered_set_empty(cc_unordered_set_t* ctx)
 	return (ctx->count == 0) ? true : false;
 }
 
-cc_api size_t cc_unordered_set_size(cc_unordered_set_t* ctx)
+cc_api size_t cc_unordered_set_table_size(cc_unordered_set_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
 
