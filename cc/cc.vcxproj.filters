@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="cc">
+      <UniqueIdentifier>{29deab2a-8a7f-401e-a96d-a61ef2a51131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\cc">
+      <UniqueIdentifier>{dfea2841-0259-4b16-9baa-4b276a9912eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\test_cc">
+      <UniqueIdentifier>{02b178eb-7437-4bf9-8c28-a0041e4429bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\tester">
+      <UniqueIdentifier>{8cfc4a2b-7480-463c-8b40-1bf8f4e18cd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\cc\container">
+      <UniqueIdentifier>{be3420f7-ef1a-4341-bd88-0502db9893c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\cc\algorithm">
+      <UniqueIdentifier>{b0f02149-7b44-412f-925e-3473b31fe5a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\cc\element">
+      <UniqueIdentifier>{b14c7942-a379-4bc2-aaf4-c061974afcf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc\cc\allocator">
+      <UniqueIdentifier>{7b6ecab9-e769-473c-879d-b64a5adeb943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="doc">
+      <UniqueIdentifier>{b7f3a699-0dc3-4ac4-ac3d-9dd17a7c744d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cc\tester\test_output.cpp">
+      <Filter>cc\tester</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\tester\test_runner.cpp">
+      <Filter>cc\tester</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\algorithm\cc_collection_sort.c">
+      <Filter>cc\cc\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\algorithm\cc_compare.c">
+      <Filter>cc\cc\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\algorithm\cc_hash.c">
+      <Filter>cc\cc\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_allocator.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\element\cc_bucket.c">
+      <Filter>cc\cc\element</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\element\cc_dnode.c">
+      <Filter>cc\cc\element</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\element\cc_element.c">
+      <Filter>cc\cc\element</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\element\cc_pair.c">
+      <Filter>cc\cc\element</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\element\cc_pair_bucket.c">
+      <Filter>cc\cc\element</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\element\cc_snode.c">
+      <Filter>cc\cc\element</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_collection.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_deque.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_forward_list.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_list.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_map.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_pair_collection.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_priority_queue.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_queue.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_set.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_stack.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_unordered_map.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_unordered_set.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\container\cc_vector.c">
+      <Filter>cc\cc\container</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\cc_assert.c">
+      <Filter>cc\cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\cc_code_template.c">
+      <Filter>cc\cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_collection_sort_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_forward_list_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_list_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_map_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_map_2.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_priority_queue_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_queue_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_set_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_stack_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_unordered_map_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_unordered_map_2.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_unordered_set_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_vector_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_vector_2.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\main.cpp">
+      <Filter>cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\tester\test_timer.cpp">
+      <Filter>cc\tester</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_map_3.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\cc_version.c">
+      <Filter>cc\cc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cc\tester\test_output.hpp">
+      <Filter>cc\tester</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\tester\test_runner.hpp">
+      <Filter>cc\tester</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\tester\test_timer.hpp">
+      <Filter>cc\tester</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\algorithm\cc_collection_sort.h">
+      <Filter>cc\cc\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\algorithm\cc_compare.h">
+      <Filter>cc\cc\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\algorithm\cc_hash.h">
+      <Filter>cc\cc\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_allocator.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\element\cc_bucket.h">
+      <Filter>cc\cc\element</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\element\cc_dnode.h">
+      <Filter>cc\cc\element</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\element\cc_element.h">
+      <Filter>cc\cc\element</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\element\cc_pair.h">
+      <Filter>cc\cc\element</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\element\cc_pair_bucket.h">
+      <Filter>cc\cc\element</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\element\cc_snode.h">
+      <Filter>cc\cc\element</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_collection.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_deque.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_forward_list.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_list.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_map.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_pair_collection.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_priority_queue.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_queue.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_set.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_stack.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_unordered_map.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_unordered_set.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\container\cc_vector.h">
+      <Filter>cc\cc\container</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_assert.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_code_template.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_config.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_define.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_export.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_import.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_type.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\test_cc\test_cc.hpp">
+      <Filter>cc\test_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\cc_version.h">
+      <Filter>cc\cc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Filter>doc</Filter>
+    </None>
+  </ItemGroup>
+</Project>

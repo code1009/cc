@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cc\cc\algorithm\cc_collection_sort.c" />
+    <ClCompile Include="cc\cc\algorithm\cc_compare.c" />
+    <ClCompile Include="cc\cc\algorithm\cc_hash.c" />
+    <ClCompile Include="cc\cc\allocator\cc_allocator.c" />
+    <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c" />
+    <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c" />
+    <ClCompile Include="cc\cc\cc_assert.c" />
+    <ClCompile Include="cc\cc\cc_code_template.c" />
+    <ClCompile Include="cc\cc\cc_version.c" />
+    <ClCompile Include="cc\cc\container\cc_collection.c" />
+    <ClCompile Include="cc\cc\container\cc_deque.c" />
+    <ClCompile Include="cc\cc\container\cc_forward_list.c" />
+    <ClCompile Include="cc\cc\container\cc_list.c" />
+    <ClCompile Include="cc\cc\container\cc_map.c" />
+    <ClCompile Include="cc\cc\container\cc_pair_collection.c" />
+    <ClCompile Include="cc\cc\container\cc_priority_queue.c" />
+    <ClCompile Include="cc\cc\container\cc_queue.c" />
+    <ClCompile Include="cc\cc\container\cc_set.c" />
+    <ClCompile Include="cc\cc\container\cc_stack.c" />
+    <ClCompile Include="cc\cc\container\cc_unordered_map.c" />
+    <ClCompile Include="cc\cc\container\cc_unordered_set.c" />
+    <ClCompile Include="cc\cc\container\cc_vector.c" />
+    <ClCompile Include="cc\cc\element\cc_bucket.c" />
+    <ClCompile Include="cc\cc\element\cc_dnode.c" />
+    <ClCompile Include="cc\cc\element\cc_element.c" />
+    <ClCompile Include="cc\cc\element\cc_pair.c" />
+    <ClCompile Include="cc\cc\element\cc_pair_bucket.c" />
+    <ClCompile Include="cc\cc\element\cc_snode.c" />
+    <ClCompile Include="cc\main.cpp" />
+    <ClCompile Include="cc\tester\test_output.cpp" />
+    <ClCompile Include="cc\tester\test_runner.cpp" />
+    <ClCompile Include="cc\tester\test_timer.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_collection_sort_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_forward_list_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_list_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_map_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_map_2.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_map_3.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_priority_queue_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_queue_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_set_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_stack_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_unordered_map_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_unordered_map_2.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_unordered_set_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_vector_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_vector_2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cc\cc\algorithm\cc_collection_sort.h" />
+    <ClInclude Include="cc\cc\algorithm\cc_compare.h" />
+    <ClInclude Include="cc\cc\algorithm\cc_hash.h" />
+    <ClInclude Include="cc\cc\allocator\cc_allocator.h" />
+    <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h" />
+    <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h" />
+    <ClInclude Include="cc\cc\cc.h" />
+    <ClInclude Include="cc\cc\cc_assert.h" />
+    <ClInclude Include="cc\cc\cc_code_template.h" />
+    <ClInclude Include="cc\cc\cc_config.h" />
+    <ClInclude Include="cc\cc\cc_define.h" />
+    <ClInclude Include="cc\cc\cc_export.h" />
+    <ClInclude Include="cc\cc\cc_import.h" />
+    <ClInclude Include="cc\cc\cc_type.h" />
+    <ClInclude Include="cc\cc\cc_version.h" />
+    <ClInclude Include="cc\cc\container\cc_collection.h" />
+    <ClInclude Include="cc\cc\container\cc_deque.h" />
+    <ClInclude Include="cc\cc\container\cc_forward_list.h" />
+    <ClInclude Include="cc\cc\container\cc_list.h" />
+    <ClInclude Include="cc\cc\container\cc_map.h" />
+    <ClInclude Include="cc\cc\container\cc_pair_collection.h" />
+    <ClInclude Include="cc\cc\container\cc_priority_queue.h" />
+    <ClInclude Include="cc\cc\container\cc_queue.h" />
+    <ClInclude Include="cc\cc\container\cc_set.h" />
+    <ClInclude Include="cc\cc\container\cc_stack.h" />
+    <ClInclude Include="cc\cc\container\cc_unordered_map.h" />
+    <ClInclude Include="cc\cc\container\cc_unordered_set.h" />
+    <ClInclude Include="cc\cc\container\cc_vector.h" />
+    <ClInclude Include="cc\cc\element\cc_bucket.h" />
+    <ClInclude Include="cc\cc\element\cc_dnode.h" />
+    <ClInclude Include="cc\cc\element\cc_element.h" />
+    <ClInclude Include="cc\cc\element\cc_pair.h" />
+    <ClInclude Include="cc\cc\element\cc_pair_bucket.h" />
+    <ClInclude Include="cc\cc\element\cc_snode.h" />
+    <ClInclude Include="cc\tester\test_output.hpp" />
+    <ClInclude Include="cc\tester\test_runner.hpp" />
+    <ClInclude Include="cc\tester\test_timer.hpp" />
+    <ClInclude Include="cc\test_cc\test_cc.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{0654c638-2406-4e10-8c60-7bd2b6ad967f}</ProjectGuid>
+    <RootNamespace>cc</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
