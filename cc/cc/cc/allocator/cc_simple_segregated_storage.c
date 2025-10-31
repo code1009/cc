@@ -25,17 +25,23 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api size_t cc_simple_segregated_storage_alignment_size(void)
+static size_t cc_simple_segregated_storage_alignment_size(void)
 {
 	return sizeof(void*);
 }
 
-cc_api bool cc_simple_segregated_storage_is_aligned_address(const uintptr_t address)
+static bool cc_simple_segregated_storage_is_aligned_address(const uintptr_t address)
 {
 	return (0U == (address % cc_simple_segregated_storage_alignment_size()));
 }
 
-cc_api size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size)
+//===========================================================================
+static size_t cc_simple_segregated_storage_chunk_alignment_size(void)
+{
+	return cc_simple_segregated_storage_alignment_size();
+}
+
+static size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size)
 {
 	size_t alignment_size;
 	size_t count;
@@ -43,21 +49,25 @@ cc_api size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_siz
 	size_t chunk_size;
 
 
-	alignment_size = cc_simple_segregated_storage_alignment_size();
+	alignment_size = cc_simple_segregated_storage_chunk_alignment_size();
 	count = data_size / alignment_size;
 	if (0U != (data_size % alignment_size))
 	{
 		count++;
 	}
-
-
 	chunk_size = alignment_size * count;
 
 
 	return chunk_size;
 }
 
-cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_size, const cc_ssize_t max_count)
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_size, const size_t max_count)
 {
 	size_t chunk_size;
 	size_t memory_size;
@@ -108,7 +118,7 @@ cc_api bool cc_simple_segregated_storage_validate_pointer(const cc_simple_segreg
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage_t* ctx, const void* memory_pointer, const size_t memory_size, const size_t data_size, const cc_ssize_t max_count)
+cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage_t* ctx, const void* memory_pointer, const size_t memory_size, const size_t data_size, const size_t max_count)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -137,8 +147,8 @@ cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage
 
 	//-----------------------------------------------------------------------
 	ctx->chunk_size = cc_simple_segregated_storage_calc_chunk_size(data_size);
-	ctx->free_chunk_head = NULL;
 	ctx->count = 0;
+	ctx->free_chunk_head = NULL;
 
 
 	//-----------------------------------------------------------------------
@@ -149,27 +159,29 @@ cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage
 
 
 	//-----------------------------------------------------------------------
-	cc_simple_segregated_storage_free_chunk_t* free_chunk_head;
-	cc_simple_segregated_storage_free_chunk_t* free_chunk;
+	cc_simple_segregated_storage_chunk_t* free_chunk_head;
+	cc_simple_segregated_storage_chunk_t* free_chunk;
 
-	uint8_t* pointer;
+	uintptr_t address;
 
-	cc_ssize_t i;
-	cc_ssize_t count;
+	size_t i;
+	size_t count;
 
 
-	pointer = ctx->memory_pointer;
-	free_chunk_head = (cc_simple_segregated_storage_free_chunk_t*)(ctx->memory_pointer);
+	address = (uintptr_t)ctx->memory_pointer;
+
+
+	free_chunk_head = (cc_simple_segregated_storage_chunk_t*)(address);
 	count = ctx->max_count;
 
 
 	free_chunk = free_chunk_head;
 	for (i = 1; i < count; i++)
 	{
-		free_chunk->next = (cc_simple_segregated_storage_free_chunk_t*)(pointer + (i * ctx->chunk_size));
-		free_chunk = free_chunk->next;
+		free_chunk->next_free_chunk = (cc_simple_segregated_storage_chunk_t*)(address + (i * ctx->chunk_size));
+		free_chunk = free_chunk->next_free_chunk;
 	}
-	free_chunk->next = NULL;
+	free_chunk->next_free_chunk = NULL;
 
 
 	//-----------------------------------------------------------------------
@@ -199,7 +211,7 @@ cc_api void* cc_simple_segregated_storage_allocate(cc_simple_segregated_storage_
 
 
 	pointer = ctx->free_chunk_head;
-	ctx->free_chunk_head = ctx->free_chunk_head->next;
+	ctx->free_chunk_head = ctx->free_chunk_head->next_free_chunk;
 	ctx->count++;
 
 
@@ -222,12 +234,12 @@ cc_api bool cc_simple_segregated_storage_free(cc_simple_segregated_storage_t* ct
 
 
 	//-----------------------------------------------------------------------
-	cc_simple_segregated_storage_free_chunk_t* free_chunk;
+	cc_simple_segregated_storage_chunk_t* free_chunk;
 
 
 	free_chunk = ctx->free_chunk_head;
-	ctx->free_chunk_head = (cc_simple_segregated_storage_free_chunk_t*)(pointer);
-	ctx->free_chunk_head->next = free_chunk;
+	ctx->free_chunk_head = (cc_simple_segregated_storage_chunk_t*)(pointer);
+	ctx->free_chunk_head->next_free_chunk = free_chunk;
 	ctx->count--;
 
 

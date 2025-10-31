@@ -177,6 +177,9 @@
     <ClCompile Include="cc\cc\cc_version.c">
       <Filter>cc\cc</Filter>
     </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_first_fit_storage.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="cc\cc\cc_version.h">
       <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_first_fit_storage.h">
+      <Filter>cc\cc\allocator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

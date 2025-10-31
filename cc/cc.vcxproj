@@ -24,6 +24,7 @@
     <ClCompile Include="cc\cc\algorithm\cc_hash.c" />
     <ClCompile Include="cc\cc\allocator\cc_allocator.c" />
     <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c" />
+    <ClCompile Include="cc\cc\allocator\cc_first_fit_storage.c" />
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c" />
     <ClCompile Include="cc\cc\cc_assert.c" />
     <ClCompile Include="cc\cc\cc_code_template.c" />
@@ -75,6 +76,7 @@
     <ClInclude Include="cc\cc\algorithm\cc_hash.h" />
     <ClInclude Include="cc\cc\allocator\cc_allocator.h" />
     <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h" />
+    <ClInclude Include="cc\cc\allocator\cc_first_fit_storage.h" />
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h" />
     <ClInclude Include="cc\cc\cc.h" />
     <ClInclude Include="cc\cc\cc_assert.h" />

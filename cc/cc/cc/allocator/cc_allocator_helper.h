@@ -19,7 +19,7 @@
 //===========================================================================
 cc_api bool cc_simple_segregated_storage_allocator_initialize(
 	cc_allocator_t* allocator,
-	cc_simple_segregated_storage_t* simple_segregated_storage, const void* memory_pointer, const size_t memory_size, const size_t data_size, const cc_ssize_t max_count
+	cc_simple_segregated_storage_t* simple_segregated_storage, const void* memory_pointer, const size_t memory_size, const size_t data_size, const size_t max_count
 );
 
 
