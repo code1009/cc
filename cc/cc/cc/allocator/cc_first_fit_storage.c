@@ -285,7 +285,10 @@ cc_api bool cc_first_fit_storage_validate_pointer(const cc_first_fit_storage_t* 
 		block = (cc_first_fit_storage_block_head_t*)address;
 		if (pointer == cc_first_fit_storage_block_payload_pointer(ctx, block))
 		{
-			return true;
+			if (cc_first_fit_storage_block_head_is_allocated(block))
+			{
+				return true;
+			}
 		}
 
 		address += cc_first_fit_storage_block_head_get_size(block);
