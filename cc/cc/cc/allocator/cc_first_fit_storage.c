@@ -49,7 +49,7 @@ static inline size_t cc_first_fit_storage_block_head_flags_size(size_t flags)
 
 static inline bool cc_first_fit_storage_block_head_flags_allocated(size_t flags)
 {
-	return (flags & 1u) != 0;
+	return (flags & 1u) == cc_first_fit_storage_block_status_allocated;
 }
 
 //===========================================================================
@@ -254,6 +254,52 @@ static inline void cc_first_fit_storage_insert_block_into_free_blocks(cc_first_f
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+cc_api bool cc_first_fit_storage_validate_pointer(const cc_first_fit_storage_t* ctx, const void* pointer)
+{
+	cc_debug_assert(ctx != NULL);
+
+
+	uintptr_t begin;
+	uintptr_t end;
+	uintptr_t current;
+
+	begin = (uintptr_t)ctx->memory_pointer;
+	end = (uintptr_t)ctx->end_block;
+	current = (uintptr_t)cc_first_fit_storage_block_head_pointer(ctx, pointer);
+	if (begin > current)
+	{
+		return false;
+	}
+	if (end <= current)
+	{
+		return false;
+	}
+
+
+	cc_first_fit_storage_block_head_t* block;
+	uintptr_t address;
+
+	address = begin;
+	while(address != end)
+	{
+		block = (cc_first_fit_storage_block_head_t*)address;
+		if (pointer == cc_first_fit_storage_block_payload_pointer(ctx, block))
+		{
+			return true;
+		}
+
+		address += cc_first_fit_storage_block_head_get_size(block);
+	}
+
+	return false;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const void* memory_pointer, const size_t memory_size)
 {
 	//-----------------------------------------------------------------------
@@ -299,10 +345,11 @@ cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const v
 
 
 	pointer = ctx->memory_pointer;
+	begin_block = (cc_first_fit_storage_block_head_t*)(pointer);
+
 	count = ctx->memory_size / cc_first_fit_storage_calc_block_head_aligned_size();
 	offset = (count - 1) * cc_first_fit_storage_calc_block_head_aligned_size();
 	end_block = (cc_first_fit_storage_block_head_t*)(pointer + offset);
-	begin_block = (cc_first_fit_storage_block_head_t*)(pointer);
 
 
 	//-----------------------------------------------------------------------

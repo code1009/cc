@@ -51,6 +51,13 @@ cc_first_fit_storage_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+cc_api bool cc_first_fit_storage_validate_pointer(const cc_first_fit_storage_t* ctx, const void* pointer);
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const void* memory_pointer, const size_t memory_size);
 
 cc_api void* cc_first_fit_storage_allocate(cc_first_fit_storage_t* ctx, const size_t size);

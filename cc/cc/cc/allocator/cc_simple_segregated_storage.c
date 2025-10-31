@@ -71,9 +71,15 @@ cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_si
 {
 	size_t chunk_size;
 	size_t memory_size;
+	size_t max_memory_size;
 
 
 	chunk_size = cc_simple_segregated_storage_calc_chunk_size(data_size);
+	max_memory_size = (size_t)-1;
+	if (max_count > (max_memory_size / chunk_size))
+	{
+		return max_memory_size;
+	}
 
 
 	memory_size = chunk_size * max_count;
@@ -90,7 +96,6 @@ cc_api bool cc_simple_segregated_storage_validate_pointer(const cc_simple_segreg
 	uintptr_t begin;
 	uintptr_t end;
 	uintptr_t current;
-
 
 	begin = (uintptr_t)(ctx->memory_pointer);
 	end = begin + ctx->chunk_size * ctx->max_count;
