@@ -49,7 +49,7 @@ cc_simple_segregated_storage_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api size_t cc_simple_segregated_storage_get_aligned_size(void);
+cc_api size_t cc_simple_segregated_storage_alignment_size(void);
 cc_api bool   cc_simple_segregated_storage_is_aligned_address(const uintptr_t address);
 cc_api size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size);
 cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_size, const cc_ssize_t max_count);
