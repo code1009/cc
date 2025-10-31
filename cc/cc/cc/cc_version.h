@@ -31,7 +31,7 @@ cc_version_t;
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 cc_api void cc_version(cc_version_t* ctx);
-cc_api bool cc_version_c_string(char* version_c_string, size_t version_c_string_size);
+cc_api bool cc_version_c_string(char* pointer, size_t max_count);
 
 
 
