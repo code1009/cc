@@ -53,44 +53,44 @@ static inline bool cc_first_fit_storage_block_head_flags_allocated(size_t flags)
 }
 
 //===========================================================================
-static inline size_t cc_first_fit_storage_block_head_get_size(cc_first_fit_storage_block_head_t* block_head)
+static inline size_t cc_first_fit_storage_block_head_get_size(cc_first_fit_storage_block_head_t* ctx)
 {
-	return cc_first_fit_storage_block_head_flags_size(block_head->flags);
+	return cc_first_fit_storage_block_head_flags_size(ctx->flags);
 }
 
-static inline bool cc_first_fit_storage_block_head_is_allocated(cc_first_fit_storage_block_head_t* block_head)
+static inline bool cc_first_fit_storage_block_head_is_allocated(cc_first_fit_storage_block_head_t* ctx)
 {
-	return cc_first_fit_storage_block_head_flags_allocated(block_head->flags);
+	return cc_first_fit_storage_block_head_flags_allocated(ctx->flags);
 }
 
-static inline void cc_first_fit_storage_block_head_set_flags(cc_first_fit_storage_block_head_t* block_head, size_t size, bool allocated)
+static inline void cc_first_fit_storage_block_head_set_flags(cc_first_fit_storage_block_head_t* ctx, size_t size, bool allocated)
 {	
-	block_head->flags = cc_first_fit_storage_block_head_flags_make(size, allocated);
+	ctx->flags = cc_first_fit_storage_block_head_flags_make(size, allocated);
 }
 
-static inline void cc_first_fit_storage_block_head_set_allocated(cc_first_fit_storage_block_head_t* block_head, bool allocated)
+static inline void cc_first_fit_storage_block_head_set_allocated(cc_first_fit_storage_block_head_t* ctx, bool allocated)
 {
 	cc_first_fit_storage_block_head_set_flags(
-		block_head,
-		cc_first_fit_storage_block_head_get_size(block_head),
+		ctx,
+		cc_first_fit_storage_block_head_get_size(ctx),
 		allocated
 	);
 }
 
-static inline void cc_first_fit_storage_block_head_set_size(cc_first_fit_storage_block_head_t* block_head, size_t size)
+static inline void cc_first_fit_storage_block_head_set_size(cc_first_fit_storage_block_head_t* ctx, size_t size)
 {
 	cc_first_fit_storage_block_head_set_flags(
-		block_head,
+		ctx,
 		size,
-		cc_first_fit_storage_block_head_is_allocated(block_head)
+		cc_first_fit_storage_block_head_is_allocated(ctx)
 	);
 }
 
-static inline void cc_first_fit_storage_block_head_add_size(cc_first_fit_storage_block_head_t* block_head, size_t size)
+static inline void cc_first_fit_storage_block_head_add_size(cc_first_fit_storage_block_head_t* ctx, size_t size)
 {
 	cc_first_fit_storage_block_head_set_size(
-		block_head,
-		cc_first_fit_storage_block_head_get_size(block_head) + size
+		ctx,
+		cc_first_fit_storage_block_head_get_size(ctx) + size
 	);
 }
 
