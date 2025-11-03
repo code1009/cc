@@ -365,9 +365,9 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 		buckets[i].storages = NULL;
 	}
 
+
 	ctx->buckets = buckets;
 	ctx->bucket_count = config->bucket_count;
-
 
 	return true;
 }
