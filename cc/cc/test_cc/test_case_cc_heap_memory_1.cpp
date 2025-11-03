@@ -26,11 +26,14 @@ typedef struct _item_t
 	(sizeof(cc_first_fit_storage_block_head_t)                  ) + \
 	(sizeof(cc_heap_bucket_storage_t)          * 1              ) + \
 	(sizeof(item_t)                            * item_max_count ) + \
-	(sizeof(cc_first_fit_storage_block_head_t) * 2              ) + \
-	(sizeof(cc_first_fit_storage_block_head_t)                  ) )
+	(sizeof(cc_first_fit_storage_block_head_t)                  ) + 8)
 
-
-
+// cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_t:24 = 40
+// cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_storage_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
+// 40 + 1104 = 1144
+// 1144 + 16(end) = 1160 = 16 * 72.5
+// 1160 + 8(padding) = 1168 = 16 * 73
+// cc_first_fit_storage_block_head_t의 크기는 16바이트 단위로 정렬됨
 
 
 /////////////////////////////////////////////////////////////////////////////

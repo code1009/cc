@@ -356,9 +356,9 @@ static void test_run()
 	test_suite_cc_priority_queue();
 
 	test_suite_cc_collection_sort();
+	test_case_cc_first_fit_storage();
 #endif
 
-	test_case_cc_first_fit_storage();
 	test_case_cc_heap_memory();
 }
 
