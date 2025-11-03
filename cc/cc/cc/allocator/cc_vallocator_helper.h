@@ -1,9 +1,9 @@
-﻿#ifndef cc_allocator_helper_h
-#define cc_allocator_helper_h
+﻿#ifndef cc_vallocator_helper_h
+#define cc_vallocator_helper_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_allocator_helper.h
+// # File: cc_vallocator_helper.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -17,9 +17,9 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_simple_segregated_storage_allocator_initialize(
-	cc_allocator_t* allocator,
-	cc_simple_segregated_storage_t* simple_segregated_storage, const void* memory_pointer, const size_t memory_size, const size_t data_size, const size_t max_count
+cc_api bool cc_first_fit_storage_vallocator_initialize(
+	cc_vallocator_t* vallocator,
+	cc_first_fit_storage_t* first_fit_storage, const void* memory_pointer, const size_t memory_size
 );
 
 
@@ -28,5 +28,5 @@ cc_api bool cc_simple_segregated_storage_allocator_initialize(
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_allocator_helper_h
+#endif // cc_vallocator_helper_h
 

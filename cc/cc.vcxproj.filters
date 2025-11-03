@@ -45,10 +45,10 @@
     <ClCompile Include="cc\cc\algorithm\cc_hash.c">
       <Filter>cc\cc\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_allocator.c">
+    <ClCompile Include="cc\cc\allocator\cc_fallocator.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c">
+    <ClCompile Include="cc\cc\allocator\cc_fallocator_helper.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c">
@@ -180,6 +180,15 @@
     <ClCompile Include="cc\cc\allocator\cc_first_fit_storage.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_storage.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_vallocator.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_vallocator_helper.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">
@@ -200,10 +209,10 @@
     <ClInclude Include="cc\cc\algorithm\cc_hash.h">
       <Filter>cc\cc\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_allocator.h">
+    <ClInclude Include="cc\cc\allocator\cc_fallocator.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h">
+    <ClInclude Include="cc\cc\allocator\cc_fallocator_helper.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h">
@@ -297,6 +306,12 @@
       <Filter>cc\cc</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_first_fit_storage.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_vallocator.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_vallocator_helper.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
   </ItemGroup>

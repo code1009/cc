@@ -330,9 +330,8 @@ cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const v
 
 	//-----------------------------------------------------------------------
 	ctx->count = 0;
-	ctx->allocated_size = 0;
-	ctx->minimum_ever_free_size_remaining = 0;
-	ctx->free_size_remaining = 0;
+	ctx->min_ever_free_size = 0;
+	ctx->free_size = 0;
 	ctx->start_block.next_free_block = (cc_first_fit_storage_block_head_t*)memory_pointer;
 	ctx->start_block.flags = cc_first_fit_storage_block_head_flags_make(0, cc_first_fit_storage_block_status_free);
 	ctx->end_block = NULL;
@@ -372,8 +371,8 @@ cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const v
 
 
 	//-----------------------------------------------------------------------
-	ctx->minimum_ever_free_size_remaining = begin_block_size;
-	ctx->free_size_remaining = begin_block_size;
+	ctx->min_ever_free_size = begin_block_size;
+	ctx->free_size = begin_block_size;
 
 
 	return true;
@@ -396,7 +395,7 @@ cc_api void* cc_first_fit_storage_allocate(cc_first_fit_storage_t* ctx, const si
 
 	//-----------------------------------------------------------------------
 	size_t block_size = cc_first_fit_storage_calc_block_size(size);
-	if (ctx->free_size_remaining  < block_size)
+	if (ctx->free_size  < block_size)
 	{
 		return NULL;
 	}
@@ -440,18 +439,15 @@ cc_api void* cc_first_fit_storage_allocate(cc_first_fit_storage_t* ctx, const si
 
 
 		size_t allocated_block_size = cc_first_fit_storage_block_head_get_size(block);
-		ctx->free_size_remaining -= allocated_block_size;
-		if (ctx->free_size_remaining < ctx->minimum_ever_free_size_remaining)
+		ctx->free_size -= allocated_block_size;
+		if (ctx->free_size < ctx->min_ever_free_size)
 		{
-			ctx->minimum_ever_free_size_remaining = ctx->free_size_remaining;
+			ctx->min_ever_free_size = ctx->free_size;
 		}
 
 
 		cc_first_fit_storage_block_head_set_allocated(block, true);
 		block->next_free_block = NULL;
-
-
-		ctx->allocated_size += allocated_block_size;
 
 
 		ctx->count++;
@@ -487,10 +483,7 @@ cc_api bool cc_first_fit_storage_free(cc_first_fit_storage_t* ctx, const void* p
 
 	
 	size_t free_block_size = cc_first_fit_storage_block_head_get_size(block);
-	ctx->free_size_remaining += free_block_size;
-
-
-	ctx->allocated_size -= free_block_size;
+	ctx->free_size += free_block_size;
 	
 	
 	cc_first_fit_storage_block_head_set_allocated(block, false);

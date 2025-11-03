@@ -35,9 +35,8 @@ typedef struct _cc_first_fit_storage_t
 	uint8_t* memory_pointer;
 	size_t memory_size;
 
-	size_t allocated_size;
-	size_t minimum_ever_free_size_remaining;
-	size_t free_size_remaining;
+	size_t min_ever_free_size;
+	size_t free_size;
 	cc_first_fit_storage_block_head_t start_block;
 	cc_first_fit_storage_block_head_t* end_block;
 

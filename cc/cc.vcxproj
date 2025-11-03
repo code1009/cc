@@ -22,10 +22,12 @@
     <ClCompile Include="cc\cc\algorithm\cc_collection_sort.c" />
     <ClCompile Include="cc\cc\algorithm\cc_compare.c" />
     <ClCompile Include="cc\cc\algorithm\cc_hash.c" />
-    <ClCompile Include="cc\cc\allocator\cc_allocator.c" />
-    <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c" />
+    <ClCompile Include="cc\cc\allocator\cc_fallocator.c" />
+    <ClCompile Include="cc\cc\allocator\cc_fallocator_helper.c" />
     <ClCompile Include="cc\cc\allocator\cc_first_fit_storage.c" />
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c" />
+    <ClCompile Include="cc\cc\allocator\cc_vallocator.c" />
+    <ClCompile Include="cc\cc\allocator\cc_vallocator_helper.c" />
     <ClCompile Include="cc\cc\cc_assert.c" />
     <ClCompile Include="cc\cc\cc_code_template.c" />
     <ClCompile Include="cc\cc\cc_version.c" />
@@ -55,6 +57,7 @@
     <ClCompile Include="cc\test_cc\test_case_cc.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_collection_sort_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_storage.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_forward_list_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_list_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_map_1.cpp" />
@@ -74,10 +77,12 @@
     <ClInclude Include="cc\cc\algorithm\cc_collection_sort.h" />
     <ClInclude Include="cc\cc\algorithm\cc_compare.h" />
     <ClInclude Include="cc\cc\algorithm\cc_hash.h" />
-    <ClInclude Include="cc\cc\allocator\cc_allocator.h" />
-    <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h" />
+    <ClInclude Include="cc\cc\allocator\cc_fallocator.h" />
+    <ClInclude Include="cc\cc\allocator\cc_fallocator_helper.h" />
     <ClInclude Include="cc\cc\allocator\cc_first_fit_storage.h" />
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h" />
+    <ClInclude Include="cc\cc\allocator\cc_vallocator.h" />
+    <ClInclude Include="cc\cc\allocator\cc_vallocator_helper.h" />
     <ClInclude Include="cc\cc\cc.h" />
     <ClInclude Include="cc\cc\cc_assert.h" />
     <ClInclude Include="cc\cc\cc_code_template.h" />

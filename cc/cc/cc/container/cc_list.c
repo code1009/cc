@@ -17,7 +17,7 @@
 #include "../cc_export.h"
 
 //===========================================================================
-#include "../allocator/cc_allocator.h"
+#include "../allocator/cc_fallocator.h"
 #include "../allocator/cc_simple_segregated_storage.h"
 
 #include "../element/cc_element.h"
@@ -86,9 +86,9 @@ cc_api bool cc_list_initialize(cc_list_t* ctx, const cc_dnode_t* elements, const
 	}
 
 
-	cc_allocator_initialize(
+	cc_fallocator_initialize(
 		&ctx->nallocator,
-		&ctx->nstorage, (cc_alloc_t)cc_simple_segregated_storage_allocate, (cc_free_t)cc_simple_segregated_storage_free
+		&ctx->nstorage, (cc_falloc_t)cc_simple_segregated_storage_allocate, (cc_ffree_t)cc_simple_segregated_storage_free
 	);
 
 

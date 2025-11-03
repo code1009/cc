@@ -147,7 +147,7 @@ typedef struct _cc_item_pool_t
 {
 	cc_simple_segregated_storage_t storage;
 	item_t memory[item_max_count];
-	cc_allocator_t allocator;
+	cc_fallocator_t allocator;
 }
 cc_item_pool_t;
 
@@ -158,13 +158,13 @@ static cc_item_pool_t _cc_item_pool;
 static bool cc_item_pool_initialize()
 {
 	bool rv;
-	rv = cc_simple_segregated_storage_allocator_initialize(
+	rv = cc_simple_segregated_storage_fallocator_initialize(
 		&_cc_item_pool.allocator,
 		&_cc_item_pool.storage, &_cc_item_pool.memory[0], sizeof(_cc_item_pool.memory), sizeof(item_t), item_max_count
 	);
 	if (rv == false)
 	{
-		test_out << "cc_simple_segregated_storage_allocator_initialize() failed" << test_tendl;
+		test_out << "cc_simple_segregated_storage_fallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}

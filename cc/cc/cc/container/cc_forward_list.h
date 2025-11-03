@@ -20,7 +20,7 @@
 typedef struct _cc_forward_list_t
 {
 	cc_simple_segregated_storage_t nstorage;
-	cc_allocator_t nallocator;
+	cc_fallocator_t nallocator;
 
 	cc_snode_t* elements;
 	size_t max_count;
