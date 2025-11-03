@@ -39,7 +39,7 @@ cc_fallocator_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_fallocate_t alloc, const cc_ffree_t free);
+cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_fallocate_t allocate, const cc_ffree_t free);
 
 
 

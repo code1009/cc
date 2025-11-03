@@ -187,7 +187,7 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 	return bucket_storage;
 }
 
-static inline void* cc_heap_memory_alloc_from_bucket(const cc_heap_memory_t* ctx, cc_heap_bucket_t* bucket)
+static inline void* cc_heap_memory_allocate_from_bucket(const cc_heap_memory_t* ctx, cc_heap_bucket_t* bucket)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -400,7 +400,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 
 
 	//-----------------------------------------------------------------------
-	pointer = cc_heap_memory_alloc_from_bucket(ctx, bucket);
+	pointer = cc_heap_memory_allocate_from_bucket(ctx, bucket);
 	if (pointer != NULL)
 	{ 
 		ctx->count++;

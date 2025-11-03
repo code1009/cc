@@ -39,7 +39,7 @@ cc_vallocator_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_vallocator_initialize(cc_vallocator_t* ctx, const void* handle, const cc_vallocate_t alloc, const cc_vfree_t free);
+cc_api void cc_vallocator_initialize(cc_vallocator_t* ctx, const void* handle, const cc_vallocate_t allocate, const cc_vfree_t free);
 
 
 

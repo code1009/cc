@@ -165,7 +165,7 @@ static item_t* item_pool_allocate(size_t size)
 	uintptr_t address = (uintptr_t)item_pointer;
 	address -= _begin_address;
 	test_out
-		<< "-alloc:" << "address=" << address << test_tendl
+		<< "-allocate:" << "address=" << address << test_tendl
 		;
 	item_pool_dump();
 
@@ -206,10 +206,10 @@ static uintptr_t _p1_address = 0;
 static uintptr_t _p2_address = 0;
 
 //===========================================================================
-static void alloc(void)
+static void allocate(void)
 {
 	test_out
-		<< "@ alloc:" << test_tendl
+		<< "@ allocate:" << test_tendl
 		;
 
 	_p0 = item_pool_allocate(sizeof(item_t)*1);
@@ -265,10 +265,10 @@ static void release(void)
 //===========================================================================
 static void run(void)
 {
-	alloc();
+	allocate();
 	release();
 
-	alloc();
+	allocate();
 	release();
 }
 
