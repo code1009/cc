@@ -20,26 +20,22 @@ typedef struct _item_t
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #define item_max_count 4
+#define pad 1 // (sizeof(cc_heap_bucket_t)*N) % sizeof(cc_first_fit_storage_block_head_t) == 0 일 때 0, 아니면 1
 #define item_memory_size ( \
 	(sizeof(cc_first_fit_storage_block_head_t)                  ) + \
 	(sizeof(cc_heap_bucket_t)                  * 1              ) + \
+	(sizeof(cc_first_fit_storage_block_head_t) / 2 * pad        ) + \
+	\
 	(sizeof(cc_first_fit_storage_block_head_t)                  ) + \
 	(sizeof(cc_heap_bucket_storage_t)          * 1              ) + \
 	(sizeof(item_t)                            * item_max_count ) + \
-	(sizeof(cc_first_fit_storage_block_head_t) / 2 * 1          ) + \
 	(sizeof(cc_first_fit_storage_block_head_t)                  ) )
 
 // 64bit
-// cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_t:24 = 40
+// cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_t:24 + pad:8 = 48
 // cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_storage_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
-// 40 + 1104 = 1144
-// 1144 + 8(padding) = 1152
+// 48 + 1104 = 1152
 // 1152 + 16(end_block) = 1168 = 16 * 73
-// 
-// 1144 + 16(end) = 1160 = 16 * 72.5
-// 1160 + 8(padding) = 1168 = 16 * 73
-// cc_first_fit_storage_block_head_t의 크기는 16바이트 단위로 정렬됨
-// cc_first_fit_storage의 end_block위치가 16바이트 단위로 정렬되기 때문에 패딩 8바이트 추가
 
 
 
@@ -202,9 +198,10 @@ static void alloc(void)
 	_p1_address -= _begin_address;
 	_p2_address -= _begin_address;
 
-
+	
+	uintptr_t padding_size = sizeof(cc_first_fit_storage_block_head_t) / 2 * 1;
 	uintptr_t offset =
-		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_t) +
+		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_t) + padding_size +
 		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_storage_t)
 		;
 	_p0_address -= offset;

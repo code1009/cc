@@ -80,7 +80,7 @@ static inline bool cc_heap_memory_is_aligned_address(const uintptr_t address)
 //===========================================================================
 static inline size_t cc_heap_memory_buckets_alignment_size(void)
 {
-	return sizeof(void*);
+	return cc_heap_memory_calc_aligned_size(sizeof(cc_first_fit_storage_block_head_t), cc_heap_memory_alignment_size());
 }
 
 
