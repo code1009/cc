@@ -61,12 +61,12 @@ static void item_pool_uninitialize()
 	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.storage) << test_tendl;
 }
 
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -151,7 +151,7 @@ static void add(void)
 	count = item_max_count;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		test_assert(item_pointer != NULL);
 
 		item_pointer->first = (int)i;
@@ -270,9 +270,9 @@ static void insert_and_order(void)
 	test_assert(true == cc_list_empty(&_items.container));
 
 
-	item_t* d1 = item_pool_alloc();
-	item_t* d2 = item_pool_alloc();
-	item_t* d3 = item_pool_alloc();
+	item_t* d1 = item_pool_allocate();
+	item_t* d2 = item_pool_allocate();
+	item_t* d3 = item_pool_allocate();
 	test_assert(d1 != NULL);
 	test_assert(d2 != NULL);
 	test_assert(d3 != NULL);
@@ -362,9 +362,9 @@ static void erase_middle(void)
 	bool rv;
 
 
-	item_t* da = item_pool_alloc();
-	item_t* db = item_pool_alloc();
-	item_t* dc = item_pool_alloc();
+	item_t* da = item_pool_allocate();
+	item_t* db = item_pool_allocate();
+	item_t* dc = item_pool_allocate();
 	test_assert(da && db && dc);
 	da->first = 0; 
 	db->first = 1; 

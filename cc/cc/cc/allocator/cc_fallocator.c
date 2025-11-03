@@ -25,15 +25,15 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_falloc_t alloc, const cc_ffree_t free)
+cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_fallocate_t allocate, const cc_ffree_t free)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(handle != NULL); 
-	cc_debug_assert(alloc != NULL);
+	cc_debug_assert(allocate != NULL);
 	cc_debug_assert(free != NULL);
 
 
 	ctx->handle = handle;
-	ctx->alloc = alloc;
+	ctx->allocate = allocate;
 	ctx->free = free;
 }

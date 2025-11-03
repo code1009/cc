@@ -97,12 +97,12 @@ static void item_pool_uninitialize()
 	item_pool_dump();
 }
 
-static item_t* item_pool_alloc(size_t size)
+static item_t* item_pool_allocate(size_t size)
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage, size);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage, size);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 
@@ -156,9 +156,9 @@ static void alloc(void)
 		<< "@ alloc:" << test_tendl
 		;
 
-	_p0 = item_pool_alloc(sizeof(item_t) * 1);
-	_p1 = item_pool_alloc(sizeof(item_t) * 2);
-	_p2 = item_pool_alloc(sizeof(item_t) * 1);
+	_p0 = item_pool_allocate(sizeof(item_t) * 1);
+	_p1 = item_pool_allocate(sizeof(item_t) * 2);
+	_p2 = item_pool_allocate(sizeof(item_t) * 1);
 
 	_p0_address = (uintptr_t)_p0;
 	_p1_address = (uintptr_t)_p1;
@@ -179,9 +179,9 @@ static void alloc1(void)
 		<< "@ alloc1:" << test_tendl
 		;
 
-	_p0 = item_pool_alloc(sizeof(item_t) * 1);
-	_p1 = item_pool_alloc(sizeof(item_t) * 2);
-	_p2 = item_pool_alloc(sizeof(item_t) * 1);
+	_p0 = item_pool_allocate(sizeof(item_t) * 1);
+	_p1 = item_pool_allocate(sizeof(item_t) * 2);
+	_p2 = item_pool_allocate(sizeof(item_t) * 1);
 
 	_p0_address = (uintptr_t)_p0;
 	_p1_address = (uintptr_t)_p1;
@@ -199,7 +199,7 @@ static void alloc1(void)
 	item_pool_free(_p1);
 
 
-	_p1 = item_pool_alloc(sizeof(item_t) * 1);
+	_p1 = item_pool_allocate(sizeof(item_t) * 1);
 	_p1_address = (uintptr_t)_p1;
 	_p1_address -= _begin_address;
 	test_assert(_p1_address == ((sizeof(cc_first_fit_storage_block_head_t) * 2) + (sizeof(item_t) * 1)));
@@ -208,7 +208,7 @@ static void alloc1(void)
 	void* _p3;
 	uintptr_t _p3_address;
 
-	_p3 = item_pool_alloc(sizeof(item_t) - sizeof(cc_first_fit_storage_block_head_t));
+	_p3 = item_pool_allocate(sizeof(item_t) - sizeof(cc_first_fit_storage_block_head_t));
 	test_assert(_p3 != NULL);
 
 	_p3_address = (uintptr_t)_p3;

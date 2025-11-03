@@ -80,12 +80,12 @@ static void item_pool_uninitialize()
 	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.storage) << test_tendl;
 }
 
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -163,7 +163,7 @@ static void add(void)
 	count = item_max_count;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		test_assert(item_pointer != NULL);
 
 		item_pointer->first = data[i][0];
@@ -209,8 +209,8 @@ static void push_pop1(void)
 	test_assert(true == cc_priority_queue_empty(&_items.container));
 
 
-	item_t* d0 = item_pool_alloc();
-	item_t* d1 = item_pool_alloc();
+	item_t* d0 = item_pool_allocate();
+	item_t* d1 = item_pool_allocate();
 	test_assert(d0 != NULL && d1 != NULL);
 
 	d0->first = 20; d1->second = 120;
@@ -243,9 +243,9 @@ static void push_pop2(void)
 
 
 	bool rv;
-	item_t* a = item_pool_alloc();
-	item_t* b = item_pool_alloc();
-	item_t* c = item_pool_alloc();
+	item_t* a = item_pool_allocate();
+	item_t* b = item_pool_allocate();
+	item_t* c = item_pool_allocate();
 	test_assert(a != NULL && b != NULL && c != NULL);
 
 	a->first = 1; a->second = 11;

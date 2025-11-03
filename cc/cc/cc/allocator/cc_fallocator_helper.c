@@ -53,7 +53,7 @@ cc_api bool cc_simple_segregated_storage_fallocator_initialize(
 	if (rv == false)
 	{
 		fallocator->handle = NULL;
-		fallocator->alloc = NULL;
+		fallocator->allocate = NULL;
 		fallocator->free = NULL;
 
 		return false;
@@ -62,7 +62,7 @@ cc_api bool cc_simple_segregated_storage_fallocator_initialize(
 
 	cc_fallocator_initialize(
 		fallocator, 
-		simple_segregated_storage, (cc_falloc_t)cc_simple_segregated_storage_allocate, (cc_ffree_t)cc_simple_segregated_storage_free
+		simple_segregated_storage, (cc_fallocate_t)cc_simple_segregated_storage_allocate, (cc_ffree_t)cc_simple_segregated_storage_free
 	);
 
 	return true;

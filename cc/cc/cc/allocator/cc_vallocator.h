@@ -17,7 +17,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef void* (*cc_valloc_t)(void* handle, size_t size);
+typedef void* (*cc_vallocate_t)(void* handle, size_t size);
 typedef bool  (*cc_vfree_t) (void* handle, void* pointer);
 
 
@@ -28,7 +28,7 @@ typedef bool  (*cc_vfree_t) (void* handle, void* pointer);
 typedef struct _cc_vallocator_t
 {
 	const void* handle;
-	cc_valloc_t alloc;
+	cc_vallocate_t allocate;
 	cc_vfree_t free;
 }
 cc_vallocator_t;
@@ -39,7 +39,7 @@ cc_vallocator_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_vallocator_initialize(cc_vallocator_t* ctx, const void* handle, const cc_valloc_t alloc, const cc_vfree_t free);
+cc_api void cc_vallocator_initialize(cc_vallocator_t* ctx, const void* handle, const cc_vallocate_t alloc, const cc_vfree_t free);
 
 
 

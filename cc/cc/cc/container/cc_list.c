@@ -40,12 +40,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static cc_dnode_t* cc_list_dnode_alloc(cc_list_t* ctx)
+static cc_dnode_t* cc_list_dnode_allocate(cc_list_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
 
 
-	return (cc_dnode_t*)ctx->nallocator.alloc((void*)ctx->nallocator.handle);
+	return (cc_dnode_t*)ctx->nallocator.allocate((void*)ctx->nallocator.handle);
 }
 
 static bool cc_list_dnode_free(cc_list_t* ctx, const cc_dnode_t* node)
@@ -79,7 +79,7 @@ cc_api bool cc_list_initialize(cc_list_t* ctx, const cc_dnode_t* elements, const
 	if (rv == false)
 	{
 		ctx->nallocator.handle = NULL;
-		ctx->nallocator.alloc = NULL;
+		ctx->nallocator.allocate = NULL;
 		ctx->nallocator.free = NULL;
 
 		return false;
@@ -88,7 +88,7 @@ cc_api bool cc_list_initialize(cc_list_t* ctx, const cc_dnode_t* elements, const
 
 	cc_fallocator_initialize(
 		&ctx->nallocator,
-		&ctx->nstorage, (cc_falloc_t)cc_simple_segregated_storage_allocate, (cc_ffree_t)cc_simple_segregated_storage_free
+		&ctx->nstorage, (cc_fallocate_t)cc_simple_segregated_storage_allocate, (cc_ffree_t)cc_simple_segregated_storage_free
 	);
 
 
@@ -232,7 +232,7 @@ cc_api cc_dnode_t* cc_list_add(cc_list_t* ctx, const void* element)
 	}
 
 
-	cc_dnode_t* new_node = cc_list_dnode_alloc(ctx);
+	cc_dnode_t* new_node = cc_list_dnode_allocate(ctx);
 	if (new_node == NULL)
 	{
 		return NULL;
@@ -288,7 +288,7 @@ cc_api cc_dnode_t* cc_list_insert(cc_list_t* ctx, const cc_dnode_t* node, const 
 #endif
 
 
-	cc_dnode_t* new_node = cc_list_dnode_alloc(ctx);
+	cc_dnode_t* new_node = cc_list_dnode_allocate(ctx);
 	if (new_node == NULL)
 	{
 		return NULL;

@@ -50,7 +50,7 @@ cc_api bool cc_first_fit_storage_vallocator_initialize(
 	if (rv == false)
 	{
 		vallocator->handle = NULL;
-		vallocator->alloc = NULL;
+		vallocator->allocate = NULL;
 		vallocator->free = NULL;
 
 		return false;
@@ -59,7 +59,7 @@ cc_api bool cc_first_fit_storage_vallocator_initialize(
 
 	cc_vallocator_initialize(
 		vallocator, 
-		first_fit_storage, (cc_valloc_t)cc_first_fit_storage_allocate, (cc_vfree_t)cc_first_fit_storage_free
+		first_fit_storage, (cc_vallocate_t)cc_first_fit_storage_allocate, (cc_vfree_t)cc_first_fit_storage_free
 	);
 
 	return true;

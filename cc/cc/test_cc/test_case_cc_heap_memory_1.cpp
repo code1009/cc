@@ -94,7 +94,7 @@ static bool item_pool_initialize()
 		return false;
 	}
 	_item_pool.allocator.handle = &_item_pool.storage;
-	_item_pool.allocator.alloc = (cc_valloc_t)cc_heap_memory_allocate;
+	_item_pool.allocator.allocate = (cc_vallocate_t)cc_heap_memory_allocate;
 	_item_pool.allocator.free = (cc_vfree_t)cc_heap_memory_free;
 
 
@@ -127,12 +127,12 @@ static void item_pool_uninitialize()
 	cc_heap_memory_uninitialize(&_item_pool.storage);
 }
 
-static item_t* item_pool_alloc(size_t size)
+static item_t* item_pool_allocate(size_t size)
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage, size);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage, size);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 
@@ -186,9 +186,9 @@ static void alloc(void)
 		<< "@ alloc:" << test_tendl
 		;
 
-	_p0 = item_pool_alloc(sizeof(item_t)*1);
-	_p1 = item_pool_alloc(sizeof(item_t)*1);
-	_p2 = item_pool_alloc(sizeof(item_t)*1);
+	_p0 = item_pool_allocate(sizeof(item_t)*1);
+	_p1 = item_pool_allocate(sizeof(item_t)*1);
+	_p2 = item_pool_allocate(sizeof(item_t)*1);
 
 	_p0_address = (uintptr_t)_p0;
 	_p1_address = (uintptr_t)_p1;

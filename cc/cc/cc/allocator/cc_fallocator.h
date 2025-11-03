@@ -17,7 +17,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef void* (*cc_falloc_t)(void* handle);
+typedef void* (*cc_fallocate_t)(void* handle);
 typedef bool  (*cc_ffree_t) (void* handle, void* pointer);
 
 
@@ -28,7 +28,7 @@ typedef bool  (*cc_ffree_t) (void* handle, void* pointer);
 typedef struct _cc_fallocator_t
 {
 	const void* handle;
-	cc_falloc_t alloc;
+	cc_fallocate_t allocate;
 	cc_ffree_t free;
 }
 cc_fallocator_t;
@@ -39,7 +39,7 @@ cc_fallocator_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_falloc_t alloc, const cc_ffree_t free);
+cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_fallocate_t alloc, const cc_ffree_t free);
 
 
 

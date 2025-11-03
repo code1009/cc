@@ -26,7 +26,7 @@ typedef struct _item_t
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
 	return new item_t();
 }
@@ -84,14 +84,14 @@ static void add(void)
 	count = 512;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		if (item_pointer)
 		{
 			item_pointer->value = (int)i;
 		}
 		else
 		{
-			test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+			test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 			break;
 		}
 
@@ -150,7 +150,7 @@ static void insert(void)
 	i = 5;
 
 
-	item_pointer = item_pool_alloc();
+	item_pointer = item_pool_allocate();
 	if (item_pointer)
 	{
 		item_pointer->value = 10;
@@ -167,7 +167,7 @@ static void insert(void)
 	}
 	else
 	{
-		test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+		test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 	}
 }
 

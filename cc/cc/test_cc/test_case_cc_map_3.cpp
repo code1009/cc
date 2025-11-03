@@ -176,12 +176,12 @@ static void cc_item_pool_uninitialize()
 	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_cc_item_pool.storage) << test_tendl;
 }
 
-static item_t* cc_item_pool_alloc()
+static item_t* cc_item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_cc_item_pool.allocator.alloc(&_cc_item_pool.storage);
+	item_t* item_pointer = (item_t*)_cc_item_pool.allocator.allocate(&_cc_item_pool.storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_cc_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_cc_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -263,7 +263,7 @@ static void cc_add(std::vector<item_t>& source_items)
 	size_t count = source_items.size();
     for (size_t i = 0; i < count; ++i)
     {
-        item_t* item_pointer = cc_item_pool_alloc();
+        item_t* item_pointer = cc_item_pool_allocate();
         if (item_pointer == NULL)
         {
             continue;

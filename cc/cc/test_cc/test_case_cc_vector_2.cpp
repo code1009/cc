@@ -61,12 +61,12 @@ static void item_pool_uninitialize()
 	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.storage) << test_tendl;
 }
 
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -143,7 +143,7 @@ static void add(void)
 	count = 512;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		if (item_pointer)
 		{
 			item_pointer->first = (int)i;
@@ -151,7 +151,7 @@ static void add(void)
 		}
 		else
 		{
-			test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+			test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 			break;
 		}
 
@@ -258,7 +258,7 @@ static void insert(void)
 	i = 5;
 
 
-	item_pointer = item_pool_alloc();
+	item_pointer = item_pool_allocate();
 	if (item_pointer)
 	{
 		item_pointer->first = 99;
@@ -276,7 +276,7 @@ static void insert(void)
 	}
 	else
 	{
-		test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+		test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 	}
 }
 

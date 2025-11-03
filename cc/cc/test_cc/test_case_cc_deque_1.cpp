@@ -61,12 +61,12 @@ static void item_pool_uninitialize()
 	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.storage) << test_tendl;
 }
 
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -146,7 +146,7 @@ static void add(void)
 	count = item_max_count;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		test_assert(item_pointer != NULL);
 
 		item_pointer->first = (int)i;
@@ -213,7 +213,7 @@ static void push_back(void)
 	count = item_max_count;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		test_assert(item_pointer != NULL);
 
 		item_pointer->first = (int)i;
@@ -254,7 +254,7 @@ static void push_front(void)
 	count = item_max_count;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		test_assert(item_pointer != NULL);
 
 		item_pointer->first = (int)i;
@@ -344,8 +344,8 @@ static void push_pop(void)
 	item_t* d1;
 
 
-	d0 = item_pool_alloc();
-	d1 = item_pool_alloc();
+	d0 = item_pool_allocate();
+	d1 = item_pool_allocate();
 	test_assert(d0 != NULL && d1 != NULL);
 
 	d0->first = 1; d0->second = 11;
