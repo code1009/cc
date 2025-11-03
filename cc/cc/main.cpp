@@ -332,7 +332,6 @@ static void test_case_cc_heap_memory()
 //===========================================================================
 static void test_run()
 {
-#if 0
 	test_suite_cc_version();
 
 //	test_suite_cc_code_template();
@@ -356,9 +355,8 @@ static void test_run()
 	test_suite_cc_priority_queue();
 
 	test_suite_cc_collection_sort();
-	test_case_cc_first_fit_storage();
-#endif
 
+	test_case_cc_first_fit_storage();
 	test_case_cc_heap_memory();
 }
 
