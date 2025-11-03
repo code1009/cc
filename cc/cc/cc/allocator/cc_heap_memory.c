@@ -31,22 +31,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline void cc_heap_bucket_config_copy(cc_heap_bucket_config_t* dst, const cc_heap_bucket_config_t* src)
-{
-	cc_debug_assert(dst != NULL);
-	cc_debug_assert(src != NULL);
-
-
-	dst->size = src->size;
-	dst->count = src->count;
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
 static inline size_t cc_heap_memory_calc_aligned_size(size_t v, size_t alignment_size)
 {
 	cc_debug_assert(alignment_size != 0);
@@ -69,6 +53,22 @@ static inline size_t cc_heap_memory_alignment_size(void)
 static inline bool cc_heap_memory_is_aligned_address(const uintptr_t address)
 {
 	return (0U == (address % cc_heap_memory_alignment_size()));
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static inline void cc_heap_bucket_config_copy(cc_heap_bucket_config_t* dst, const cc_heap_bucket_config_t* src)
+{
+	cc_debug_assert(dst != NULL);
+	cc_debug_assert(src != NULL);
+
+
+	dst->size = src->size;
+	dst->count = src->count;
 }
 
 
