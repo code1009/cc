@@ -20,8 +20,11 @@ typedef struct _item_t
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #define item_max_count 4
-#define item_alloc_count 3
-#define item_memory_size ((sizeof(item_t) * item_max_count) + sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_first_fit_storage_block_head_t)*item_alloc_count )
+#define item_allocation_count 3
+#define item_memory_size ( \
+	(sizeof(item_t) * item_max_count) + \
+	sizeof(cc_first_fit_storage_block_head_t) +  \
+	sizeof(cc_first_fit_storage_block_head_t) * item_allocation_count )
 
 
 
