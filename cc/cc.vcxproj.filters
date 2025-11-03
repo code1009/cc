@@ -180,7 +180,7 @@
     <ClCompile Include="cc\cc\allocator\cc_first_fit_storage.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
-    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_storage.cpp">
+    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_storage_1.cpp">
       <Filter>cc\test_cc</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\allocator\cc_vallocator.c">
@@ -188,6 +188,12 @@
     </ClCompile>
     <ClCompile Include="cc\cc\allocator\cc_vallocator_helper.c">
       <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_heap_memory.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp">
+      <Filter>cc\test_cc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +318,9 @@
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_vallocator_helper.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_heap_memory.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
   </ItemGroup>

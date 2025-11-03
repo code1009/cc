@@ -77,7 +77,7 @@ static bool item_pool_initialize()
 
 	test_out
 		<< "@ item pool initialized:" << test_tendl
-		<< " memory_size:   " << (void*)_item_pool.storage.memory_size << "(" << _item_pool.storage.memory_size << ")"  << test_tendl
+		<< " memory_size:   " << (void*)_item_pool.storage.memory_size << "(" << _item_pool.storage.memory_size << ")" << test_tendl
 		<< " begin address: " << (void*)_begin_address << test_tendl
 		<< " end address:   " << (void*)_end_address << test_tendl
 		<< " end-begin:     " << _end_address - _begin_address << test_tendl
@@ -156,9 +156,9 @@ static void alloc(void)
 		<< "@ alloc:" << test_tendl
 		;
 
-	_p0 = item_pool_alloc(sizeof(item_t)*1);
-	_p1 = item_pool_alloc(sizeof(item_t)*2);
-	_p2 = item_pool_alloc(sizeof(item_t)*1);
+	_p0 = item_pool_alloc(sizeof(item_t) * 1);
+	_p1 = item_pool_alloc(sizeof(item_t) * 2);
+	_p2 = item_pool_alloc(sizeof(item_t) * 1);
 
 	_p0_address = (uintptr_t)_p0;
 	_p1_address = (uintptr_t)_p1;
@@ -168,9 +168,9 @@ static void alloc(void)
 	_p1_address -= _begin_address;
 	_p2_address -= _begin_address;
 
-	test_assert(_p0_address == ( (sizeof(cc_first_fit_storage_block_head_t) * 1) + (sizeof(item_t) * 0) ));
-	test_assert(_p1_address == ( (sizeof(cc_first_fit_storage_block_head_t) * 2) + (sizeof(item_t) * 1) ));
-	test_assert(_p2_address == ( (sizeof(cc_first_fit_storage_block_head_t) * 3) + (sizeof(item_t) * 3) ));
+	test_assert(_p0_address == ((sizeof(cc_first_fit_storage_block_head_t) * 1) + (sizeof(item_t) * 0)));
+	test_assert(_p1_address == ((sizeof(cc_first_fit_storage_block_head_t) * 2) + (sizeof(item_t) * 1)));
+	test_assert(_p2_address == ((sizeof(cc_first_fit_storage_block_head_t) * 3) + (sizeof(item_t) * 3)));
 }
 
 static void alloc1(void)
@@ -210,7 +210,7 @@ static void alloc1(void)
 
 	_p3 = item_pool_alloc(sizeof(item_t) - sizeof(cc_first_fit_storage_block_head_t));
 	test_assert(_p3 != NULL);
-	
+
 	_p3_address = (uintptr_t)_p3;
 	_p3_address -= _begin_address;
 	test_assert(_p3_address == ((sizeof(cc_first_fit_storage_block_head_t) * 3) + (sizeof(item_t) * 2)));
