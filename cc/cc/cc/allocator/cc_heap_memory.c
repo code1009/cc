@@ -191,7 +191,6 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 	bucket_storage->next = NULL;
 
 
-
 	//-----------------------------------------------------------------------
 	if (NULL == bucket->storages)
 	{
