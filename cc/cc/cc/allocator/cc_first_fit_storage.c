@@ -28,14 +28,39 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#define cc_first_fit_storage_block_status_free      0U
-#define cc_first_fit_storage_block_status_allocated 1U
+static inline size_t cc_first_fit_storage_calc_aligned_size(size_t v, size_t alignment_size)
+{
+	cc_debug_assert(alignment_size != 0);
+
+
+	size_t count;
+	count = v / alignment_size;
+	if (0U != (v % alignment_size))
+	{
+		count++;
+	}
+	return alignment_size * count;
+}
+
+static inline size_t cc_first_fit_storage_alignment_size(void)
+{
+	return sizeof(void*);
+}
+
+static inline bool cc_first_fit_storage_is_aligned_address(const uintptr_t address)
+{
+	return (0U == (address % cc_first_fit_storage_alignment_size()));
+}
 
 
 
 
 
 /////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#define cc_first_fit_storage_block_status_free      0U
+#define cc_first_fit_storage_block_status_allocated 1U
+
 //===========================================================================
 static inline size_t cc_first_fit_storage_block_head_flags_make(size_t size, bool allocated)
 {
@@ -92,37 +117,6 @@ static inline void cc_first_fit_storage_block_head_add_size(cc_first_fit_storage
 		ctx,
 		cc_first_fit_storage_block_head_get_size(ctx) + size
 	);
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-static inline size_t cc_first_fit_storage_calc_aligned_size(size_t v, size_t alignment_size)
-{
-	cc_debug_assert(alignment_size != 0);
-
-
-	size_t count;
-	count = v / alignment_size;
-	if (0U != (v % alignment_size))
-	{
-		count++;
-	}
-	return alignment_size * count;
-}
-
-//===========================================================================
-static inline size_t cc_first_fit_storage_alignment_size(void)
-{
-	return sizeof(void*);
-}
-
-static inline bool cc_first_fit_storage_is_aligned_address(const uintptr_t address)
-{
-	return (0U == (address % cc_first_fit_storage_alignment_size()));
 }
 
 

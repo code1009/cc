@@ -61,7 +61,6 @@ static inline size_t cc_heap_memory_calc_aligned_size(size_t v, size_t alignment
 	return alignment_size * count;
 }
 
-//===========================================================================
 static inline size_t cc_heap_memory_alignment_size(void)
 {
 	return sizeof(void*);

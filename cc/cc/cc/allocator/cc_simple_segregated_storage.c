@@ -49,6 +49,11 @@ static inline bool cc_simple_segregated_storage_is_aligned_address(const uintptr
 	return (0U == (address % cc_simple_segregated_storage_alignment_size()));
 }
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 static inline size_t cc_simple_segregated_storage_chunk_alignment_size(void)
 {
