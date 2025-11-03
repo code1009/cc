@@ -202,11 +202,19 @@ static void alloc(void)
 	_p1_address -= _begin_address;
 	_p2_address -= _begin_address;
 
-	/*
-	test_assert(_p0_address == ( (sizeof(cc_heap_memory_block_head_t) * 1) + (sizeof(item_t) * 0) ));
-	test_assert(_p1_address == ( (sizeof(cc_heap_memory_block_head_t) * 2) + (sizeof(item_t) * 1) ));
-	test_assert(_p2_address == ( (sizeof(cc_heap_memory_block_head_t) * 3) + (sizeof(item_t) * 3) ));
-	*/
+
+	uintptr_t offset =
+		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_t) +
+		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_storage_t)
+		;
+	_p0_address -= offset;
+	_p1_address -= offset;
+	_p2_address -= offset;
+
+
+	test_assert(_p0_address == ( (sizeof(item_t) * 0) ));
+	test_assert(_p1_address == ( (sizeof(item_t) * 1) ));
+	test_assert(_p2_address == ( (sizeof(item_t) * 2) ));
 }
 
 static void release(void)
