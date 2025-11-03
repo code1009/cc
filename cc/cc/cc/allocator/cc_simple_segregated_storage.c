@@ -25,40 +25,39 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static size_t cc_simple_segregated_storage_alignment_size(void)
+static inline size_t cc_simple_segregated_storage_calc_aligned_size(size_t v, size_t alignment_size)
+{
+	cc_debug_assert(alignment_size != 0);
+
+
+	size_t count;
+	count = v / alignment_size;
+	if (0U != (v % alignment_size))
+	{
+		count++;
+	}
+	return alignment_size * count;
+}
+
+static inline size_t cc_simple_segregated_storage_alignment_size(void)
 {
 	return sizeof(void*);
 }
 
-static bool cc_simple_segregated_storage_is_aligned_address(const uintptr_t address)
+static inline bool cc_simple_segregated_storage_is_aligned_address(const uintptr_t address)
 {
 	return (0U == (address % cc_simple_segregated_storage_alignment_size()));
 }
 
 //===========================================================================
-static size_t cc_simple_segregated_storage_chunk_alignment_size(void)
+static inline size_t cc_simple_segregated_storage_chunk_alignment_size(void)
 {
 	return cc_simple_segregated_storage_alignment_size();
 }
 
-static size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size)
+static inline size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size)
 {
-	size_t alignment_size;
-	size_t count;
-
-	size_t chunk_size;
-
-
-	alignment_size = cc_simple_segregated_storage_chunk_alignment_size();
-	count = data_size / alignment_size;
-	if (0U != (data_size % alignment_size))
-	{
-		count++;
-	}
-	chunk_size = alignment_size * count;
-
-
-	return chunk_size;
+	return cc_simple_segregated_storage_calc_aligned_size(data_size, cc_simple_segregated_storage_alignment_size());
 }
 
 

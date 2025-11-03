@@ -122,6 +122,31 @@ static inline size_t cc_heap_memory_bucket_alignment_size(void)
 	return sizeof(void*);
 }
 
+static inline size_t cc_heap_memory_calc_bucket_head_memory_size(void)
+{
+	size_t head_size = sizeof(cc_heap_bucket_storage_t);
+	size_t head_memory_size = cc_heap_memory_calc_aligned_size(head_size, cc_heap_memory_bucket_head_alignment_size());
+
+	return head_memory_size;
+}
+
+static inline size_t cc_heap_memory_calc_bucket_body_size(cc_heap_bucket_t* bucket)
+{
+	cc_debug_assert(bucket != NULL);
+
+
+	size_t body_size = bucket->config.size * bucket->config.count;
+
+	return body_size;
+}
+
+static inline size_t cc_heap_memory_calc_bucket_body_memory_size(size_t body_size)
+{
+	size_t body_memory_size = cc_heap_memory_calc_aligned_size(body_size, cc_heap_memory_bucket_body_alignment_size());
+
+	return body_memory_size;
+}
+
 static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_heap_memory_t* ctx, cc_heap_bucket_t* bucket)
 {
 	//-----------------------------------------------------------------------
@@ -130,10 +155,10 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 
 
 	//-----------------------------------------------------------------------
-	size_t head_size = sizeof(cc_heap_bucket_storage_t);
-	size_t body_size = bucket->config.size * bucket->config.count;
-	size_t head_memory_size = cc_heap_memory_calc_aligned_size(head_size, cc_heap_memory_bucket_head_alignment_size());
-	size_t body_memory_size = cc_heap_memory_calc_aligned_size(body_size, cc_heap_memory_bucket_body_alignment_size());
+	size_t head_memory_size = cc_heap_memory_calc_bucket_head_memory_size();
+
+	size_t body_size = cc_heap_memory_calc_bucket_body_size(bucket);
+	size_t body_memory_size = cc_heap_memory_calc_bucket_body_memory_size(body_size);
 
 	size_t size = head_memory_size + body_memory_size;
 	size_t memory_size = cc_heap_memory_calc_aligned_size(size, cc_heap_memory_bucket_alignment_size());
@@ -309,6 +334,14 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	{
 		return false;
 	}
+	if (ctx->storage.free_size < cc_heap_memory_calc_bucket_head_memory_size())
+	{
+		cc_first_fit_storage_free(&ctx->storage, buckets);
+		return false;
+	}
+
+	size_t max_memory_size = ctx->storage.free_size - cc_heap_memory_calc_bucket_head_memory_size();
+	size_t max_count;
 	for (size_t i =0; i < config->bucket_count; i++)
 	{
 		if (config->buckets[i].size == 0)
@@ -317,6 +350,13 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 			return false;
 		}
 		if (config->buckets[i].count == 0)
+		{
+			cc_first_fit_storage_free(&ctx->storage, buckets);
+			return false;
+		}
+
+		max_count = max_memory_size / config->buckets[i].size;
+		if (config->buckets[i].count > max_count)
 		{
 			cc_first_fit_storage_free(&ctx->storage, buckets);
 			return false;

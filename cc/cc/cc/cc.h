@@ -32,9 +32,8 @@
 
 #include "allocator/cc_vallocator.h"
 #include "allocator/cc_first_fit_storage.h"
-#include "allocator/cc_vallocator_helper.h"
-
 #include "allocator/cc_heap_memory.h"
+#include "allocator/cc_vallocator_helper.h"
 
 //===========================================================================
 #include "algorithm/cc_hash.h"

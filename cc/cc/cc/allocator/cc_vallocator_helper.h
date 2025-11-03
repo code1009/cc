@@ -22,6 +22,11 @@ cc_api bool cc_first_fit_storage_vallocator_initialize(
 	cc_first_fit_storage_t* first_fit_storage, const void* memory_pointer, const size_t memory_size
 );
 
+cc_api bool cc_heap_memory_vallocator_initialize(
+	cc_vallocator_t* vallocator,
+	cc_heap_memory_t* heap_memory, const void* memory_pointer, const size_t memory_size, const cc_heap_memory_config_t* heap_memory_config
+);
+
 
 
 

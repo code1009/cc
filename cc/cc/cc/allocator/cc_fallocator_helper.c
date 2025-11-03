@@ -45,7 +45,6 @@ cc_api bool cc_simple_segregated_storage_fallocator_initialize(
 
 	bool rv;
 
-
 	rv = cc_simple_segregated_storage_initialize(
 		simple_segregated_storage, 
 		memory_pointer, memory_size, data_size, max_count
