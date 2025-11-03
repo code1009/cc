@@ -26,8 +26,8 @@
 #include "cc_version.h"
 
 //===========================================================================
-#include "allocator/cc_first_fit_storage.h"
 #include "allocator/cc_simple_segregated_storage.h"
+#include "allocator/cc_first_fit_storage.h"
 
 #include "allocator/cc_fallocator.h"
 #include "allocator/cc_fallocator_helper.h"
