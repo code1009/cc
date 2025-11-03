@@ -6,7 +6,7 @@
 // # Created on: 09-18, 2025.
 // 
 // # Description:
-// @ First-fit allocator with boundary-tag coalescing
+// @ first-fit allocator with boundary-tag coalescing
 // 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
