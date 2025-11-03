@@ -25,28 +25,31 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline size_t cc_simple_segregated_storage_calc_aligned_size(size_t v, size_t alignment_size)
-{
-	cc_debug_assert(alignment_size != 0);
-
-
-	size_t count;
-	count = v / alignment_size;
-	if (0U != (v % alignment_size))
-	{
-		count++;
-	}
-	return alignment_size * count;
-}
-
-static inline size_t cc_simple_segregated_storage_alignment_size(void)
+static inline size_t cc_simple_segregated_storage_alignment(void)
 {
 	return sizeof(void*);
 }
 
-static inline bool cc_simple_segregated_storage_is_aligned_address(const uintptr_t address)
+static inline size_t cc_simple_segregated_storage_align(size_t value, size_t alignment)
 {
-	return (0U == (address % cc_simple_segregated_storage_alignment_size()));
+	cc_debug_assert(alignment != 0);
+
+
+	size_t count;
+	count = value / alignment;
+	if (0U != (value % alignment))
+	{
+		count++;
+	}
+	return alignment * count;
+}
+
+static inline bool cc_simple_segregated_storage_is_aligned(const uintptr_t value, size_t alignment)
+{
+	cc_debug_assert(alignment != 0);
+
+
+	return (0U == (value % alignment));
 }
 
 
@@ -57,12 +60,12 @@ static inline bool cc_simple_segregated_storage_is_aligned_address(const uintptr
 //===========================================================================
 static inline size_t cc_simple_segregated_storage_chunk_alignment_size(void)
 {
-	return cc_simple_segregated_storage_alignment_size();
+	return cc_simple_segregated_storage_alignment();
 }
 
 static inline size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size)
 {
-	return cc_simple_segregated_storage_calc_aligned_size(data_size, cc_simple_segregated_storage_alignment_size());
+	return cc_simple_segregated_storage_align(data_size, cc_simple_segregated_storage_chunk_alignment_size());
 }
 
 
@@ -138,7 +141,7 @@ cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage
 
 
 	//-----------------------------------------------------------------------
-	if (cc_simple_segregated_storage_is_aligned_address((uintptr_t)memory_pointer) == false)
+	if (cc_simple_segregated_storage_is_aligned((uintptr_t)memory_pointer, cc_simple_segregated_storage_chunk_alignment_size()) == false)
 	{
 		return false;
 	}
