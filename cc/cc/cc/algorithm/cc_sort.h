@@ -1,9 +1,9 @@
-﻿#ifndef cc_collection_sort_h
-#define cc_collection_sort_h
+﻿#ifndef cc_sort_h
+#define cc_sort_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_collection_sort.h
+// # File: cc_sort.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -29,5 +29,6 @@ cc_api void cc_collection_heapsort(cc_collection_t* ctx, const cc_less_t less);
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_collection_sort_h
+#endif // cc_sort_h
+
 

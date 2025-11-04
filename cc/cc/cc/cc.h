@@ -63,7 +63,7 @@
 #include "container/cc_priority_queue.h"
 
 //===========================================================================
-#include "algorithm/cc_collection_sort.h"
+#include "algorithm/cc_sort.h"
 
 
 

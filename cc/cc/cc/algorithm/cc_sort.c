@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_collection_sort.c
+// # File: cc_sort.c
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -24,7 +24,7 @@
 #include "../container/cc_collection.h"
 
 //===========================================================================
-#include "cc_collection_sort.h"
+#include "cc_sort.h"
 
 
 

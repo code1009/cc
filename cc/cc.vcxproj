@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cc\cc\algorithm\cc_collection_sort.c" />
+    <ClCompile Include="cc\cc\algorithm\cc_sort.c" />
     <ClCompile Include="cc\cc\algorithm\cc_compare.c" />
     <ClCompile Include="cc\cc\algorithm\cc_hash.c" />
     <ClCompile Include="cc\cc\allocator\cc_fallocator.c" />
@@ -76,7 +76,7 @@
     <ClCompile Include="cc\test_cc\test_case_cc_vector_2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cc\cc\algorithm\cc_collection_sort.h" />
+    <ClInclude Include="cc\cc\algorithm\cc_sort.h" />
     <ClInclude Include="cc\cc\algorithm\cc_compare.h" />
     <ClInclude Include="cc\cc\algorithm\cc_hash.h" />
     <ClInclude Include="cc\cc\allocator\cc_fallocator.h" />
