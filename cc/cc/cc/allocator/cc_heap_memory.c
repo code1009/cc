@@ -95,11 +95,11 @@ static inline cc_heap_bucket_t* cc_heap_memory_find_bucket(const cc_heap_memory_
 
 
 	//-----------------------------------------------------------------------
-	for (size_t i = 0; i < ctx->bucket_count; i++)
+	for (size_t i = 0; i < ctx->buckets.count; i++)
 	{
-		if (size <= ctx->buckets[i].descriptor.size)
+		if (size <= ctx->buckets.elements[i].descriptor.size)
 		{
-			return &ctx->buckets[i];
+			return &ctx->buckets.elements[i];
 		}
 	}
 
@@ -243,8 +243,8 @@ static inline void* cc_heap_memory_allocate_from_bucket(const cc_heap_memory_t* 
 cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const void* pointer)
 {
 	cc_debug_assert(ctx != NULL);
-	cc_debug_assert(ctx->bucket_count != 0);
-	cc_debug_assert(ctx->buckets != NULL);
+	cc_debug_assert(ctx->buckets.count != 0);
+	cc_debug_assert(ctx->buckets.elements != NULL);
 
 
 	uintptr_t begin;
@@ -263,9 +263,9 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 		return false;
 	}
 
-	for (size_t i = 0; i < ctx->bucket_count; ++i)
+	for (size_t i = 0; i < ctx->buckets.count; ++i)
 	{
-		cc_heap_bucket_t* bucket = &ctx->buckets[i];
+		cc_heap_bucket_t* bucket = &ctx->buckets.elements[i];
 		cc_heap_bucket_region_head_t* current = bucket->regions;
 		while (current)
 		{
@@ -365,8 +365,8 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	}
 
 
-	ctx->buckets = buckets;
-	ctx->bucket_count = bucket_descriptors->count;
+	ctx->buckets.elements = buckets;
+	ctx->buckets.count = bucket_descriptors->count;
 
 	return true;
 }
@@ -375,14 +375,14 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
-	cc_debug_assert(ctx->bucket_count != 0);
-	cc_debug_assert(ctx->buckets != NULL);
+	cc_debug_assert(ctx->buckets.count != 0);
+	cc_debug_assert(ctx->buckets.elements != NULL);
 
 
 	//-----------------------------------------------------------------------
-	for (size_t i = 0; i < ctx->bucket_count; ++i)
+	for (size_t i = 0; i < ctx->buckets.count; ++i)
 	{
-		cc_heap_bucket_t* bucket = &ctx->buckets[i];
+		cc_heap_bucket_t* bucket = &ctx->buckets.elements[i];
 		cc_heap_bucket_region_head_t* current = bucket->regions;
 		while (current)
 		{
@@ -396,9 +396,9 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 
 
 	//-----------------------------------------------------------------------
-	cc_first_fit_free(&ctx->first_fit, ctx->buckets);
-	ctx->buckets = NULL;
-	ctx->bucket_count = 0;
+	cc_first_fit_free(&ctx->first_fit, ctx->buckets.elements);
+	ctx->buckets.elements = NULL;
+	ctx->buckets.count = 0;
 	ctx->count = 0;
 }
 
@@ -407,8 +407,8 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
-	cc_debug_assert(ctx->bucket_count != 0);
-	cc_debug_assert(ctx->buckets != NULL);
+	cc_debug_assert(ctx->buckets.count != 0);
+	cc_debug_assert(ctx->buckets.elements != NULL);
 
 
 	//-----------------------------------------------------------------------
@@ -471,16 +471,16 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(pointer != NULL);
-	cc_debug_assert(ctx->bucket_count != 0);
-	cc_debug_assert(ctx->buckets != NULL);
+	cc_debug_assert(ctx->buckets.count != 0);
+	cc_debug_assert(ctx->buckets.elements != NULL);
 	cc_debug_assert(ctx->count > 0);
 
 
 	//-----------------------------------------------------------------------
 	// Try buckets first (fast-path for small fixed-size allocations)
-	for (size_t i=0; i<ctx->bucket_count; i++)
+	for (size_t i=0; i<ctx->buckets.count; i++)
 	{
-		cc_heap_bucket_t* bucket = &ctx->buckets[i];
+		cc_heap_bucket_t* bucket = &ctx->buckets.elements[i];
 		cc_heap_bucket_region_head_t* current = bucket->regions;
 		cc_heap_bucket_region_head_t* previous = NULL;
 		while (current)

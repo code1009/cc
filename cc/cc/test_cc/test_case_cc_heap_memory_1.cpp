@@ -111,19 +111,19 @@ static bool item_pool_initialize()
 {
 	bool rv;
 
-	cc_heap_bucket_descriptor_t cc_heap_bucket_descriptors[] = {
+	cc_heap_bucket_descriptor_t cc_heap_bucket_descriptor_elements[] = {
 		{ sizeof(item_t), item_max_count }
 	};
-	cc_heap_bucket_descriptors_t config;
-	config.elements = cc_heap_bucket_descriptors;
-	config.count = cc_heap_bucket_count;
+	cc_heap_bucket_descriptors_t cc_heap_bucket_descriptors;
+	cc_heap_bucket_descriptors.elements = cc_heap_bucket_descriptor_elements;
+	cc_heap_bucket_descriptors.count = cc_heap_bucket_count;
 
 
 	rv = cc_heap_memory_vallocator_initialize(
 		&_item_pool.allocator,
 		&_item_pool.heap_memory,
 		&_item_pool.memory[0], sizeof(_item_pool.memory),
-		&config
+		&cc_heap_bucket_descriptors
 	);
 	if (rv == false)
 	{

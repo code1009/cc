@@ -53,13 +53,19 @@ typedef struct _cc_heap_bucket_t
 }
 cc_heap_bucket_t;
 
+typedef struct _cc_heap_buckets_t
+{
+	cc_heap_bucket_t* elements;
+	size_t count;
+}
+cc_heap_buckets_t;
+
 //===========================================================================
 typedef struct _cc_heap_memory_t
 {
 	cc_first_fit_t first_fit;
 
-	cc_heap_bucket_t* buckets;
-	size_t bucket_count;
+	cc_heap_buckets_t buckets;
 
 	cc_ssize_t count;
 }
