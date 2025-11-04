@@ -28,6 +28,9 @@
     <Filter Include="doc">
       <UniqueIdentifier>{b7f3a699-0dc3-4ac4-ac3d-9dd17a7c744d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cc\cc\dynamic">
+      <UniqueIdentifier>{f9c52b3b-f226-42a1-86a6-3b395dc26dea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cc\tester\test_output.cpp">
@@ -36,7 +39,7 @@
     <ClCompile Include="cc\tester\test_runner.cpp">
       <Filter>cc\tester</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\algorithm\cc_collection_sort.c">
+    <ClCompile Include="cc\cc\algorithm\cc_sort.c">
       <Filter>cc\cc\algorithm</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\algorithm\cc_compare.c">
@@ -45,10 +48,10 @@
     <ClCompile Include="cc\cc\algorithm\cc_hash.c">
       <Filter>cc\cc\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_allocator.c">
+    <ClCompile Include="cc\cc\allocator\cc_fallocator.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c">
+    <ClCompile Include="cc\cc\allocator\cc_fallocator_helper.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c">
@@ -120,7 +123,7 @@
     <ClCompile Include="cc\test_cc\test_case_cc.cpp">
       <Filter>cc\test_cc</Filter>
     </ClCompile>
-    <ClCompile Include="cc\test_cc\test_case_cc_collection_sort_1.cpp">
+    <ClCompile Include="cc\test_cc\test_case_cc_sort_1.cpp">
       <Filter>cc\test_cc</Filter>
     </ClCompile>
     <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp">
@@ -177,6 +180,24 @@
     <ClCompile Include="cc\cc\cc_version.c">
       <Filter>cc\cc</Filter>
     </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_first_fit.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator_helper.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">
@@ -188,7 +209,7 @@
     <ClInclude Include="cc\tester\test_timer.hpp">
       <Filter>cc\tester</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\algorithm\cc_collection_sort.h">
+    <ClInclude Include="cc\cc\algorithm\cc_sort.h">
       <Filter>cc\cc\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\algorithm\cc_compare.h">
@@ -197,10 +218,10 @@
     <ClInclude Include="cc\cc\algorithm\cc_hash.h">
       <Filter>cc\cc\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_allocator.h">
+    <ClInclude Include="cc\cc\allocator\cc_fallocator.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h">
+    <ClInclude Include="cc\cc\allocator\cc_fallocator_helper.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h">
@@ -292,6 +313,18 @@
     </ClInclude>
     <ClInclude Include="cc\cc\cc_version.h">
       <Filter>cc\cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator_helper.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_first_fit.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator.h">
+      <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

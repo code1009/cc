@@ -26,7 +26,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #define cc_version_major 1
-#define cc_version_minor 0
+#define cc_version_minor 1
 
 
 
@@ -34,7 +34,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static size_t cc_decimal_digits(uint32_t value)
+static size_t cc_decimal_digits_uint32_t(uint32_t value)
 {
 	size_t digit_count = 1;
 	while (value >= 10)
@@ -45,30 +45,39 @@ static size_t cc_decimal_digits(uint32_t value)
 	return digit_count;
 }
 
-static size_t cc_c_string_write_uint32_t(char* buffer, uint32_t value)
+static char* cc_c_string_write_decimal_uint32_t(char* pointer, uint32_t value)
 {
-	char c_string_buffer[11]; // uint32_t 최대 10자리 + 안전 여유
-	size_t c_string_index = 0;
+	cc_debug_assert(pointer != NULL);
 
+
+	// uint32_t = 0x FFFF FFFF = 4,294,967,295
+	// max 10 digits
 	if (value == 0)
 	{
-		c_string_buffer[c_string_index++] = '0';
+		*pointer++ = '0';
 	}
 	else
 	{
 		while (value != 0)
 		{
-			c_string_buffer[c_string_index++] = (char)('0' + (value % 10));
+			*pointer++ = (char)('0' + (value % 10));
 			value /= 10;
 		}
 	}
 
-	for (size_t i = 0; i < c_string_index; i++)
-	{
-		buffer[i] = c_string_buffer[c_string_index - 1 - i];
-	}
 
-	return c_string_index;
+	return pointer;
+}
+
+static char* cc_c_string_write_char(char* pointer, char value)
+{
+	cc_debug_assert(pointer != NULL);
+
+
+	*pointer++ = value;
+
+
+	return pointer;
 }
 
 
@@ -86,9 +95,9 @@ cc_api void cc_version(cc_version_t* ctx)
 	ctx->minor = cc_version_minor;
 }
 
-cc_api bool cc_version_c_string(char* version_c_string, size_t version_c_string_size)
+cc_api bool cc_version_c_string(char* pointer, size_t max_count)
 {
-	if (version_c_string == NULL)
+	if (pointer == NULL)
 	{
 		return false;
 	}
@@ -98,27 +107,20 @@ cc_api bool cc_version_c_string(char* version_c_string, size_t version_c_string_
 	cc_version(&version);
 
 
-	size_t major_count = cc_decimal_digits(version.major);
-	size_t minor_count = cc_decimal_digits(version.minor);
+	size_t major_count = cc_decimal_digits_uint32_t(version.major);
+	size_t minor_count = cc_decimal_digits_uint32_t(version.minor);
 
 	size_t required_size = major_count + 1 + minor_count + 1;
-	if (version_c_string_size < required_size)
+	if (max_count < required_size)
 	{
 		return false;
 	}
 
-	char* write_pointer = version_c_string;
-	size_t written;
-
-	written = cc_c_string_write_uint32_t(write_pointer, version.major);
-	write_pointer += written;
-
-	*write_pointer++ = '.';
-
-	written = cc_c_string_write_uint32_t(write_pointer, version.minor);
-	write_pointer += written;
-
-	*write_pointer = '\0';
+	char* wpointer = pointer;
+	wpointer = cc_c_string_write_decimal_uint32_t(wpointer, version.major);
+	wpointer = cc_c_string_write_char(wpointer, '.');
+	wpointer = cc_c_string_write_decimal_uint32_t(wpointer, version.minor);
+	wpointer = cc_c_string_write_char(wpointer, '\0');
 
 	return true;
 }

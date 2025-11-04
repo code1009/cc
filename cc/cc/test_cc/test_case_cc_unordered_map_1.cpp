@@ -64,9 +64,9 @@ cc_api static bool item_key_equal(const void* left, const void* right)
 //===========================================================================
 typedef struct _item_pool_t
 {
-	cc_simple_segregated_storage_t storage;
+	cc_simple_segregated_storage_t simple_segregated_storage;
 	item_t memory[item_max_count];
-	cc_allocator_t allocator;
+	cc_fallocator_t allocator;
 }
 item_pool_t;
 
@@ -77,13 +77,13 @@ static item_pool_t _item_pool;
 static bool item_pool_initialize()
 {
 	bool rv;
-	rv = cc_simple_segregated_storage_allocator_initialize(
+	rv = cc_simple_segregated_storage_fallocator_initialize(
 		&_item_pool.allocator,
-		&_item_pool.storage, &_item_pool.memory[0], sizeof(_item_pool.memory), sizeof(item_t), item_max_count
+		&_item_pool.simple_segregated_storage, &_item_pool.memory[0], sizeof(_item_pool.memory), sizeof(item_t), item_max_count
 	);
 	if (rv == false)
 	{
-		test_out << "cc_simple_segregated_storage_allocator_initialize() failed" << test_tendl;
+		test_out << "cc_simple_segregated_storage_fallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}
@@ -92,15 +92,15 @@ static bool item_pool_initialize()
 
 static void item_pool_uninitialize()
 {
-	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.storage) << test_tendl;
+	test_out << "cc_simple_segregated_storage_count():" << cc_simple_segregated_storage_count(&_item_pool.simple_segregated_storage) << test_tendl;
 }
 
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.simple_segregated_storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -110,7 +110,7 @@ static void item_pool_free(item_t* item)
 {
 	bool rv;
 	
-	rv = _item_pool.allocator.free(&_item_pool.storage, item);
+	rv = _item_pool.allocator.free(&_item_pool.simple_segregated_storage, item);
 	if (rv == false)
 	{
 		test_out << "_item_pool.allocator.free() failed" << test_tendl;
@@ -137,6 +137,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -155,7 +160,12 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_unordered_map_count(&_items.container) << test_tendl;
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
+	test_out << "cc_unordered_map_count():" << cc_unordered_map_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -168,6 +178,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -180,7 +195,7 @@ static void add(void)
 	count = 512;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		if (item_pointer)
 		{
 			item_pointer->key1 = (uint16_t)i;
@@ -189,7 +204,7 @@ static void add(void)
 		}
 		else
 		{
-			test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+			test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 			break;
 		}
 
@@ -197,7 +212,7 @@ static void add(void)
 		rv = cc_unordered_map_add(&_items.container, (void*)((uintptr_t)key), item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_unordered_map_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(item_max_count == i);
 			break;
@@ -207,6 +222,11 @@ static void add(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 	cc_hash_value_t hash_value;
 	uint32_t key;
@@ -245,6 +265,11 @@ static void print(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -264,6 +289,11 @@ static void release(void)
 
 static void find_and_erase(void)
 {
+	test_out
+		<< "@find_and_erase()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -285,18 +315,18 @@ static void find_and_erase(void)
 		rv = cc_unordered_map_erase(&_items.container, index);
 		if (false == rv)
 		{
-			test_out << "erase failed:" << test_tindex(index) << test_tendl;
+			test_out << "cc_unordered_map_erase() failed:" << test_tindex(index) << test_tendl;
 			test_assert(0);
 		}
 		else
 		{
-			test_out << "erase success:" << test_tindex(index) << item_pointer->key1 << "-" << item_pointer->key2 << test_tendl;
+			test_out << "cc_unordered_map_erase() success:" << test_tindex(index) << item_pointer->key1 << "-" << item_pointer->key2 << test_tendl;
 		}
 		item_pool_free(item_pointer);
 	}
 	else
 	{
-		test_out << "not found" << test_tendl;
+		test_out << "cc_unordered_map_find() failed: not found" << test_tendl;
 		test_assert(0);
 	}
 }

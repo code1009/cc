@@ -1,9 +1,9 @@
-﻿#ifndef cc_version_h
-#define cc_version_h
+﻿#ifndef cc_fallocator_h
+#define cc_fallocator_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_version.h
+// # File: cc_fallocator.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -17,12 +17,21 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_version_t
+typedef void* (*cc_fallocate_t)(void* handle);
+typedef bool  (*cc_ffree_t) (void* handle, void* pointer);
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+typedef struct _cc_fallocator_t
 {
-	uint32_t major;
-	uint32_t minor;
+	const void* handle;
+	cc_fallocate_t allocate;
+	cc_ffree_t free;
 }
-cc_version_t;
+cc_fallocator_t;
 
 
 
@@ -30,8 +39,7 @@ cc_version_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_version(cc_version_t* ctx);
-cc_api bool cc_version_c_string(char* pointer, size_t max_count);
+cc_api void cc_fallocator_initialize(cc_fallocator_t* ctx, const void* handle, const cc_fallocate_t allocate, const cc_ffree_t free);
 
 
 
@@ -39,5 +47,5 @@ cc_api bool cc_version_c_string(char* pointer, size_t max_count);
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_version_h
+#endif // cc_fallocator_h
 

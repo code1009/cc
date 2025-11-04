@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cc\cc\algorithm\cc_collection_sort.c" />
+    <ClCompile Include="cc\cc\algorithm\cc_sort.c" />
     <ClCompile Include="cc\cc\algorithm\cc_compare.c" />
     <ClCompile Include="cc\cc\algorithm\cc_hash.c" />
-    <ClCompile Include="cc\cc\allocator\cc_allocator.c" />
-    <ClCompile Include="cc\cc\allocator\cc_allocator_helper.c" />
+    <ClCompile Include="cc\cc\allocator\cc_fallocator.c" />
+    <ClCompile Include="cc\cc\allocator\cc_fallocator_helper.c" />
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c" />
     <ClCompile Include="cc\cc\cc_assert.c" />
     <ClCompile Include="cc\cc\cc_code_template.c" />
@@ -41,6 +41,10 @@
     <ClCompile Include="cc\cc\container\cc_unordered_map.c" />
     <ClCompile Include="cc\cc\container\cc_unordered_set.c" />
     <ClCompile Include="cc\cc\container\cc_vector.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_first_fit.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator_helper.c" />
     <ClCompile Include="cc\cc\element\cc_bucket.c" />
     <ClCompile Include="cc\cc\element\cc_dnode.c" />
     <ClCompile Include="cc\cc\element\cc_element.c" />
@@ -52,9 +56,11 @@
     <ClCompile Include="cc\tester\test_runner.cpp" />
     <ClCompile Include="cc\tester\test_timer.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc.cpp" />
-    <ClCompile Include="cc\test_cc\test_case_cc_collection_sort_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_sort_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_forward_list_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_list_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_map_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_map_2.cpp" />
@@ -70,11 +76,11 @@
     <ClCompile Include="cc\test_cc\test_case_cc_vector_2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cc\cc\algorithm\cc_collection_sort.h" />
+    <ClInclude Include="cc\cc\algorithm\cc_sort.h" />
     <ClInclude Include="cc\cc\algorithm\cc_compare.h" />
     <ClInclude Include="cc\cc\algorithm\cc_hash.h" />
-    <ClInclude Include="cc\cc\allocator\cc_allocator.h" />
-    <ClInclude Include="cc\cc\allocator\cc_allocator_helper.h" />
+    <ClInclude Include="cc\cc\allocator\cc_fallocator.h" />
+    <ClInclude Include="cc\cc\allocator\cc_fallocator_helper.h" />
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h" />
     <ClInclude Include="cc\cc\cc.h" />
     <ClInclude Include="cc\cc\cc_assert.h" />
@@ -98,6 +104,10 @@
     <ClInclude Include="cc\cc\container\cc_unordered_map.h" />
     <ClInclude Include="cc\cc\container\cc_unordered_set.h" />
     <ClInclude Include="cc\cc\container\cc_vector.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_first_fit.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator_helper.h" />
     <ClInclude Include="cc\cc\element\cc_bucket.h" />
     <ClInclude Include="cc\cc\element\cc_dnode.h" />
     <ClInclude Include="cc\cc\element\cc_element.h" />

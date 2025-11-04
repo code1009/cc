@@ -17,11 +17,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_simple_segregated_storage_free_chunk_t
+typedef struct _cc_simple_segregated_storage_chunk_t
 {
-	struct _cc_simple_segregated_storage_free_chunk_t* next;
+	struct _cc_simple_segregated_storage_chunk_t* next_free_chunk;
 }
-cc_simple_segregated_storage_free_chunk_t;
+cc_simple_segregated_storage_chunk_t;
 
 
 
@@ -35,10 +35,12 @@ typedef struct _cc_simple_segregated_storage_t
 	size_t memory_size;
 
 	size_t data_size;
-	cc_ssize_t max_count;
+	size_t max_count;
 
 	size_t chunk_size;
-	cc_simple_segregated_storage_free_chunk_t* free_chunk_head;
+
+	cc_simple_segregated_storage_chunk_t* free_chunk_head;
+
 	cc_ssize_t count;
 }
 cc_simple_segregated_storage_t;
@@ -49,10 +51,7 @@ cc_simple_segregated_storage_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api size_t cc_simple_segregated_storage_get_aligned_size(void);
-cc_api bool   cc_simple_segregated_storage_is_aligned_address(const uintptr_t address);
-cc_api size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size);
-cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_size, const cc_ssize_t max_count);
+cc_api size_t cc_simple_segregated_storage_memory_size(const size_t data_size, const size_t max_count);
 cc_api bool   cc_simple_segregated_storage_validate_pointer(const cc_simple_segregated_storage_t* ctx, const void* pointer);
 
 
@@ -61,7 +60,7 @@ cc_api bool   cc_simple_segregated_storage_validate_pointer(const cc_simple_segr
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage_t* ctx, const void* memory_pointer, const size_t memory_size, const size_t data_size, const cc_ssize_t max_count);
+cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage_t* ctx, const void* memory_pointer, const size_t memory_size, const size_t data_size, const size_t max_count);
 
 cc_api void* cc_simple_segregated_storage_allocate(cc_simple_segregated_storage_t* ctx);
 cc_api bool  cc_simple_segregated_storage_free(cc_simple_segregated_storage_t* ctx, const void* pointer);

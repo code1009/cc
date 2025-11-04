@@ -1,9 +1,9 @@
-﻿#ifndef cc_allocator_h
-#define cc_allocator_h
+﻿#ifndef cc_vallocator_h
+#define cc_vallocator_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_allocator.h
+// # File: cc_vallocator.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -17,21 +17,21 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef void* (*cc_alloc_t)(void* handle);
-typedef bool  (*cc_free_t) (void* handle, void* pointer);
+typedef void* (*cc_vallocate_t)(void* handle, size_t size);
+typedef bool  (*cc_vfree_t) (void* handle, void* pointer);
 
 
 
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_allocator_t
+typedef struct _cc_vallocator_t
 {
 	const void* handle;
-	cc_alloc_t alloc;
-	cc_free_t free;
+	cc_vallocate_t allocate;
+	cc_vfree_t free;
 }
-cc_allocator_t;
+cc_vallocator_t;
 
 
 
@@ -39,7 +39,7 @@ cc_allocator_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_allocator_initialize(cc_allocator_t* ctx, const void* handle, const cc_alloc_t alloc, const cc_free_t free);
+cc_api void cc_vallocator_initialize(cc_vallocator_t* ctx, const void* handle, const cc_vallocate_t allocate, const cc_vfree_t free);
 
 
 
@@ -47,5 +47,5 @@ cc_api void cc_allocator_initialize(cc_allocator_t* ctx, const void* handle, con
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_allocator_h
+#endif // cc_vallocator_h
 

@@ -29,9 +29,9 @@ typedef struct _item_t
 //===========================================================================
 typedef struct _item_pool_t
 {
-	cc_simple_segregated_storage_t storage;
+	cc_simple_segregated_storage_t simple_segregated_storage;
 	item_t memory[item_max_count];
-	cc_allocator_t allocator;
+	cc_fallocator_t allocator;
 }
 item_pool_t;
 
@@ -42,13 +42,13 @@ static item_pool_t _item_pool;
 static bool item_pool_initialize()
 {
 	bool rv;
-	rv = cc_simple_segregated_storage_allocator_initialize(
+	rv = cc_simple_segregated_storage_fallocator_initialize(
 		&_item_pool.allocator,
-		&_item_pool.storage, &_item_pool.memory[0], sizeof(_item_pool.memory), sizeof(item_t), item_max_count
+		&_item_pool.simple_segregated_storage, &_item_pool.memory[0], sizeof(_item_pool.memory), sizeof(item_t), item_max_count
 	);
 	if (rv == false)
 	{
-		test_out << "cc_simple_segregated_storage_allocator_initialize() failed" << test_tendl;
+		test_out << "cc_simple_segregated_storage_fallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}
@@ -57,15 +57,15 @@ static bool item_pool_initialize()
 
 static void item_pool_uninitialize()
 {
-	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.storage) << test_tendl;
+	test_out << "cc_simple_segregated_storage_count():" << cc_simple_segregated_storage_count(&_item_pool.simple_segregated_storage) << test_tendl;
 }
 
-static item_t* item_pool_alloc()
+static item_t* item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.alloc(&_item_pool.storage);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.simple_segregated_storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -75,7 +75,7 @@ static void item_pool_free(item_t* item)
 {
 	bool rv;
 
-	rv = _item_pool.allocator.free(&_item_pool.storage, item);
+	rv = _item_pool.allocator.free(&_item_pool.simple_segregated_storage, item);
 	if (rv == false)
 	{
 		test_out << "_item_pool.allocator.free() failed" << test_tendl;
@@ -102,6 +102,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -118,7 +123,12 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_map_count(&_items.container) << test_tendl;
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
+	test_out << "cc_map_count():" << cc_map_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -131,6 +141,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	test_assert(true == cc_map_empty(&_items.container));
 
 
@@ -145,7 +160,7 @@ static void add(void)
 	count = 5;
 	for (i = 0; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		if (item_pointer)
 		{
 			item_pointer->first = (int)i;
@@ -153,14 +168,14 @@ static void add(void)
 		}
 		else
 		{
-			test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+			test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 			break;
 		}
 
 		rv = cc_map_add(&_items.container, (void*)((uintptr_t)item_pointer->first), item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_map_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			break;
 		}
@@ -169,6 +184,11 @@ static void add(void)
 
 static void add2(void)
 {
+	test_out
+		<< "@add2()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -180,7 +200,7 @@ static void add2(void)
 	count = 10;
 	for (i = 5; i < count; i++)
 	{
-		item_pointer = item_pool_alloc();
+		item_pointer = item_pool_allocate();
 		if (item_pointer)
 		{
 			item_pointer->first = (int)i;
@@ -188,14 +208,14 @@ static void add2(void)
 		}
 		else
 		{
-			test_out << "item_pool_alloc() failed:" << test_tindex(i) << test_tendl;
+			test_out << "item_pool_allocate() failed:" << test_tindex(i) << test_tendl;
 			break;
 		}
 
 		rv = cc_map_add(&_items.container, (void*)((uintptr_t)item_pointer->first), item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_map_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			break;
 		}
@@ -204,6 +224,11 @@ static void add2(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	test_assert(false == cc_map_empty(&_items.container));
 
 
@@ -236,17 +261,27 @@ static void print(void)
 
 static void clear(void)
 {
+	test_out
+		<< "@clear()" << test_tendl
+		;
+
+
 	cc_map_clear(&_items.container);
 
 
 	test_assert(true == cc_map_empty(&_items.container));
 
 
-	test_assert(0 == cc_simple_segregated_storage_count(&_item_pool.storage));
+	test_assert(0 == cc_simple_segregated_storage_count(&_item_pool.simple_segregated_storage));
 }
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -269,17 +304,27 @@ static void release(void)
 
 static void lbound(void)
 {
+	test_out
+		<< "@lbound()" << test_tendl
+		;
+
+
 	test_assert(false == cc_map_empty(&_items.container));
 
 
 	size_t index;
 	index = cc_map_lower_bound(&_items.container, (void*)11);
-	test_out << "lower bound of 11:" << test_tindex(index) << test_tendl;
+	test_out << "cc_map_lower_bound(11): " << test_tindex(index) << test_tendl;
 	test_assert(index == cc_map_count(&_items.container));
 }
 
 static void find_and_erase(void)
 {
+	test_out
+		<< "@find_and_erase()" << test_tendl
+		;
+
+
 	test_assert(false == cc_map_empty(&_items.container));
 
 
@@ -299,18 +344,18 @@ static void find_and_erase(void)
 		rv = cc_map_erase(&_items.container, index);
 		if (false == rv)
 		{
-			test_out << "erase failed:" << test_tindex(index) << test_tendl;
+			test_out << "cc_map_erase() failed:" << test_tindex(index) << test_tendl;
 			test_assert(0);
 		}
 		else
 		{
-			test_out << "erase success:" << test_tindex(index) << item_pointer->first << "," << item_pointer->second << test_tendl;
+			test_out << "cc_map_erase() success:" << test_tindex(index) << item_pointer->first << "," << item_pointer->second << test_tendl;
 		}
 		item_pool_free(item_pointer);
 	}
 	else
 	{
-		test_out << "not found" << test_tendl;
+		test_out << "cc_map_find() failed: not found(5)" << test_tendl;
 		test_assert(0);
 	}
 
@@ -318,11 +363,11 @@ static void find_and_erase(void)
 	item_pointer = (item_t*)cc_map_element_second_by_first(&_items.container, (void*)4);
 	if (item_pointer)
 	{
-		test_out << "element:" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << "cc_map_element_second_by_first() success: " << item_pointer->first << "," << item_pointer->second << test_tendl;
 	}
 	else
 	{
-		test_out << "not found" << test_tendl;
+		test_out << "cc_map_element_second_by_first() failed: not found(4)" << test_tendl;
 		test_assert(0);
 	}
 }

@@ -145,9 +145,9 @@ cc_api static bool cc_item_key_equal(const void* left, const void* right)
 //===========================================================================
 typedef struct _cc_item_pool_t
 {
-	cc_simple_segregated_storage_t storage;
+	cc_simple_segregated_storage_t simple_segregated_storage;
 	item_t memory[item_max_count];
-	cc_allocator_t allocator;
+	cc_fallocator_t allocator;
 }
 cc_item_pool_t;
 
@@ -158,13 +158,13 @@ static cc_item_pool_t _cc_item_pool;
 static bool cc_item_pool_initialize()
 {
 	bool rv;
-	rv = cc_simple_segregated_storage_allocator_initialize(
+	rv = cc_simple_segregated_storage_fallocator_initialize(
 		&_cc_item_pool.allocator,
-		&_cc_item_pool.storage, &_cc_item_pool.memory[0], sizeof(_cc_item_pool.memory), sizeof(item_t), item_max_count
+		&_cc_item_pool.simple_segregated_storage, &_cc_item_pool.memory[0], sizeof(_cc_item_pool.memory), sizeof(item_t), item_max_count
 	);
 	if (rv == false)
 	{
-		test_out << "cc_simple_segregated_storage_allocator_initialize() failed" << test_tendl;
+		test_out << "cc_simple_segregated_storage_fallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}
@@ -173,15 +173,15 @@ static bool cc_item_pool_initialize()
 
 static void cc_item_pool_uninitialize()
 {
-	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_cc_item_pool.storage) << test_tendl;
+    test_out << "cc_simple_segregated_storage_count():" << cc_simple_segregated_storage_count(&_cc_item_pool.simple_segregated_storage) << test_tendl;
 }
 
-static item_t* cc_item_pool_alloc()
+static item_t* cc_item_pool_allocate()
 {
-	item_t* item_pointer = (item_t*)_cc_item_pool.allocator.alloc(&_cc_item_pool.storage);
+	item_t* item_pointer = (item_t*)_cc_item_pool.allocator.allocate(&_cc_item_pool.simple_segregated_storage);
 	if (item_pointer == NULL)
 	{
-		test_out << "_cc_item_pool.allocator.alloc() failed" << test_tendl;
+		test_out << "_cc_item_pool.allocator.allocate() failed" << test_tendl;
 		//test_assert(0);
 	}
 	return item_pointer;
@@ -191,7 +191,7 @@ static void cc_item_pool_free(item_t* item)
 {
 	bool rv;
 	
-	rv = _cc_item_pool.allocator.free(&_cc_item_pool.storage, item);
+	rv = _cc_item_pool.allocator.free(&_cc_item_pool.simple_segregated_storage, item);
 	if (rv == false)
 	{
 		test_out << "_cc_item_pool.allocator.free() failed" << test_tendl;
@@ -236,7 +236,7 @@ static bool cc_items_initialize()
 
 static void cc_items_uninitialize()
 {
-	test_out << "elements count:" << cc_unordered_map_count(&_cc_items.container) << test_tendl;
+	test_out << "cc_unordered_map_count():" << cc_unordered_map_count(&_cc_items.container) << test_tendl;
 
 	cc_item_pool_uninitialize();
 }
@@ -263,7 +263,7 @@ static void cc_add(std::vector<item_t>& source_items)
 	size_t count = source_items.size();
     for (size_t i = 0; i < count; ++i)
     {
-        item_t* item_pointer = cc_item_pool_alloc();
+        item_t* item_pointer = cc_item_pool_allocate();
         if (item_pointer == NULL)
         {
             continue;
@@ -418,8 +418,8 @@ static void stl_erase(std::vector<item_t>& source_items)
 static void cc_print_items(size_t items_count, size_t percent)
 {
     test_out
-        << "@ count=" << items_count
-        << "(" << percent << "%%)"
+        << "@count=" << items_count
+        << "(" << percent << "percents)"
         << test_tendl;
 
 
@@ -488,7 +488,7 @@ static void performance(std::ostream& oss, size_t count)
     percent = (count * 100) / item_max_count;
 
     oss
-        << "@" << percent << "%%:"
+        << "@" << percent << "percents:"
         << "count=" << count
         << std::endl
         ;

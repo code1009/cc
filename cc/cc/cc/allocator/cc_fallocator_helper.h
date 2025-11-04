@@ -1,9 +1,9 @@
-﻿#ifndef cc_version_h
-#define cc_version_h
+﻿#ifndef cc_fallocator_helper_h
+#define cc_fallocator_helper_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_version.h
+// # File: cc_fallocator_helper.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -17,12 +17,10 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_version_t
-{
-	uint32_t major;
-	uint32_t minor;
-}
-cc_version_t;
+cc_api bool cc_simple_segregated_storage_fallocator_initialize(
+	cc_fallocator_t* fallocator,
+	cc_simple_segregated_storage_t* simple_segregated_storage, const void* memory_pointer, const size_t memory_size, const size_t data_size, const size_t max_count
+);
 
 
 
@@ -30,14 +28,5 @@ cc_version_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_version(cc_version_t* ctx);
-cc_api bool cc_version_c_string(char* pointer, size_t max_count);
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-#endif // cc_version_h
+#endif // cc_fallocator_helper_h
 

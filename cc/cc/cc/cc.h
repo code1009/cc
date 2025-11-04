@@ -25,10 +25,15 @@
 //===========================================================================
 #include "cc_version.h"
 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#include "allocator/cc_allocator.h"
+#include "allocator/cc_fallocator.h"
 #include "allocator/cc_simple_segregated_storage.h"
-#include "allocator/cc_allocator_helper.h"
+#include "allocator/cc_fallocator_helper.h"
 
 //===========================================================================
 #include "algorithm/cc_hash.h"
@@ -58,7 +63,18 @@
 #include "container/cc_priority_queue.h"
 
 //===========================================================================
-#include "algorithm/cc_collection_sort.h"
+#include "algorithm/cc_sort.h"
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#include "dynamic/cc_vallocator.h"
+#include "dynamic/cc_first_fit.h"
+#include "dynamic/cc_heap_memory.h"
+#include "dynamic/cc_vallocator_helper.h"
 
 
 
