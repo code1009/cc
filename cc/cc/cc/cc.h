@@ -31,8 +31,9 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#include "allocator/cc_fallocator.h"
 #include "allocator/cc_simple_segregated_storage.h"
+
+#include "allocator/cc_fallocator.h"
 #include "allocator/cc_fallocator_helper.h"
 
 //===========================================================================
@@ -50,6 +51,8 @@
 //===========================================================================
 #include "container/cc_collection.h"
 #include "container/cc_pair_collection.h"
+
+//===========================================================================
 #include "container/cc_vector.h"
 #include "container/cc_deque.h"
 #include "container/cc_queue.h"
@@ -71,9 +74,10 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#include "dynamic/cc_vallocator.h"
 #include "dynamic/cc_first_fit.h"
 #include "dynamic/cc_heap_memory.h"
+
+#include "dynamic/cc_vallocator.h"
 #include "dynamic/cc_vallocator_helper.h"
 
 
