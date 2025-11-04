@@ -28,28 +28,31 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline size_t cc_first_fit_storage_calc_aligned_size(size_t v, size_t alignment_size)
-{
-	cc_debug_assert(alignment_size != 0);
-
-
-	size_t count;
-	count = v / alignment_size;
-	if (0U != (v % alignment_size))
-	{
-		count++;
-	}
-	return alignment_size * count;
-}
-
-static inline size_t cc_first_fit_storage_alignment_size(void)
+static inline size_t cc_first_fit_storage_alignment(void)
 {
 	return sizeof(void*);
 }
 
-static inline bool cc_first_fit_storage_is_aligned_address(const uintptr_t address)
+static inline size_t cc_first_fit_storage_align(size_t value, size_t alignment)
 {
-	return (0U == (address % cc_first_fit_storage_alignment_size()));
+	cc_debug_assert(alignment != 0);
+
+
+	size_t count;
+	count = value / alignment;
+	if (0U != (value % alignment))
+	{
+		count++;
+	}
+	return alignment * count;
+}
+
+static inline bool cc_first_fit_storage_is_aligned(const uintptr_t value, size_t alignment)
+{
+	cc_debug_assert(alignment != 0);
+
+
+	return (0U == (value % alignment));
 }
 
 
@@ -125,23 +128,18 @@ static inline void cc_first_fit_storage_block_head_add_size(cc_first_fit_storage
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline size_t cc_first_fit_storage_block_alignment_size(void)
+static inline size_t cc_first_fit_storage_block_head_aligned_size(void)
 {
-	return sizeof(void*);
+	return  cc_first_fit_storage_align(sizeof(cc_first_fit_storage_block_head_t), cc_first_fit_storage_alignment());
 }
 
 //===========================================================================
-static inline size_t cc_first_fit_storage_calc_block_head_aligned_size(void)
-{
-	return  cc_first_fit_storage_calc_aligned_size(sizeof(cc_first_fit_storage_block_head_t), cc_first_fit_storage_alignment_size());
-}
-
 static inline size_t cc_first_fit_storage_block_payload_minimal_size(void)
 {
-	return cc_first_fit_storage_calc_block_head_aligned_size();
+	return cc_first_fit_storage_block_head_aligned_size();
 }
 
-static inline size_t cc_first_fit_storage_calc_block_payload_aligned_size(const size_t block_payload_size)
+static inline size_t cc_first_fit_storage_block_payload_aligned_size(const size_t block_payload_size)
 {
 	size_t size;
 	if (block_payload_size < cc_first_fit_storage_block_payload_minimal_size())
@@ -152,17 +150,28 @@ static inline size_t cc_first_fit_storage_calc_block_payload_aligned_size(const 
 	{
 		size = block_payload_size;
 	}
-	return  cc_first_fit_storage_calc_aligned_size(size, cc_first_fit_storage_alignment_size());
+	return  cc_first_fit_storage_align(size, cc_first_fit_storage_alignment());
 }
 
-static inline size_t cc_first_fit_storage_calc_block_aligned_size(const size_t block_payload_size)
+//===========================================================================
+static inline size_t cc_first_fit_storage_block_alignment_size(void)
 {
-	return  cc_first_fit_storage_calc_aligned_size(
-		cc_first_fit_storage_calc_block_head_aligned_size() + cc_first_fit_storage_calc_block_payload_aligned_size(block_payload_size),
+	return cc_first_fit_storage_block_head_aligned_size();
+}
+
+static inline size_t cc_first_fit_storage_block_aligned_size(const size_t block_payload_size)
+{
+	return  cc_first_fit_storage_align(
+		cc_first_fit_storage_block_head_aligned_size() + cc_first_fit_storage_block_payload_aligned_size(block_payload_size),
 		cc_first_fit_storage_block_alignment_size()
 	);
 }
 
+//===========================================================================
+static inline size_t cc_first_fit_storage_block_size(const size_t payload_size)
+{
+	return cc_first_fit_storage_block_aligned_size(payload_size);
+}
 
 
 
@@ -172,25 +181,15 @@ static inline size_t cc_first_fit_storage_calc_block_aligned_size(const size_t b
 static inline void* cc_first_fit_storage_block_payload_pointer(const cc_first_fit_storage_t* ctx, const cc_first_fit_storage_block_head_t* block_head)
 {
 	uintptr_t address = (uintptr_t)block_head;
-	return (void*)(address + cc_first_fit_storage_calc_block_head_aligned_size());
+	return (void*)(address + cc_first_fit_storage_block_head_aligned_size());
 }
 
 static inline cc_first_fit_storage_block_head_t* cc_first_fit_storage_block_head_pointer(const cc_first_fit_storage_t* ctx, const void* block_payload)
 {
 	uintptr_t address = (uintptr_t)block_payload;
-	return (cc_first_fit_storage_block_head_t*)(address - cc_first_fit_storage_calc_block_head_aligned_size());
+	return (cc_first_fit_storage_block_head_t*)(address - cc_first_fit_storage_block_head_aligned_size());
 }
 
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-static inline size_t cc_first_fit_storage_calc_block_size(const size_t payload_size)
-{
-	return cc_first_fit_storage_calc_block_aligned_size(payload_size);
-}
 
 
 
@@ -306,11 +305,11 @@ cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const v
 
 
 	//-----------------------------------------------------------------------
-	if (cc_first_fit_storage_is_aligned_address((uintptr_t)memory_pointer) == false)
+	if (cc_first_fit_storage_is_aligned((uintptr_t)memory_pointer, cc_first_fit_storage_alignment()) == false)
 	{
 		return false;
 	}
-	if (memory_size < cc_first_fit_storage_calc_block_head_aligned_size())
+	if (memory_size < cc_first_fit_storage_block_head_aligned_size())
 	{
 		return false;
 	}
@@ -343,8 +342,8 @@ cc_api bool cc_first_fit_storage_initialize(cc_first_fit_storage_t* ctx, const v
 	pointer = ctx->memory_pointer;
 	begin_block = (cc_first_fit_storage_block_head_t*)(pointer);
 
-	count = ctx->memory_size / cc_first_fit_storage_calc_block_head_aligned_size();
-	offset = (count - 1) * cc_first_fit_storage_calc_block_head_aligned_size();
+	count = ctx->memory_size / cc_first_fit_storage_block_head_aligned_size();
+	offset = (count - 1) * cc_first_fit_storage_block_head_aligned_size();
 	end_block = (cc_first_fit_storage_block_head_t*)(pointer + offset);
 
 
@@ -388,7 +387,7 @@ cc_api void* cc_first_fit_storage_allocate(cc_first_fit_storage_t* ctx, const si
 
 
 	//-----------------------------------------------------------------------
-	size_t block_size = cc_first_fit_storage_calc_block_size(size);
+	size_t block_size = cc_first_fit_storage_block_size(size);
 	if (ctx->free_size  < block_size)
 	{
 		return NULL;
@@ -417,7 +416,7 @@ cc_api void* cc_first_fit_storage_allocate(cc_first_fit_storage_t* ctx, const si
 
 
 		size_t remaining_size = cc_first_fit_storage_block_head_get_size(block) - block_size;
-		if (remaining_size > cc_first_fit_storage_calc_block_aligned_size(0))
+		if (remaining_size > cc_first_fit_storage_block_aligned_size(0))
 		{
 			uintptr_t address = (uintptr_t)block;
 

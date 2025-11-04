@@ -51,7 +51,7 @@ cc_simple_segregated_storage_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_size, const size_t max_count);
+cc_api size_t cc_simple_segregated_storage_memory_size(const size_t data_size, const size_t max_count);
 cc_api bool   cc_simple_segregated_storage_validate_pointer(const cc_simple_segregated_storage_t* ctx, const void* pointer);
 
 

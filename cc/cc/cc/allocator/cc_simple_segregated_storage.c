@@ -63,7 +63,7 @@ static inline size_t cc_simple_segregated_storage_chunk_alignment_size(void)
 	return cc_simple_segregated_storage_alignment();
 }
 
-static inline size_t cc_simple_segregated_storage_calc_chunk_size(const size_t data_size)
+static inline size_t cc_simple_segregated_storage_chunk_size(const size_t data_size)
 {
 	return cc_simple_segregated_storage_align(data_size, cc_simple_segregated_storage_chunk_alignment_size());
 }
@@ -74,14 +74,14 @@ static inline size_t cc_simple_segregated_storage_calc_chunk_size(const size_t d
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api size_t cc_simple_segregated_storage_calc_memory_size(const size_t data_size, const size_t max_count)
+cc_api size_t cc_simple_segregated_storage_memory_size(const size_t data_size, const size_t max_count)
 {
 	size_t chunk_size;
 	size_t memory_size;
 	size_t max_memory_size;
 
 
-	chunk_size = cc_simple_segregated_storage_calc_chunk_size(data_size);
+	chunk_size = cc_simple_segregated_storage_chunk_size(data_size);
 	max_memory_size = (size_t)-1;
 	if (max_count > (max_memory_size / chunk_size))
 	{
@@ -141,7 +141,7 @@ cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage
 
 
 	//-----------------------------------------------------------------------
-	if (cc_simple_segregated_storage_is_aligned((uintptr_t)memory_pointer, cc_simple_segregated_storage_chunk_alignment_size()) == false)
+	if (cc_simple_segregated_storage_is_aligned((uintptr_t)memory_pointer, cc_simple_segregated_storage_alignment()) == false)
 	{
 		return false;
 	}
@@ -158,13 +158,13 @@ cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage
 
 
 	//-----------------------------------------------------------------------
-	ctx->chunk_size = cc_simple_segregated_storage_calc_chunk_size(data_size);
+	ctx->chunk_size = cc_simple_segregated_storage_chunk_size(data_size);
 	ctx->count = 0;
 	ctx->free_chunk_head = NULL;
 
 
 	//-----------------------------------------------------------------------
-	if (ctx->memory_size < cc_simple_segregated_storage_calc_memory_size(data_size, max_count))
+	if (ctx->memory_size < cc_simple_segregated_storage_memory_size(data_size, max_count))
 	{
 		return false;
 	}
