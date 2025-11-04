@@ -56,6 +56,7 @@ cc_api bool cc_first_fit_validate_pointer(const cc_first_fit_t* ctx, const void*
 
 
 
+
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 cc_api bool cc_first_fit_initialize(cc_first_fit_t* ctx, const void* memory_pointer, const size_t memory_size);
