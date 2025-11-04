@@ -118,7 +118,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_map_count(&_items.container) << test_tendl;
+	test_out << "cc_map_count():" << cc_map_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -160,7 +160,7 @@ static void add(void)
 		rv = cc_map_add(&_items.container, (void*)((uintptr_t)item_pointer->first), item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_map_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			break;
 		}
@@ -195,7 +195,7 @@ static void add2(void)
 		rv = cc_map_add(&_items.container, (void*)((uintptr_t)item_pointer->first), item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_map_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			break;
 		}
@@ -274,7 +274,7 @@ static void lbound(void)
 
 	size_t index;
 	index = cc_map_lower_bound(&_items.container, (void*)11);
-	test_out << "lower bound of 11:" << test_tindex(index) << test_tendl;
+	test_out << "cc_map_lower_bound(11): " << test_tindex(index) << test_tendl;
 	test_assert(index == cc_map_count(&_items.container));
 }
 
@@ -299,18 +299,18 @@ static void find_and_erase(void)
 		rv = cc_map_erase(&_items.container, index);
 		if (false == rv)
 		{
-			test_out << "erase failed:" << test_tindex(index) << test_tendl;
+			test_out << "cc_map_erase() failed:" << test_tindex(index) << test_tendl;
 			test_assert(0);
 		}
 		else
 		{
-			test_out << "erase success:" << test_tindex(index) << item_pointer->first << "," << item_pointer->second << test_tendl;
+			test_out << "cc_map_erase() success:" << test_tindex(index) << item_pointer->first << "," << item_pointer->second << test_tendl;
 		}
 		item_pool_free(item_pointer);
 	}
 	else
 	{
-		test_out << "not found" << test_tendl;
+		test_out << "cc_map_find() failed: not found(5)" << test_tendl;
 		test_assert(0);
 	}
 
@@ -318,11 +318,11 @@ static void find_and_erase(void)
 	item_pointer = (item_t*)cc_map_element_second_by_first(&_items.container, (void*)4);
 	if (item_pointer)
 	{
-		test_out << "element:" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << "cc_map_element_second_by_first() success: " << item_pointer->first << "," << item_pointer->second << test_tendl;
 	}
 	else
 	{
-		test_out << "not found" << test_tendl;
+		test_out << "cc_map_element_second_by_first() failed: not found(4)" << test_tendl;
 		test_assert(0);
 	}
 }

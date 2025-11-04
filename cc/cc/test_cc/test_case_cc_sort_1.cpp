@@ -119,7 +119,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_vector_count(&_items.container) << test_tendl;
+	test_out << "cc_vector_count():" << cc_vector_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -169,7 +169,7 @@ static void add(void)
 		rv = cc_vector_add(&_items.container, item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_vector_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(item_max_count == i);
 			break;

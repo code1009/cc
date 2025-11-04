@@ -236,7 +236,7 @@ static bool cc_items_initialize()
 
 static void cc_items_uninitialize()
 {
-	test_out << "elements count:" << cc_unordered_map_count(&_cc_items.container) << test_tendl;
+	test_out << "cc_unordered_map_count():" << cc_unordered_map_count(&_cc_items.container) << test_tendl;
 
 	cc_item_pool_uninitialize();
 }

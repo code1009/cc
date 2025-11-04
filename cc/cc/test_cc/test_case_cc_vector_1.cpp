@@ -62,7 +62,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_vector_count(&_items.container) << test_tendl;
+	test_out << "cc_vector_count():" << cc_vector_count(&_items.container) << test_tendl;
 }
 
 
@@ -98,7 +98,7 @@ static void add(void)
 		rv = cc_vector_add(&_items.container, item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_vector_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(item_max_count == i);
 			break;
@@ -129,12 +129,12 @@ static void erase(void)
 	rv = cc_vector_erase(&_items.container, i);
 	if (false == rv)
 	{
-		test_out << "erase failed:" << test_tindex(i) << test_tendl;
+		test_out << "cc_vector_erase() failed:" << test_tindex(i) << test_tendl;
 		test_assert(0);
 	}
 	else
 	{
-		test_out << "erase success:" << test_tindex(i) << item_pointer->value << test_tendl;
+		test_out << "cc_vector_erase() success:" << test_tindex(i) << item_pointer->value << test_tendl;
 		item_pool_free(item_pointer);
 	}
 }
@@ -157,11 +157,11 @@ static void insert(void)
 		rv = cc_vector_insert(&_items.container, i, item_pointer);
 		if (rv)
 		{
-			test_out << "insert success:" << test_tindex(i) << test_tendl;
+			test_out << "cc_vector_insert() success:" << test_tindex(i) << test_tendl;
 		}
 		else
 		{
-			test_out << "insert failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_vector_insert() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 		}
 	}

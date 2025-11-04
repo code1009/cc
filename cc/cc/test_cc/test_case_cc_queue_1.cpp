@@ -119,7 +119,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_queue_count(&_items.container) << test_tendl;
+	test_out << "cc_queue_count():" << cc_queue_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -152,7 +152,7 @@ static void add(void)
 		rv = cc_queue_push(&_items.container, item_pointer);
 		if (rv == false)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_queue_push() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(0);
 		}

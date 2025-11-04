@@ -124,7 +124,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_forward_list_count(&_items.container) << test_tendl;
+	test_out << "cc_forward_list_count():" << cc_forward_list_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -162,7 +162,7 @@ static void add(void)
 		current_node = cc_forward_list_insert_after(&_items.container, previous_node, item_pointer);
 		if (current_node == NULL)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_forward_list_insert_after() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(0);
 		}

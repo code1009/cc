@@ -119,7 +119,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_deque_count(&_items.container) << test_tendl;
+	test_out << "cc_deque_count():" << cc_deque_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -155,7 +155,7 @@ static void add(void)
 		rv = cc_deque_push_back(&_items.container, item_pointer);
 		if (rv == false)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_deque_push_back() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(0);
 		}
@@ -222,7 +222,7 @@ static void push_back(void)
 		rv = cc_deque_push_back(&_items.container, item_pointer);
 		if (rv == false)
 		{
-			test_out << "push_back failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_deque_push_back() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(0);
 		}
@@ -263,7 +263,7 @@ static void push_front(void)
 		rv = cc_deque_push_front(&_items.container, item_pointer);
 		if (rv == false)
 		{
-			test_out << "push_front failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_deque_push_front() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(0);
 		}

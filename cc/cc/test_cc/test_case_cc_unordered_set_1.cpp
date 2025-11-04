@@ -150,7 +150,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_unordered_set_count(&_items.container) << test_tendl;
+	test_out << "cc_unordered_set_count():" << cc_unordered_set_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
 }
@@ -190,7 +190,7 @@ static void add(void)
 		rv = cc_unordered_set_add(&_items.container, item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_unordered_set_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			test_assert(item_max_count == i);
 			break;
@@ -274,18 +274,18 @@ static void find_and_erase(void)
 		rv = cc_unordered_set_erase(&_items.container, index);
 		if (false == rv)
 		{
-			test_out << "erase failed:" << test_tindex(index) << test_tendl;
+			test_out << "cc_unordered_set_erase() failed:" << test_tindex(index) << test_tendl;
 			test_assert(0);
 		}
 		else
 		{
-			test_out << "erase success:" << test_tindex(index) << item_pointer->key1 << "-" << item_pointer->key2 << test_tendl;
+			test_out << "cc_unordered_set_erase() success:" << test_tindex(index) << item_pointer->key1 << "-" << item_pointer->key2 << test_tendl;
 		}
 		item_pool_free(item_pointer);
 	}
 	else
 	{
-		test_out << "not found" << test_tendl;
+		test_out << "cc_unordered_set_find() failed: not found" << test_tendl;
 		test_assert(0);
 	}
 }

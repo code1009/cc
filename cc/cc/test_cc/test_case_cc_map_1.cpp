@@ -189,7 +189,7 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
-	test_out << "elements count:" << cc_map_count(&_items.container) << test_tendl;
+	test_out << "cc_map_count():" << cc_map_count(&_items.container) << test_tendl;
 
 	key_pool_uninitialize();
 	item_pool_uninitialize();
@@ -249,7 +249,7 @@ static void add(void)
 		rv = cc_map_add(&_items.container, key_pointer, item_pointer);
 		if (false == rv)
 		{
-			test_out << "add failed:" << test_tindex(i) << test_tendl;
+			test_out << "cc_map_add() failed:" << test_tindex(i) << test_tendl;
 			item_pool_free(item_pointer);
 			key_pool_free(key_pointer);
 			test_assert(0);
