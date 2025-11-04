@@ -6,7 +6,7 @@
 // # Created on: 09-18, 2025.
 // 
 // # Description:
-// @ Low fragmentation heap memory
+// @ Low fragmentation heap memory.
 // 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
@@ -31,12 +31,27 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+static inline bool cc_heap_memory_add_overflow(const size_t a, const size_t b)
+{
+	return (a > ((size_t)-1 - b));
+}
+
+static inline bool cc_heap_memory_mul_overflow(const size_t a, const size_t b)
+{
+	if (a == 0 || b == 0)
+	{
+		return false;
+	}
+	size_t c = ((size_t)-1) / b;
+	return (a > c);
+}
+
 static inline size_t cc_heap_memory_alignment(void)
 {
 	return sizeof(void*);
 }
 
-static inline size_t cc_heap_memory_align(size_t value, size_t alignment)
+static inline size_t cc_heap_memory_align(const size_t value, const size_t alignment)
 {
 	cc_debug_assert(alignment != 0);
 
@@ -47,10 +62,14 @@ static inline size_t cc_heap_memory_align(size_t value, size_t alignment)
 	{
 		count++;
 	}
+	if (cc_heap_memory_mul_overflow(alignment, count))
+	{
+		return cc_invalid_size;
+	}
 	return alignment * count;
 }
 
-static inline bool cc_heap_memory_is_aligned(const uintptr_t value, size_t alignment)
+static inline bool cc_heap_memory_is_aligned(const uintptr_t value, const size_t alignment)
 {
 	cc_debug_assert(alignment != 0);
 
@@ -85,8 +104,12 @@ static inline size_t cc_heap_memory_buckets_alignment_size(void)
 	return cc_heap_memory_align(sizeof(cc_first_fit_block_head_t), cc_heap_memory_alignment());
 }
 
-static inline size_t cc_heap_memory_buckets_aligned_size(size_t bucket_count)
+static inline size_t cc_heap_memory_buckets_aligned_size(const size_t bucket_count)
 {
+	if (cc_heap_memory_mul_overflow(sizeof(cc_heap_bucket_t), bucket_count))
+	{
+		return cc_invalid_size;
+	}
 	return cc_heap_memory_align(sizeof(cc_heap_bucket_t) * bucket_count, cc_heap_memory_buckets_alignment_size());
 }
 
@@ -117,15 +140,21 @@ static inline size_t cc_heap_memory_bucket_region_head_aligned_size(void)
 	return cc_heap_memory_align(sizeof(cc_heap_bucket_region_head_t), cc_heap_memory_bucket_region_head_alignment_size());
 }
 
-static inline size_t cc_heap_memory_bucket_region_body_aligned_size(size_t body_size)
+static inline size_t cc_heap_memory_bucket_region_body_aligned_size(const size_t body_size)
 {
 	return cc_heap_memory_align(body_size, cc_heap_memory_bucket_region_body_alignment_size());
 }
 
-static inline size_t cc_heap_memory_bucket_region_aligned_size(size_t body_size)
+static inline size_t cc_heap_memory_bucket_region_aligned_size(const size_t body_size)
 {
+	size_t head_aligned_size = cc_heap_memory_bucket_region_head_aligned_size();
+	size_t body_aligned_size = cc_heap_memory_bucket_region_body_aligned_size(body_size);
+	if (cc_heap_memory_add_overflow(head_aligned_size, body_aligned_size))
+	{
+		return cc_invalid_size;
+	}
 	return cc_heap_memory_align(
-		cc_heap_memory_bucket_region_head_aligned_size() + cc_heap_memory_bucket_region_body_aligned_size(body_size),
+		head_aligned_size + body_aligned_size,
 		cc_heap_memory_bucket_region_alignment_size()
 	);
 }
@@ -136,7 +165,7 @@ static inline size_t cc_heap_memory_bucket_region_aligned_size(size_t body_size)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline cc_heap_bucket_t* cc_heap_memory_find_bucket(const cc_heap_memory_t* ctx, size_t size)
+static inline cc_heap_bucket_t* cc_heap_memory_find_bucket(const cc_heap_memory_t* ctx, const size_t size)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -221,7 +250,7 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_add_bucket_region(cc_
 	return bucket_region_head;
 }
 
-static inline void* cc_heap_memory_allocate_from_bucket(cc_heap_bucket_t* bucket)
+static inline void* cc_heap_memory_allocate_from_bucket(const cc_heap_bucket_t* bucket)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(bucket != NULL);
@@ -320,6 +349,13 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	}
 
 
+	size_t buckets_size = cc_heap_memory_buckets_aligned_size(bucket_descriptors->count);
+	if (cc_invalid_size == buckets_size)
+	{
+		return false;
+	}
+
+
 	//-----------------------------------------------------------------------
 	bool rv; 
 
@@ -331,7 +367,6 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 
 
 	//-----------------------------------------------------------------------
-	size_t buckets_size = cc_heap_memory_buckets_aligned_size(bucket_descriptors->count);
 	cc_heap_bucket_t* buckets = cc_first_fit_allocate(&ctx->first_fit, buckets_size);
 	if (buckets == NULL)
 	{
@@ -367,7 +402,19 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 			return false;
 		}
 		bucket_region_size = cc_heap_memory_bucket_region_aligned_size(simple_segregated_storage_memory_size);
-		required_memory_size = first_fit_block_head_size + bucket_region_size;		
+		if (cc_invalid_size == bucket_region_size)
+		{
+			cc_first_fit_free(&ctx->first_fit, buckets);
+			return false;
+		}
+		if (cc_heap_memory_add_overflow(first_fit_block_head_size, bucket_region_size))
+		{
+			cc_first_fit_free(&ctx->first_fit, buckets);
+			return false;
+		}
+
+
+		required_memory_size = first_fit_block_head_size + bucket_region_size;
 		if (ctx->first_fit.free_size < required_memory_size)
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);

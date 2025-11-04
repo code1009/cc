@@ -6,7 +6,7 @@
 // # Created on: 09-18, 2025.
 // 
 // # Description:
-// @ first-fit allocator with boundary-tag coalescing
+// @ First-fit allocator with boundary-tag coalescing.
 // 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
@@ -28,12 +28,22 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+static inline bool cc_first_fit_mul_overflow(const size_t a, const size_t b)
+{
+	if (a == 0 || b == 0)
+	{
+		return false;
+	}
+	size_t c = ((size_t)-1) / b;
+	return (a > c);
+}
+
 static inline size_t cc_first_fit_alignment(void)
 {
 	return sizeof(void*);
 }
 
-static inline size_t cc_first_fit_align(size_t value, size_t alignment)
+static inline size_t cc_first_fit_align(const size_t value, size_t const alignment)
 {
 	cc_debug_assert(alignment != 0);
 
@@ -44,10 +54,14 @@ static inline size_t cc_first_fit_align(size_t value, size_t alignment)
 	{
 		count++;
 	}
+	if (cc_first_fit_mul_overflow(alignment, count))
+	{
+		return cc_invalid_size;
+	}
 	return alignment * count;
 }
 
-static inline bool cc_first_fit_is_aligned(const uintptr_t value, size_t alignment)
+static inline bool cc_first_fit_is_aligned(const uintptr_t value, const size_t alignment)
 {
 	cc_debug_assert(alignment != 0);
 
@@ -65,17 +79,20 @@ static inline bool cc_first_fit_is_aligned(const uintptr_t value, size_t alignme
 #define cc_first_fit_block_status_allocated 1U
 
 //===========================================================================
-static inline size_t cc_first_fit_block_head_flags_make(size_t size, bool allocated)
+static inline size_t cc_first_fit_block_head_flags_make(const size_t size, const bool allocated)
 {
+	cc_debug_assert(size <= (((size_t)-1) >> 1));
+
+
 	return (size << 1) | (allocated ? 1u : 0u);
 }
 
-static inline size_t cc_first_fit_block_head_flags_size(size_t flags)
+static inline size_t cc_first_fit_block_head_flags_size(const size_t flags)
 {
 	return flags >> 1;
 }
 
-static inline bool cc_first_fit_block_head_flags_allocated(size_t flags)
+static inline bool cc_first_fit_block_head_flags_allocated(const size_t flags)
 {
 	return (flags & 1u) == cc_first_fit_block_status_allocated;
 }
@@ -91,12 +108,12 @@ static inline bool cc_first_fit_block_head_is_allocated(cc_first_fit_block_head_
 	return cc_first_fit_block_head_flags_allocated(ctx->flags);
 }
 
-static inline void cc_first_fit_block_head_set_flags(cc_first_fit_block_head_t* ctx, size_t size, bool allocated)
+static inline void cc_first_fit_block_head_set_flags(cc_first_fit_block_head_t* ctx, const size_t size, const bool allocated)
 {	
 	ctx->flags = cc_first_fit_block_head_flags_make(size, allocated);
 }
 
-static inline void cc_first_fit_block_head_set_allocated(cc_first_fit_block_head_t* ctx, bool allocated)
+static inline void cc_first_fit_block_head_set_allocated(cc_first_fit_block_head_t* ctx, const bool allocated)
 {
 	cc_first_fit_block_head_set_flags(
 		ctx,
@@ -105,7 +122,7 @@ static inline void cc_first_fit_block_head_set_allocated(cc_first_fit_block_head
 	);
 }
 
-static inline void cc_first_fit_block_head_set_size(cc_first_fit_block_head_t* ctx, size_t size)
+static inline void cc_first_fit_block_head_set_size(cc_first_fit_block_head_t* ctx, const size_t size)
 {
 	cc_first_fit_block_head_set_flags(
 		ctx,
@@ -114,7 +131,7 @@ static inline void cc_first_fit_block_head_set_size(cc_first_fit_block_head_t* c
 	);
 }
 
-static inline void cc_first_fit_block_head_add_size(cc_first_fit_block_head_t* ctx, size_t size)
+static inline void cc_first_fit_block_head_add_size(cc_first_fit_block_head_t* ctx, const size_t size)
 {
 	cc_first_fit_block_head_set_size(
 		ctx,
