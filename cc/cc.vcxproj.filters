@@ -28,6 +28,9 @@
     <Filter Include="doc">
       <UniqueIdentifier>{b7f3a699-0dc3-4ac4-ac3d-9dd17a7c744d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cc\cc\dynamic">
+      <UniqueIdentifier>{f9c52b3b-f226-42a1-86a6-3b395dc26dea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cc\tester\test_output.cpp">
@@ -177,23 +180,23 @@
     <ClCompile Include="cc\cc\cc_version.c">
       <Filter>cc\cc</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_first_fit.c">
-      <Filter>cc\cc\allocator</Filter>
-    </ClCompile>
     <ClCompile Include="cc\test_cc\test_case_cc_first_fit_1.cpp">
       <Filter>cc\test_cc</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_vallocator.c">
-      <Filter>cc\cc\allocator</Filter>
-    </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_vallocator_helper.c">
-      <Filter>cc\cc\allocator</Filter>
-    </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_heap_memory.c">
-      <Filter>cc\cc\allocator</Filter>
-    </ClCompile>
     <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp">
       <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_first_fit.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator_helper.c">
+      <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,17 +314,17 @@
     <ClInclude Include="cc\cc\cc_version.h">
       <Filter>cc\cc</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_first_fit.h">
-      <Filter>cc\cc\allocator</Filter>
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator_helper.h">
+      <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_vallocator.h">
-      <Filter>cc\cc\allocator</Filter>
+    <ClInclude Include="cc\cc\dynamic\cc_first_fit.h">
+      <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_vallocator_helper.h">
-      <Filter>cc\cc\allocator</Filter>
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h">
+      <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_heap_memory.h">
-      <Filter>cc\cc\allocator</Filter>
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator.h">
+      <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

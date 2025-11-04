@@ -20,7 +20,7 @@
 #include "../cc_export.h"
 
 //===========================================================================
-#include "cc_simple_segregated_storage.h"
+#include "../allocator/cc_simple_segregated_storage.h"
 #include "cc_first_fit.h"
 
 #include "cc_heap_memory.h"
