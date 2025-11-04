@@ -103,6 +103,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -124,6 +129,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_list_count():" << cc_list_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
@@ -137,6 +147,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	test_assert(true == cc_list_empty(&_items.container));
 
 
@@ -176,6 +191,11 @@ static void add(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	test_assert(false == cc_list_empty(&_items.container));
 
 
@@ -198,6 +218,11 @@ static void print(void)
 
 static void clear(void)
 {
+	test_out
+		<< "@clear()" << test_tendl
+		;
+
+
 	cc_list_clear(&_items.container);
 
 
@@ -209,6 +234,11 @@ static void clear(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 	cc_dnode_t* node;
@@ -232,6 +262,11 @@ static void release(void)
 
 static void erase(void)
 {
+	test_out
+		<< "@erase()" << test_tendl
+		;
+
+
 	test_assert(false == cc_list_empty(&_items.container));
 
 
@@ -267,6 +302,11 @@ static void erase(void)
 
 static void insert_and_order(void)
 {
+	test_out
+		<< "@insert_and_order()" << test_tendl
+		;
+
+
 	test_assert(true == cc_list_empty(&_items.container));
 
 
@@ -356,6 +396,11 @@ static void insert_and_order(void)
 
 static void erase_middle(void)
 {
+	test_out
+		<< "@erase_middle()" << test_tendl
+		;
+
+
 	test_assert(true == cc_list_empty(&_items.container));
 
 

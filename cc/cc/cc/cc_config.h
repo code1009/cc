@@ -26,7 +26,7 @@
 //===========================================================================
 // @ quicksort algorithm 사용 여부 설정
 // - mcu 환경에서는 재귀 깊이로 인한 스택 오버플로우 위험이 있어 비권장
-#define cc_config_algorithm_quicksort 0
+#define cc_config_algorithm_quicksort 1
 
 
 

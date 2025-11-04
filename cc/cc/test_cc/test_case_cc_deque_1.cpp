@@ -103,6 +103,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -119,6 +124,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_deque_count():" << cc_deque_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
@@ -132,6 +142,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	test_assert(true==cc_deque_empty(&_items.container));
 
 
@@ -172,6 +187,11 @@ static void add(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	test_assert(false == cc_deque_empty(&_items.container));
 
 
@@ -187,7 +207,7 @@ static void release(void)
 		item_pointer = (item_t*)cc_deque_pop_front(&_items.container);
 		test_assert(item_pointer != NULL);
 
-		test_out << "release:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 
 		item_pool_free(item_pointer);
 	}
@@ -199,6 +219,11 @@ static void release(void)
 
 static void push_back(void)
 {
+	test_out
+		<< "@push_back()" << test_tendl
+		;
+
+
 	test_assert(true == cc_deque_empty(&_items.container));
 
 
@@ -227,7 +252,7 @@ static void push_back(void)
 			test_assert(0);
 		}
 
-		test_out << "push_back:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 	}
 
 
@@ -240,6 +265,11 @@ static void push_back(void)
 
 static void push_front(void)
 {
+	test_out
+		<< "@push_front()" << test_tendl
+		;
+
+
 	test_assert(true == cc_deque_empty(&_items.container));
 
 
@@ -268,7 +298,7 @@ static void push_front(void)
 			test_assert(0);
 		}
 
-		test_out << "push_front:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 	}
 
 
@@ -281,6 +311,11 @@ static void push_front(void)
 
 static void pop_front(void)
 {
+	test_out
+		<< "@pop_front()" << test_tendl
+		;
+
+
 	test_assert(false == cc_deque_empty(&_items.container));
 
 
@@ -296,7 +331,7 @@ static void pop_front(void)
 		item_pointer = (item_t*)cc_deque_pop_front(&_items.container);
 		test_assert(item_pointer != NULL);
 
-		test_out << "pop_front:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 
 		item_pool_free(item_pointer);
 	}
@@ -308,6 +343,11 @@ static void pop_front(void)
 
 static void pop_back(void)
 {
+	test_out
+		<< "@pop_back()" << test_tendl
+		;
+
+
 	test_assert(false == cc_deque_empty(&_items.container));
 
 
@@ -323,7 +363,7 @@ static void pop_back(void)
 		item_pointer = (item_t*)cc_deque_pop_back(&_items.container);
 		test_assert(item_pointer != NULL);
 
-		test_out << "pop_back:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 
 		item_pool_free(item_pointer);
 	}
@@ -335,6 +375,11 @@ static void pop_back(void)
 
 static void push_pop(void)
 {
+	test_out
+		<< "@push_pop()" << test_tendl
+		;
+
+
 	test_assert(true == cc_deque_empty(&_items.container));
 
 

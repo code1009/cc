@@ -165,6 +165,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -189,6 +194,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_map_count():" << cc_map_count(&_items.container) << test_tendl;
 
 	key_pool_uninitialize();
@@ -203,6 +213,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	test_assert(true == cc_map_empty(&_items.container));
 
 
@@ -245,7 +260,7 @@ static void add(void)
 		}
 
 
-		test_out << "add:" << test_tindex(i) << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << item_pointer->first << "," << item_pointer->second << test_tendl;
 		rv = cc_map_add(&_items.container, key_pointer, item_pointer);
 		if (false == rv)
 		{
@@ -269,6 +284,11 @@ static void add(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	test_assert(false == cc_map_empty(&_items.container));
 
 
@@ -301,6 +321,11 @@ static void print(void)
 
 static void clear(void)
 {
+	test_out
+		<< "@clear()" << test_tendl
+		;
+
+
 	cc_map_clear(&_items.container);
 
 
@@ -312,6 +337,11 @@ static void clear(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	int* key_pointer;
 	item_t* item_pointer;
 

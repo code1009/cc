@@ -61,7 +61,13 @@ static uintptr_t _end_address = 0;
 //===========================================================================
 static bool item_pool_initialize()
 {
+	test_out
+		<< "#item_pool_initialize()" << test_tendl
+		;
+
+
 	bool rv;
+
 	rv = cc_first_fit_vallocator_initialize(
 		&_item_pool.allocator,
 		&_item_pool.first_fit, &_item_pool.memory[0], sizeof(_item_pool.memory)
@@ -79,7 +85,6 @@ static bool item_pool_initialize()
 	_end_address = (uintptr_t)_item_pool.first_fit.end_block;
 
 	test_out
-		<< "#item_pool_initialize()" << test_tendl
 		<< "memory_size  :" << (void*)_item_pool.first_fit.memory_size << "(" << _item_pool.first_fit.memory_size << ")" << test_tendl
 		<< "begin_address:" << (void*)_begin_address << test_tendl
 		<< "end_address  :" << (void*)_end_address << test_tendl

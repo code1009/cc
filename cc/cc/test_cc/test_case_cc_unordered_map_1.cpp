@@ -137,6 +137,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -155,6 +160,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_unordered_map_count():" << cc_unordered_map_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
@@ -168,6 +178,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -207,6 +222,11 @@ static void add(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 	cc_hash_value_t hash_value;
 	uint32_t key;
@@ -245,6 +265,11 @@ static void print(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -264,6 +289,11 @@ static void release(void)
 
 static void find_and_erase(void)
 {
+	test_out
+		<< "@find_and_erase()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;

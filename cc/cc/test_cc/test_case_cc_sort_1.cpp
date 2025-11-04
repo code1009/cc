@@ -132,6 +132,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -179,6 +184,11 @@ static void add(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -221,6 +231,11 @@ cc_api static bool item_less(const void* left, const void* right)
 #if (1==cc_config_algorithm_quicksort)
 static void quicksort(void)
 {
+	test_out
+		<< "@quicksort()" << test_tendl
+		;
+
+
 	cc_collection_quicksort(
 		&_items.container.collection,
 		item_less
@@ -230,6 +245,11 @@ static void quicksort(void)
 
 static void heapsort(void)
 {
+	test_out
+		<< "@heapsort()" << test_tendl
+		;
+
+
 	cc_collection_heapsort(
 		&_items.container.collection,
 		item_less
@@ -238,6 +258,11 @@ static void heapsort(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -248,10 +273,9 @@ static void release(void)
 	for (i = 0; i < count; i++)
 	{
 		item_pointer = (item_t*)cc_vector_element(&_items.container, i);
-		if (item_pointer != NULL)
-		{
-			item_pool_free(item_pointer);
-		}
+		test_assert(item_pointer != NULL);
+
+		item_pool_free(item_pointer);
 	}
 
 	cc_vector_clear(&_items.container);
@@ -266,18 +290,17 @@ static void run(void)
 {
 	add();
 	print();
-
-#if (1==cc_config_algorithm_quicksort)
-	quicksort();
-	print();
-	release();
-
-
-	add();
-#endif
 	heapsort();
 	print();
 	release();
+
+#if (1==cc_config_algorithm_quicksort)
+	add();
+	print();
+	quicksort();
+	print();
+	release();
+#endif
 }
 
 

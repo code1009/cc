@@ -103,6 +103,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -119,6 +124,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_stack_count():" << cc_stack_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
@@ -132,6 +142,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -164,6 +179,11 @@ static void add(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -176,7 +196,7 @@ static void release(void)
 		item_pointer = (item_t*)cc_stack_pop(&_items.container);
 		test_assert(item_pointer != NULL);
 
-		test_out << "release:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 
 		item_pool_free(item_pointer);
 	}
@@ -184,6 +204,11 @@ static void release(void)
 
 static void push_pop1(void)
 {
+	test_out
+		<< "@push_pop1()" << test_tendl
+		;
+
+
 	item_t* d0 = item_pool_allocate();
 	item_t* d1 = item_pool_allocate();
 	test_assert(d0 != NULL && d1 != NULL);
@@ -208,6 +233,11 @@ static void push_pop1(void)
 
 static void push_pop2(void)
 {
+	test_out
+		<< "@push_pop2()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* a = item_pool_allocate();

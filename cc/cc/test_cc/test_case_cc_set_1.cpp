@@ -103,6 +103,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -119,6 +124,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_set_count():" << cc_set_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
@@ -132,6 +142,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -156,7 +171,7 @@ static void add(void)
 			break;
 		}
 
-		test_out << "add:" << test_tindex(i) << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << item_pointer->first << "," << item_pointer->second << test_tendl;
 		rv = cc_set_add(&_items.container, item_pointer);
 		if (false == rv)
 		{
@@ -170,6 +185,11 @@ static void add(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	cc_element_t* element_pointer;
 	item_t* item_pointer;
 
@@ -199,6 +219,11 @@ static void print(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 

@@ -109,6 +109,11 @@ static uintptr_t _end_address = 0;
 //===========================================================================
 static bool item_pool_initialize()
 {
+	test_out
+		<< "#item_pool_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	cc_heap_bucket_descriptor_t cc_heap_bucket_descriptor_elements[] = {
@@ -139,7 +144,6 @@ static bool item_pool_initialize()
 	_end_address = (uintptr_t)_item_pool.heap_memory.first_fit.end_block;
 
 	test_out
-		<< "#item_pool_initialize()" << test_tendl
 		<< "memory_size  :" << (void*)_item_pool.heap_memory.first_fit.memory_size << "(" << _item_pool.heap_memory.first_fit.memory_size << ")" << test_tendl
 		<< "begin_address:" << (void*)_begin_address << test_tendl
 		<< "end_address  :" << (void*)_end_address << test_tendl
@@ -156,6 +160,7 @@ static void item_pool_uninitialize()
 	test_out
 		<< "#item_pool_uninitialize()" << test_tendl
 		;
+
 
 	item_pool_dump();
 
@@ -227,7 +232,7 @@ static uintptr_t _p3_address = 0;
 static void allocate(void)
 {
 	test_out
-		<< "@ allocate:" << test_tendl
+		<< "@allocate()" << test_tendl
 		;
 
 	_p0 = item_pool_allocate(sizeof(item_t) * 1);
@@ -268,7 +273,7 @@ static void allocate(void)
 static void release(void)
 {
 	test_out
-		<< "@ release:" << test_tendl
+		<< "@release()" << test_tendl
 		;
 
 	if (_p0 != NULL)

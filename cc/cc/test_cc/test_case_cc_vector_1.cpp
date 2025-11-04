@@ -55,6 +55,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	cc_vector_initialize(&_items.container, _items.elements, item_max_count, sizeof(item_t));
 
 	return true;
@@ -62,6 +67,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_vector_count():" << cc_vector_count(&_items.container) << test_tendl;
 }
 
@@ -73,6 +83,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -108,6 +123,11 @@ static void add(void)
 
 static void erase(void)
 {
+	test_out
+		<< "@erase()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -141,6 +161,11 @@ static void erase(void)
 
 static void insert(void)
 {
+	test_out
+		<< "@insert()" << test_tendl
+		;
+
+
 	bool rv;
 
 	item_t* item_pointer;
@@ -173,6 +198,11 @@ static void insert(void)
 
 static void print(void)
 {
+	test_out
+		<< "@print()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -198,6 +228,11 @@ static void print(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 

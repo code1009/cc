@@ -418,8 +418,8 @@ static void stl_erase(std::vector<item_t>& source_items)
 static void cc_print_items(size_t items_count, size_t percent)
 {
     test_out
-        << "@ count=" << items_count
-        << "(" << percent << "%%)"
+        << "@count=" << items_count
+        << "(" << percent << "percents)"
         << test_tendl;
 
 
@@ -477,7 +477,7 @@ static void performance(std::ostream& oss, size_t count)
     percent = (count * 100) / item_max_count;
 
     oss
-        << "@" << percent << "%%:"
+        << "@" << percent << "percents:"
         << "count=" << count
         << std::endl
         ;

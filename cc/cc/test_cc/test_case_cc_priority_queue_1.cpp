@@ -122,6 +122,11 @@ static items_t _items;
 //===========================================================================
 static bool items_initialize()
 {
+	test_out
+		<< "#items_initialize()" << test_tendl
+		;
+
+
 	bool rv;
 
 	rv = item_pool_initialize();
@@ -138,6 +143,11 @@ static bool items_initialize()
 
 static void items_uninitialize()
 {
+	test_out
+		<< "#items_uninitialize()" << test_tendl
+		;
+
+
 	test_out << "cc_priority_queue_count():" << cc_priority_queue_count(&_items.container) << test_tendl;
 
 	item_pool_uninitialize();
@@ -151,6 +161,11 @@ static void items_uninitialize()
 //===========================================================================
 static void add(void)
 {
+	test_out
+		<< "@add()" << test_tendl
+		;
+
+
 	bool rv;
 
 	int32_t data[item_max_count][2] = { {5, 1}, {3, 2}, {1, 3},  {3, 4}, {5, 5} };
@@ -177,7 +192,7 @@ static void add(void)
 			test_assert(0);
 		}
 
-		test_out << "add:" << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 	}
 
 	rv = cc_priority_queue_push(&_items.container, NULL);
@@ -186,6 +201,11 @@ static void add(void)
 
 static void release(void)
 {
+	test_out
+		<< "@release()" << test_tendl
+		;
+
+
 	item_t* item_pointer;
 
 
@@ -198,7 +218,7 @@ static void release(void)
 		item_pointer = (item_t*)cc_priority_queue_pop(&_items.container);
 		test_assert(item_pointer != NULL);
 
-		test_out << "release:" << test_tindex(i) << " =" << item_pointer->first << "," << item_pointer->second << test_tendl;
+		test_out << test_tindex(i) << "=" << item_pointer->first << "," << item_pointer->second << test_tendl;
 
 		item_pool_free(item_pointer);
 	}
@@ -206,6 +226,11 @@ static void release(void)
 
 static void push_pop1(void)
 {
+	test_out
+		<< "@push_pop1()" << test_tendl
+		;
+
+
 	test_assert(true == cc_priority_queue_empty(&_items.container));
 
 
@@ -239,6 +264,11 @@ static void push_pop1(void)
 
 static void push_pop2(void)
 {
+	test_out
+		<< "@push_pop2()" << test_tendl
+		;
+
+
 	test_assert(true == cc_priority_queue_empty(&_items.container));
 
 
