@@ -21,7 +21,7 @@
 
 //===========================================================================
 #include "cc_simple_segregated_storage.h"
-#include "cc_first_fit_storage.h"
+#include "cc_first_fit.h"
 
 #include "cc_heap_memory.h"
 
@@ -79,7 +79,7 @@ static inline void cc_heap_bucket_config_copy(cc_heap_bucket_config_t* dst, cons
 //===========================================================================
 static inline size_t cc_heap_memory_buckets_alignment_size(void)
 {
-	return cc_heap_memory_calc_aligned_size(sizeof(cc_first_fit_storage_block_head_t), cc_heap_memory_alignment_size());
+	return cc_heap_memory_calc_aligned_size(sizeof(cc_first_fit_block_head_t), cc_heap_memory_alignment_size());
 }
 
 
@@ -161,7 +161,7 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 
 	size_t size = head_memory_size + body_memory_size;
 	size_t memory_size = cc_heap_memory_calc_aligned_size(size, cc_heap_memory_bucket_alignment_size());
-	uint8_t* memory_pointer = (uint8_t*)cc_first_fit_storage_allocate(&ctx->storage, memory_size);
+	uint8_t* memory_pointer = (uint8_t*)cc_first_fit_allocate(&ctx->first_fit, memory_size);
 	if(NULL==memory_pointer)
 	{
 		return NULL;
@@ -184,7 +184,7 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 	);
 	if (rv == false)
 	{
-		cc_first_fit_storage_free(&ctx->storage, memory_pointer);
+		cc_first_fit_free(&ctx->first_fit, memory_pointer);
 		return NULL;
 	}
 	bucket_storage->next = NULL;
@@ -251,8 +251,8 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 	uintptr_t end;
 	uintptr_t current;
 
-	begin = (uintptr_t)ctx->storage.memory_pointer;
-	end = (uintptr_t)ctx->storage.end_block;
+	begin = (uintptr_t)ctx->first_fit.memory_pointer;
+	end = (uintptr_t)ctx->first_fit.end_block;
 	current = (uintptr_t)pointer;
 	if (begin > current)
 	{
@@ -277,7 +277,7 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 		}
 	}
 
-	return cc_first_fit_storage_validate_pointer(&ctx->storage, pointer);
+	return cc_first_fit_validate_pointer(&ctx->first_fit, pointer);
 }
 
 
@@ -318,7 +318,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	bool rv;
 
 
-	rv = cc_first_fit_storage_initialize(&ctx->storage, memory_pointer, memory_size);
+	rv = cc_first_fit_initialize(&ctx->first_fit, memory_pointer, memory_size);
 	if (rv == false)
 	{
 		return false;
@@ -327,36 +327,36 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 
 	size_t buckets_size = sizeof(cc_heap_bucket_t) * config->bucket_count;
 	size_t buckets_memory_size = cc_heap_memory_calc_aligned_size(buckets_size, cc_heap_memory_buckets_alignment_size());
-	cc_heap_bucket_t* buckets = cc_first_fit_storage_allocate(&ctx->storage, buckets_memory_size);
+	cc_heap_bucket_t* buckets = cc_first_fit_allocate(&ctx->first_fit, buckets_memory_size);
 	if (buckets == NULL)
 	{
 		return false;
 	}
-	if (ctx->storage.free_size < cc_heap_memory_calc_bucket_head_memory_size())
+	if (ctx->first_fit.free_size < cc_heap_memory_calc_bucket_head_memory_size())
 	{
-		cc_first_fit_storage_free(&ctx->storage, buckets);
+		cc_first_fit_free(&ctx->first_fit, buckets);
 		return false;
 	}
 
-	size_t max_memory_size = ctx->storage.free_size - cc_heap_memory_calc_bucket_head_memory_size();
+	size_t max_memory_size = ctx->first_fit.free_size - cc_heap_memory_calc_bucket_head_memory_size();
 	size_t max_count;
 	for (size_t i =0; i < config->bucket_count; i++)
 	{
 		if (config->buckets[i].size == 0)
 		{
-			cc_first_fit_storage_free(&ctx->storage, buckets);
+			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
 		if (config->buckets[i].count == 0)
 		{
-			cc_first_fit_storage_free(&ctx->storage, buckets);
+			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
 
 		max_count = max_memory_size / config->buckets[i].size;
 		if (config->buckets[i].count > max_count)
 		{
-			cc_first_fit_storage_free(&ctx->storage, buckets);
+			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
 
@@ -388,7 +388,7 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 		{
 			cc_heap_bucket_storage_t* next = current->next;
 
-			cc_first_fit_storage_free(&ctx->storage, (void*)current);
+			cc_first_fit_free(&ctx->first_fit, (void*)current);
 			current = next;
 		}
 		bucket->storages = NULL;
@@ -396,7 +396,7 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 
 
 	//-----------------------------------------------------------------------
-	cc_first_fit_storage_free(&ctx->storage, ctx->buckets);
+	cc_first_fit_free(&ctx->first_fit, ctx->buckets);
 	ctx->buckets = NULL;
 	ctx->bucket_count = 0;
 	ctx->count = 0;
@@ -426,7 +426,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 	cc_heap_bucket_t* bucket = cc_heap_memory_find_bucket(ctx, size);
 	if (bucket == NULL)
 	{
-		pointer = cc_first_fit_storage_allocate(&ctx->storage, size);
+		pointer = cc_first_fit_allocate(&ctx->first_fit, size);
 		if (pointer != NULL)
 		{
 			ctx->count++;
@@ -503,7 +503,7 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 							previous->next = current->next;
 						}
 
-						cc_first_fit_storage_free(&ctx->storage, (void*)current);
+						cc_first_fit_free(&ctx->first_fit, (void*)current);
 					}
 
 					return true;
@@ -520,9 +520,9 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 
 	//-----------------------------------------------------------------------
 	// Not in any bucket => try underlying first-fit storage
-	if (cc_first_fit_storage_validate_pointer(&ctx->storage, pointer))
+	if (cc_first_fit_validate_pointer(&ctx->first_fit, pointer))
 	{
-		bool rv = cc_first_fit_storage_free(&ctx->storage, pointer);
+		bool rv = cc_first_fit_free(&ctx->first_fit, pointer);
 		if (rv)
 		{
 			ctx->count--;

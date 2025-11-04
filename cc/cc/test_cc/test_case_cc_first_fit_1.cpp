@@ -22,9 +22,9 @@ typedef struct _item_t
 #define item_max_count 4
 #define item_allocation_count 3
 #define item_memory_size ( \
-	(sizeof(item_t) * item_max_count) + \
-	sizeof(cc_first_fit_storage_block_head_t) +  \
-	sizeof(cc_first_fit_storage_block_head_t) * item_allocation_count )
+	(sizeof(item_t                   ) * item_max_count       ) + \
+	(sizeof(cc_first_fit_block_head_t)                        ) + \
+	(sizeof(cc_first_fit_block_head_t) * item_allocation_count) )
 
 
 
@@ -34,7 +34,7 @@ typedef struct _item_t
 //===========================================================================
 typedef struct _item_pool_t
 {
-	cc_first_fit_storage_t storage;
+	cc_first_fit_t first_fit;
 	uint8_t memory[item_memory_size];
 	cc_vallocator_t allocator;
 }
@@ -47,9 +47,9 @@ static item_pool_t _item_pool;
 static void item_pool_dump(void)
 {
 	test_out
-		<< "storage min ever free size:" << _item_pool.storage.min_ever_free_size << test_tendl
-		<< "storage          free size:" << _item_pool.storage.free_size << test_tendl
-		<< "storage              count:" << _item_pool.storage.count << test_tendl
+		<< "first_fit.min_ever_free_size:" << _item_pool.first_fit.min_ever_free_size << test_tendl
+		<< "first_fit.free_size         :" << _item_pool.first_fit.free_size          << test_tendl
+		<< "first_fit.count             :" << _item_pool.first_fit.count              << test_tendl
 		<< test_tendl
 		;
 }
@@ -62,13 +62,13 @@ static uintptr_t _end_address = 0;
 static bool item_pool_initialize()
 {
 	bool rv;
-	rv = cc_first_fit_storage_vallocator_initialize(
+	rv = cc_first_fit_vallocator_initialize(
 		&_item_pool.allocator,
-		&_item_pool.storage, &_item_pool.memory[0], sizeof(_item_pool.memory)
+		&_item_pool.first_fit, &_item_pool.memory[0], sizeof(_item_pool.memory)
 	);
 	if (rv == false)
 	{
-		test_out << "cc_first_fit_storage_vallocator_initialize() failed" << test_tendl;
+		test_out << "cc_first_fit_vallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}
@@ -76,14 +76,14 @@ static bool item_pool_initialize()
 	item_pool_dump();
 
 	_begin_address = (uintptr_t)&_item_pool.memory[0];
-	_end_address = (uintptr_t)_item_pool.storage.end_block;
+	_end_address = (uintptr_t)_item_pool.first_fit.end_block;
 
 	test_out
-		<< "@ item pool initialized:" << test_tendl
-		<< " memory_size:   " << (void*)_item_pool.storage.memory_size << "(" << _item_pool.storage.memory_size << ")" << test_tendl
-		<< " begin address: " << (void*)_begin_address << test_tendl
-		<< " end address:   " << (void*)_end_address << test_tendl
-		<< " end-begin:     " << _end_address - _begin_address << test_tendl
+		<< "#item_pool_initialize()" << test_tendl
+		<< "memory_size  :" << (void*)_item_pool.first_fit.memory_size << "(" << _item_pool.first_fit.memory_size << ")" << test_tendl
+		<< "begin_address:" << (void*)_begin_address << test_tendl
+		<< "end_address  :" << (void*)_end_address << test_tendl
+		<< "end-begin    :" << _end_address - _begin_address << test_tendl
 		<< test_tendl
 		;
 
@@ -94,15 +94,19 @@ static bool item_pool_initialize()
 static void item_pool_uninitialize()
 {
 	test_out
-		<< "@ item pool uninitialized:" << test_tendl
+		<< "#item_pool_uninitialize()" << test_tendl
 		;
 
 	item_pool_dump();
+
+	test_out
+		<< "cc_first_fit_count():" << cc_first_fit_count(&_item_pool.first_fit) << test_tendl
+		;
 }
 
 static item_t* item_pool_allocate(size_t size)
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage, size);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.first_fit, size);
 	if (item_pointer == NULL)
 	{
 		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
@@ -112,7 +116,7 @@ static item_t* item_pool_allocate(size_t size)
 	uintptr_t address = (uintptr_t)item_pointer;
 	address -= _begin_address;
 	test_out
-		<< "-allocate:" << "address=" << address << test_tendl
+		<< "-item_pool_allocate():" << "address=" << address << test_tendl
 		;
 	item_pool_dump();
 
@@ -123,7 +127,7 @@ static void item_pool_free(item_t* item)
 {
 	bool rv;
 
-	rv = _item_pool.allocator.free(&_item_pool.storage, item);
+	rv = _item_pool.allocator.free(&_item_pool.first_fit, item);
 	if (rv == false)
 	{
 		test_out << "_item_pool.allocator.free() failed" << test_tendl;
@@ -133,7 +137,7 @@ static void item_pool_free(item_t* item)
 	uintptr_t address = (uintptr_t)item;
 	address -= _begin_address;
 	test_out
-		<< "-free:" << "address=" << address << test_tendl
+		<< "-item_pool_free():" << "address=" << address << test_tendl
 		;
 	item_pool_dump();
 }
@@ -156,7 +160,7 @@ static uintptr_t _p2_address = 0;
 static void allocate(void)
 {
 	test_out
-		<< "@ allocate:" << test_tendl
+		<< "@allocate()" << test_tendl
 		;
 
 	_p0 = item_pool_allocate(sizeof(item_t) * 1);
@@ -171,15 +175,15 @@ static void allocate(void)
 	_p1_address -= _begin_address;
 	_p2_address -= _begin_address;
 
-	test_assert(_p0_address == ((sizeof(cc_first_fit_storage_block_head_t) * 1) + (sizeof(item_t) * 0)));
-	test_assert(_p1_address == ((sizeof(cc_first_fit_storage_block_head_t) * 2) + (sizeof(item_t) * 1)));
-	test_assert(_p2_address == ((sizeof(cc_first_fit_storage_block_head_t) * 3) + (sizeof(item_t) * 3)));
+	test_assert(_p0_address == ((sizeof(cc_first_fit_block_head_t) * 1) + (sizeof(item_t) * 0)));
+	test_assert(_p1_address == ((sizeof(cc_first_fit_block_head_t) * 2) + (sizeof(item_t) * 1)));
+	test_assert(_p2_address == ((sizeof(cc_first_fit_block_head_t) * 3) + (sizeof(item_t) * 3)));
 }
 
 static void allocate1(void)
 {
 	test_out
-		<< "@ allocate1:" << test_tendl
+		<< "@allocate1()" << test_tendl
 		;
 
 	_p0 = item_pool_allocate(sizeof(item_t) * 1);
@@ -194,9 +198,9 @@ static void allocate1(void)
 	_p1_address -= _begin_address;
 	_p2_address -= _begin_address;
 
-	test_assert(_p0_address == ((sizeof(cc_first_fit_storage_block_head_t) * 1) + (sizeof(item_t) * 0)));
-	test_assert(_p1_address == ((sizeof(cc_first_fit_storage_block_head_t) * 2) + (sizeof(item_t) * 1)));
-	test_assert(_p2_address == ((sizeof(cc_first_fit_storage_block_head_t) * 3) + (sizeof(item_t) * 3)));
+	test_assert(_p0_address == ((sizeof(cc_first_fit_block_head_t) * 1) + (sizeof(item_t) * 0)));
+	test_assert(_p1_address == ((sizeof(cc_first_fit_block_head_t) * 2) + (sizeof(item_t) * 1)));
+	test_assert(_p2_address == ((sizeof(cc_first_fit_block_head_t) * 3) + (sizeof(item_t) * 3)));
 
 
 	item_pool_free(_p1);
@@ -205,18 +209,18 @@ static void allocate1(void)
 	_p1 = item_pool_allocate(sizeof(item_t) * 1);
 	_p1_address = (uintptr_t)_p1;
 	_p1_address -= _begin_address;
-	test_assert(_p1_address == ((sizeof(cc_first_fit_storage_block_head_t) * 2) + (sizeof(item_t) * 1)));
+	test_assert(_p1_address == ((sizeof(cc_first_fit_block_head_t) * 2) + (sizeof(item_t) * 1)));
 
 
 	void* _p3;
 	uintptr_t _p3_address;
 
-	_p3 = item_pool_allocate(sizeof(item_t) - sizeof(cc_first_fit_storage_block_head_t));
+	_p3 = item_pool_allocate(sizeof(item_t) - sizeof(cc_first_fit_block_head_t));
 	test_assert(_p3 != NULL);
 
 	_p3_address = (uintptr_t)_p3;
 	_p3_address -= _begin_address;
-	test_assert(_p3_address == ((sizeof(cc_first_fit_storage_block_head_t) * 3) + (sizeof(item_t) * 2)));
+	test_assert(_p3_address == ((sizeof(cc_first_fit_block_head_t) * 3) + (sizeof(item_t) * 2)));
 
 	item_pool_free((item_t*)_p3);
 }
@@ -224,7 +228,7 @@ static void allocate1(void)
 static void release(void)
 {
 	test_out
-		<< "@ release:" << test_tendl
+		<< "@release()" << test_tendl
 		;
 
 	if (_p0 != NULL)
@@ -259,7 +263,7 @@ static void run(void)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-void test_case_cc_first_fit_storage_1()
+void test_case_cc_first_fit_1()
 {
 	if (!item_pool_initialize())
 	{

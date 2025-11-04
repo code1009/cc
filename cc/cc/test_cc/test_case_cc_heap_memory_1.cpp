@@ -24,7 +24,7 @@ typedef struct _item_t
 /*
 static inline size_t cc_heap_bucket_padding_size(size_t bucket_count)
 {
-	uintptr_t aligment_size = sizeof(cc_first_fit_storage_block_head_t);
+	uintptr_t aligment_size = sizeof(cc_first_fit_block_head_t);
 	uintptr_t source_size;
 	uintptr_t padding_size;
 	source_size = sizeof(cc_heap_bucket_t) * bucket_count;
@@ -42,24 +42,35 @@ static inline size_t cc_heap_bucket_padding_size(size_t bucket_count)
 */
 
 #define cc_heap_bucket_padding_size(bucket_count) \
-	(((((sizeof(cc_heap_bucket_t) * (bucket_count)) + sizeof(cc_first_fit_storage_block_head_t) - 1) / sizeof(cc_first_fit_storage_block_head_t)) \
-		* sizeof(cc_first_fit_storage_block_head_t)) - (sizeof(cc_heap_bucket_t) * (bucket_count)))
+	(                                                             \
+		(                                                         \
+			(                                                     \
+				(                                                 \
+					(sizeof(cc_heap_bucket_t) * (bucket_count)) + \
+					sizeof(cc_first_fit_block_head_t) - 1         \
+				)                                                 \
+				/ sizeof(cc_first_fit_block_head_t)               \
+			)                                                     \
+			* sizeof(cc_first_fit_block_head_t)                   \
+		)                                                         \
+		- (sizeof(cc_heap_bucket_t) * (bucket_count))             \
+	)
 
 //===========================================================================
 #define item_max_count 4
 #define item_memory_size ( \
-	(sizeof(cc_first_fit_storage_block_head_t)                        ) + \
-	(sizeof(cc_heap_bucket_t)                  * cc_heap_bucket_count ) + \
-	(cc_heap_bucket_padding_size(cc_heap_bucket_count)                ) + \
+	(sizeof(cc_first_fit_block_head_t                )                        ) + \
+	(sizeof(cc_heap_bucket_t                         ) * cc_heap_bucket_count ) + \
+	(cc_heap_bucket_padding_size(cc_heap_bucket_count)                        ) + \
 	\
-	(sizeof(cc_first_fit_storage_block_head_t)                  ) + \
-	(sizeof(cc_heap_bucket_storage_t)                           ) + \
-	(sizeof(item_t)                            * item_max_count ) + \
-	(sizeof(cc_first_fit_storage_block_head_t)                  ) )
+	(sizeof(cc_first_fit_block_head_t                )                        ) + \
+	(sizeof(cc_heap_bucket_storage_t                 )                        ) + \
+	(sizeof(item_t                                   ) * item_max_count       ) + \
+	(sizeof(cc_first_fit_block_head_t                )                        ) )
 
 // 64bit
-// cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_t:24 + cc_heap_bucket_padding_size:8 = 48
-// cc_first_fit_storage_block_head_t:16 + cc_heap_bucket_storage_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
+// cc_first_fit_block_head_t:16 + cc_heap_bucket_t:24 + cc_heap_bucket_padding_size:8 = 48
+// cc_first_fit_block_head_t:16 + cc_heap_bucket_storage_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
 // 48 + 1104 = 1152
 // 1152 + 16(end_block) = 1168 = 16 * 73
 
@@ -71,7 +82,7 @@ static inline size_t cc_heap_bucket_padding_size(size_t bucket_count)
 //===========================================================================
 typedef struct _item_pool_t
 {
-	cc_heap_memory_t storage;
+	cc_heap_memory_t heap_memory;
 	uint8_t memory[item_memory_size];
 	cc_vallocator_t allocator;
 }
@@ -84,9 +95,9 @@ static item_pool_t _item_pool;
 static void item_pool_dump(void)
 {
 	test_out
-		<< "storage min ever free size:" << _item_pool.storage.storage.min_ever_free_size << test_tendl
-		<< "storage          free size:" << _item_pool.storage.storage.free_size << test_tendl
-		<< "storage              count:" << _item_pool.storage.storage.count << test_tendl
+		<< "first_fit.min_ever_free_size:" << _item_pool.heap_memory.first_fit.min_ever_free_size << test_tendl
+		<< "first_fit.free_size         :" << _item_pool.heap_memory.first_fit.free_size << test_tendl
+		<< "first_fit.count             :" << _item_pool.heap_memory.first_fit.count << test_tendl
 		<< test_tendl
 		;
 }
@@ -108,33 +119,31 @@ static bool item_pool_initialize()
 	config.bucket_count = cc_heap_bucket_count;
 
 
-	rv = cc_heap_memory_initialize(
-		&_item_pool.storage,
+	rv = cc_heap_memory_vallocator_initialize(
+		&_item_pool.allocator,
+		&_item_pool.heap_memory,
 		&_item_pool.memory[0], sizeof(_item_pool.memory),
 		&config
 	);
 	if (rv == false)
 	{
-		test_out << "cc_heap_memory_initialize() failed" << test_tendl;
+		test_out << "cc_heap_memory_vallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}
-	_item_pool.allocator.handle = &_item_pool.storage;
-	_item_pool.allocator.allocate = (cc_vallocate_t)cc_heap_memory_allocate;
-	_item_pool.allocator.free = (cc_vfree_t)cc_heap_memory_free;
 
 
 	item_pool_dump();
 
 	_begin_address = (uintptr_t)&_item_pool.memory[0];
-	_end_address = (uintptr_t)_item_pool.storage.storage.end_block;
+	_end_address = (uintptr_t)_item_pool.heap_memory.first_fit.end_block;
 
 	test_out
-		<< "@ item pool initialized:" << test_tendl
-		<< " memory_size:   " << (void*)_item_pool.storage.storage.memory_size << "(" << _item_pool.storage.storage.memory_size << ")" << test_tendl
-		<< " begin address: " << (void*)_begin_address << test_tendl
-		<< " end address:   " << (void*)_end_address << test_tendl
-		<< " end-begin:     " << _end_address - _begin_address << test_tendl
+		<< "#item_pool_initialize()" << test_tendl
+		<< "memory_size  :" << (void*)_item_pool.heap_memory.first_fit.memory_size << "(" << _item_pool.heap_memory.first_fit.memory_size << ")" << test_tendl
+		<< "begin_address:" << (void*)_begin_address << test_tendl
+		<< "end_address  :" << (void*)_end_address << test_tendl
+		<< "end-begin    :" << _end_address - _begin_address << test_tendl
 		<< test_tendl
 		;
 
@@ -145,17 +154,24 @@ static bool item_pool_initialize()
 static void item_pool_uninitialize()
 {
 	test_out
-		<< "@ item pool uninitialized:" << test_tendl
+		<< "#item_pool_uninitialize()" << test_tendl
 		;
 
 	item_pool_dump();
 
-	cc_heap_memory_uninitialize(&_item_pool.storage);
+	test_out
+		<< "cc_heap_memory_count():" << cc_heap_memory_count(&_item_pool.heap_memory) << test_tendl
+		;
+	test_out
+		<< "cc_first_fit_count():" << cc_first_fit_count(&_item_pool.heap_memory.first_fit) << test_tendl
+		;
+
+	cc_heap_memory_uninitialize(&_item_pool.heap_memory);
 }
 
 static item_t* item_pool_allocate(size_t size)
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.storage, size);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.heap_memory, size);
 	if (item_pointer == NULL)
 	{
 		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
@@ -176,7 +192,7 @@ static void item_pool_free(item_t* item)
 {
 	bool rv;
 
-	rv = _item_pool.allocator.free(&_item_pool.storage, item);
+	rv = _item_pool.allocator.free(&_item_pool.heap_memory, item);
 	if (rv == false)
 	{
 		test_out << "_item_pool.allocator.free() failed" << test_tendl;
@@ -229,8 +245,8 @@ static void allocate(void)
 	padding_size = cc_heap_bucket_padding_size(cc_heap_bucket_count);
 
 	uintptr_t offset =
-		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_t) + padding_size +
-		sizeof(cc_first_fit_storage_block_head_t) + sizeof(cc_heap_bucket_storage_t)
+		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_t) + padding_size +
+		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_storage_t)
 		;
 	_p0_address -= offset;
 	_p1_address -= offset;

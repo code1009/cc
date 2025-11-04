@@ -31,7 +31,7 @@
 #include "allocator/cc_fallocator_helper.h"
 
 #include "allocator/cc_vallocator.h"
-#include "allocator/cc_first_fit_storage.h"
+#include "allocator/cc_first_fit.h"
 #include "allocator/cc_heap_memory.h"
 #include "allocator/cc_vallocator_helper.h"
 

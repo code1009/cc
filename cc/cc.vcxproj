@@ -24,7 +24,7 @@
     <ClCompile Include="cc\cc\algorithm\cc_hash.c" />
     <ClCompile Include="cc\cc\allocator\cc_fallocator.c" />
     <ClCompile Include="cc\cc\allocator\cc_fallocator_helper.c" />
-    <ClCompile Include="cc\cc\allocator\cc_first_fit_storage.c" />
+    <ClCompile Include="cc\cc\allocator\cc_first_fit.c" />
     <ClCompile Include="cc\cc\allocator\cc_heap_memory.c" />
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c" />
     <ClCompile Include="cc\cc\allocator\cc_vallocator.c" />
@@ -58,7 +58,7 @@
     <ClCompile Include="cc\test_cc\test_case_cc.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_collection_sort_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp" />
-    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_storage_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_first_fit_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_forward_list_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_list_1.cpp" />
@@ -81,7 +81,7 @@
     <ClInclude Include="cc\cc\algorithm\cc_hash.h" />
     <ClInclude Include="cc\cc\allocator\cc_fallocator.h" />
     <ClInclude Include="cc\cc\allocator\cc_fallocator_helper.h" />
-    <ClInclude Include="cc\cc\allocator\cc_first_fit_storage.h" />
+    <ClInclude Include="cc\cc\allocator\cc_first_fit.h" />
     <ClInclude Include="cc\cc\allocator\cc_heap_memory.h" />
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h" />
     <ClInclude Include="cc\cc\allocator\cc_vallocator.h" />
