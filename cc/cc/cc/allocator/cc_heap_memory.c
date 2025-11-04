@@ -221,10 +221,9 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_add_bucket_region(cc_
 	return bucket_region_head;
 }
 
-static inline void* cc_heap_memory_allocate_from_bucket(const cc_heap_memory_t* ctx, cc_heap_bucket_t* bucket)
+static inline void* cc_heap_memory_allocate_from_bucket(cc_heap_bucket_t* bucket)
 {
 	//-----------------------------------------------------------------------
-	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(bucket != NULL);
 
 
@@ -457,7 +456,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 
 
 	//-----------------------------------------------------------------------
-	pointer = cc_heap_memory_allocate_from_bucket(ctx, bucket);
+	pointer = cc_heap_memory_allocate_from_bucket(bucket);
 	if (pointer != NULL)
 	{ 
 		ctx->count++;

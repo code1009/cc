@@ -25,6 +25,16 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+static inline bool cc_simple_segregated_storage_mul_overflow(size_t a, size_t b)
+{
+	if (a == 0 || b == 0)
+	{
+		return false;
+	}
+	size_t c = ((size_t)-1) / b;
+	return (a > c);
+}
+
 static inline size_t cc_simple_segregated_storage_alignment(void)
 {
 	return sizeof(void*);
@@ -40,6 +50,10 @@ static inline size_t cc_simple_segregated_storage_align(size_t value, size_t ali
 	if (0U != (value % alignment))
 	{
 		count++;
+	}
+	if (cc_simple_segregated_storage_mul_overflow(alignment, count))
+	{
+		return cc_invalid_size;
 	}
 	return alignment * count;
 }
@@ -76,23 +90,14 @@ static inline size_t cc_simple_segregated_storage_chunk_size(const size_t data_s
 //===========================================================================
 cc_api size_t cc_simple_segregated_storage_memory_size(const size_t data_size, const size_t max_count)
 {
-	size_t chunk_size;
-	size_t memory_size;
-	size_t max_memory_size;
+	size_t chunk_size = cc_simple_segregated_storage_chunk_size(data_size);
 
-
-	chunk_size = cc_simple_segregated_storage_chunk_size(data_size);
-	max_memory_size = (size_t)-1;
-	if (max_count > (max_memory_size / chunk_size))
+	if (cc_simple_segregated_storage_mul_overflow(max_count, chunk_size))
 	{
-		return max_memory_size;
+		return cc_invalid_size;
 	}
 
-
-	memory_size = chunk_size * max_count;
-
-
-	return memory_size;
+	return chunk_size * max_count;
 }
 
 cc_api bool cc_simple_segregated_storage_validate_pointer(const cc_simple_segregated_storage_t* ctx, const void* pointer)
@@ -214,7 +219,6 @@ cc_api void* cc_simple_segregated_storage_allocate(cc_simple_segregated_storage_
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
-	cc_debug_assert(ctx->count <= ctx->max_count);
 
 
 	//-----------------------------------------------------------------------
@@ -255,6 +259,22 @@ cc_api bool cc_simple_segregated_storage_free(cc_simple_segregated_storage_t* ct
 	cc_simple_segregated_storage_chunk_t* free_chunk;
 
 
+	//-----------------------------------------------------------------------
+#if (1==cc_config_debug)
+	free_chunk = ctx->free_chunk_head;
+	while (free_chunk != NULL)
+	{
+		if (free_chunk == (cc_simple_segregated_storage_chunk_t*)pointer)
+		{
+			// 이미 자유 목록에 있음 -> 중복 해제
+			return false;
+		}
+		free_chunk = free_chunk->next_free_chunk;
+	}
+#endif
+
+
+	//-----------------------------------------------------------------------
 	free_chunk = ctx->free_chunk_head;
 	ctx->free_chunk_head = (cc_simple_segregated_storage_chunk_t*)(pointer);
 	ctx->free_chunk_head->next_free_chunk = free_chunk;

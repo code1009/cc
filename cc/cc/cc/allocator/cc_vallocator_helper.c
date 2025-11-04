@@ -77,7 +77,7 @@ cc_api bool cc_heap_memory_vallocator_initialize(
 	cc_debug_assert(heap_memory != NULL);
 	cc_debug_assert(memory_pointer != NULL);
 	cc_debug_assert(memory_size != 0);
-	cc_debug_assert(heap_memory_config != NULL);
+	cc_debug_assert(bucket_descriptors != NULL);
 
 
 	bool rv;
