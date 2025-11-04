@@ -176,7 +176,7 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 
 	cc_heap_bucket_storage_t* bucket_storage = (cc_heap_bucket_storage_t*)head_pointer;
 	rv = cc_simple_segregated_storage_initialize(
-		&bucket_storage->storage,
+		&bucket_storage->simple_segregated_storage,
 		body_pointer,
 		body_size,
 		bucket->config.size,
@@ -191,14 +191,14 @@ static inline cc_heap_bucket_storage_t* cc_heap_memory_add_bucket_storage(cc_hea
 
 
 	//-----------------------------------------------------------------------
-	if (NULL == bucket->storages)
+	if (NULL == bucket->simple_segregated_storages)
 	{
-		bucket->storages = bucket_storage;
+		bucket->simple_segregated_storages = bucket_storage;
 	}
 	else
 	{
 		cc_heap_bucket_storage_t* current;
-		current = bucket->storages;
+		current = bucket->simple_segregated_storages;
 		while (current->next != NULL)
 		{
 			current = (cc_heap_bucket_storage_t*)current->next;
@@ -218,11 +218,11 @@ static inline void* cc_heap_memory_allocate_from_bucket(const cc_heap_memory_t* 
 
 
 	//-----------------------------------------------------------------------
-	cc_heap_bucket_storage_t* current = bucket->storages;
+	cc_heap_bucket_storage_t* current = bucket->simple_segregated_storages;
 	
 	while (current)
 	{
-		void* pointer = cc_simple_segregated_storage_allocate(&current->storage);
+		void* pointer = cc_simple_segregated_storage_allocate(&current->simple_segregated_storage);
 		if (pointer != NULL)
 		{
 			return pointer;
@@ -266,10 +266,10 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 	for (size_t i = 0; i < ctx->bucket_count; ++i)
 	{
 		cc_heap_bucket_t* bucket = &ctx->buckets[i];
-		cc_heap_bucket_storage_t* current = bucket->storages;
+		cc_heap_bucket_storage_t* current = bucket->simple_segregated_storages;
 		while (current)
 		{
-			if (cc_simple_segregated_storage_validate_pointer(&current->storage, pointer))
+			if (cc_simple_segregated_storage_validate_pointer(&current->simple_segregated_storage, pointer))
 			{
 				return true;
 			}
@@ -361,7 +361,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 		}
 
 		cc_heap_bucket_config_copy(&buckets[i].config, &config->buckets[i]);
-		buckets[i].storages = NULL;
+		buckets[i].simple_segregated_storages = NULL;
 	}
 
 
@@ -383,7 +383,7 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 	for (size_t i = 0; i < ctx->bucket_count; ++i)
 	{
 		cc_heap_bucket_t* bucket = &ctx->buckets[i];
-		cc_heap_bucket_storage_t* current = bucket->storages;
+		cc_heap_bucket_storage_t* current = bucket->simple_segregated_storages;
 		while (current)
 		{
 			cc_heap_bucket_storage_t* next = current->next;
@@ -391,7 +391,7 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 			cc_first_fit_free(&ctx->first_fit, (void*)current);
 			current = next;
 		}
-		bucket->storages = NULL;
+		bucket->simple_segregated_storages = NULL;
 	}
 
 
@@ -454,7 +454,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 		return NULL;
 	}
 
-	pointer = cc_simple_segregated_storage_allocate(&bucket_storage->storage);
+	pointer = cc_simple_segregated_storage_allocate(&bucket_storage->simple_segregated_storage);
 	if (pointer != NULL)
 	{
 		ctx->count++;
@@ -481,22 +481,22 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 	for (size_t i=0; i<ctx->bucket_count; i++)
 	{
 		cc_heap_bucket_t* bucket = &ctx->buckets[i];
-		cc_heap_bucket_storage_t* current = bucket->storages;
+		cc_heap_bucket_storage_t* current = bucket->simple_segregated_storages;
 		cc_heap_bucket_storage_t* previous = NULL;
 		while (current)
 		{
-			if (cc_simple_segregated_storage_validate_pointer(&current->storage, pointer))
+			if (cc_simple_segregated_storage_validate_pointer(&current->simple_segregated_storage, pointer))
 			{
-				bool rv = cc_simple_segregated_storage_free(&current->storage, pointer);
+				bool rv = cc_simple_segregated_storage_free(&current->simple_segregated_storage, pointer);
 				if (rv)
 				{
 					ctx->count--;
 
-					if (current->storage.count == 0)
+					if (current->simple_segregated_storage.count == 0)
 					{
 						if (previous == NULL)
 						{
-							bucket->storages = (cc_heap_bucket_storage_t*)current->next;
+							bucket->simple_segregated_storages = (cc_heap_bucket_storage_t*)current->next;
 						}
 						else
 						{

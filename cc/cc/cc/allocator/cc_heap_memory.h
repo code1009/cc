@@ -41,7 +41,7 @@ cc_heap_memory_config_t;
 typedef struct _cc_heap_bucket_storage_t
 {
 	struct _cc_heap_bucket_storage_t* next;
-	cc_simple_segregated_storage_t storage;
+	cc_simple_segregated_storage_t simple_segregated_storage;
 }
 cc_heap_bucket_storage_t;
 
@@ -49,7 +49,7 @@ cc_heap_bucket_storage_t;
 typedef struct _cc_heap_bucket_t
 {
 	cc_heap_bucket_config_t config;
-	cc_heap_bucket_storage_t* storages;
+	cc_heap_bucket_storage_t* simple_segregated_storages;
 }
 cc_heap_bucket_t;
 
