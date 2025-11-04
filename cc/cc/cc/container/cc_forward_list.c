@@ -32,7 +32,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+#if (1==cc_config_debug)
 #define cc_forward_list_config_enable_node_validation 1
+#else
+#define cc_forward_list_config_enable_node_validation 0
+#endif
 
 
 

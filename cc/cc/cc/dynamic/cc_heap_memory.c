@@ -444,6 +444,7 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 	cc_debug_assert(ctx->buckets.elements != NULL);
 
 
+#if (1==cc_config_debug)
 	//-----------------------------------------------------------------------
 	for (size_t i = 0; i < ctx->buckets.count; ++i)
 	{
@@ -462,6 +463,10 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 
 	//-----------------------------------------------------------------------
 	cc_first_fit_free(&ctx->first_fit, ctx->buckets.elements);
+#endif
+
+
+	//-----------------------------------------------------------------------
 	ctx->buckets.elements = NULL;
 	ctx->buckets.count = 0;
 	ctx->count = 0;
