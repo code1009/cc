@@ -64,13 +64,13 @@ static inline size_t cc_heap_bucket_padding_size(size_t bucket_count)
 	(cc_heap_bucket_padding_size(cc_heap_bucket_count)                        ) + \
 	\
 	(sizeof(cc_first_fit_block_head_t                )                        ) + \
-	(sizeof(cc_heap_bucket_storage_t                 )                        ) + \
+	(sizeof(cc_heap_bucket_region_head_t             )                        ) + \
 	(sizeof(item_t                                   ) * item_max_count       ) + \
 	(sizeof(cc_first_fit_block_head_t                )                        ) )
 
 // 64bit
 // cc_first_fit_block_head_t:16 + cc_heap_bucket_t:24 + cc_heap_bucket_padding_size:8 = 48
-// cc_first_fit_block_head_t:16 + cc_heap_bucket_storage_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
+// cc_first_fit_block_head_t:16 + cc_heap_bucket_region_head_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
 // 48 + 1104 = 1152
 // 1152 + 16(end_block) = 1168 = 16 * 73
 
@@ -246,7 +246,7 @@ static void allocate(void)
 
 	uintptr_t offset =
 		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_t) + padding_size +
-		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_storage_t)
+		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_region_head_t)
 		;
 	_p0_address -= offset;
 	_p1_address -= offset;

@@ -38,18 +38,18 @@ cc_heap_memory_config_t;
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_heap_bucket_storage_t
+typedef struct _cc_heap_bucket_region_head_t
 {
-	struct _cc_heap_bucket_storage_t* next;
+	struct _cc_heap_bucket_region_head_t* next;
 	cc_simple_segregated_storage_t simple_segregated_storage;
 }
-cc_heap_bucket_storage_t;
+cc_heap_bucket_region_head_t;
 
 //===========================================================================
 typedef struct _cc_heap_bucket_t
 {
 	cc_heap_bucket_config_t config;
-	cc_heap_bucket_storage_t* simple_segregated_storages;
+	cc_heap_bucket_region_head_t* regions;
 }
 cc_heap_bucket_t;
 
