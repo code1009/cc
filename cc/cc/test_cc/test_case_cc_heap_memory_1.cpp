@@ -216,10 +216,12 @@ static void item_pool_free(item_t* item)
 static item_t* _p0 = NULL;
 static item_t* _p1 = NULL;
 static item_t* _p2 = NULL;
+static item_t* _p3 = NULL;
 
 static uintptr_t _p0_address = 0;
 static uintptr_t _p1_address = 0;
 static uintptr_t _p2_address = 0;
+static uintptr_t _p3_address = 0;
 
 //===========================================================================
 static void allocate(void)
@@ -228,17 +230,20 @@ static void allocate(void)
 		<< "@ allocate:" << test_tendl
 		;
 
-	_p0 = item_pool_allocate(sizeof(item_t)*1);
-	_p1 = item_pool_allocate(sizeof(item_t)*1);
-	_p2 = item_pool_allocate(sizeof(item_t)*1);
+	_p0 = item_pool_allocate(sizeof(item_t) * 1);
+	_p1 = item_pool_allocate(sizeof(item_t) * 1);
+	_p2 = item_pool_allocate(sizeof(item_t) * 1);
+	_p3 = item_pool_allocate(sizeof(item_t) * 1);
 
 	_p0_address = (uintptr_t)_p0;
 	_p1_address = (uintptr_t)_p1;
 	_p2_address = (uintptr_t)_p2;
+	_p3_address = (uintptr_t)_p3;
 
 	_p0_address -= _begin_address;
 	_p1_address -= _begin_address;
 	_p2_address -= _begin_address;
+	_p3_address -= _begin_address;
 
 	
 	uintptr_t padding_size;
@@ -251,11 +256,13 @@ static void allocate(void)
 	_p0_address -= offset;
 	_p1_address -= offset;
 	_p2_address -= offset;
+	_p3_address -= offset;
 
 
 	test_assert(_p0_address == ( (sizeof(item_t) * 0) ));
 	test_assert(_p1_address == ( (sizeof(item_t) * 1) ));
 	test_assert(_p2_address == ( (sizeof(item_t) * 2) ));
+	test_assert(_p3_address == ( (sizeof(item_t) * 3) ));
 }
 
 static void release(void)
@@ -275,6 +282,10 @@ static void release(void)
 	if (_p2 != NULL)
 	{
 		item_pool_free(_p2);
+	}
+	if (_p3 != NULL)
+	{
+		item_pool_free(_p3);
 	}
 }
 

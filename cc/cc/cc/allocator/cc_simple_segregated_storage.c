@@ -164,7 +164,13 @@ cc_api bool cc_simple_segregated_storage_initialize(cc_simple_segregated_storage
 
 
 	//-----------------------------------------------------------------------
-	if (ctx->memory_size < cc_simple_segregated_storage_memory_size(data_size, max_count))
+	size_t required_memory_size;
+	required_memory_size = cc_simple_segregated_storage_memory_size(data_size, max_count);
+	if (cc_invalid_size  == required_memory_size)
+	{
+		return false;
+	}
+	if (ctx->memory_size < required_memory_size)
 	{
 		return false;
 	}

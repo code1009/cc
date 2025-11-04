@@ -35,10 +35,11 @@ typedef struct _cc_first_fit_t
 	uint8_t* memory_pointer;
 	size_t memory_size;
 
-	size_t min_ever_free_size;
-	size_t free_size;
 	cc_first_fit_block_head_t start_block;
 	cc_first_fit_block_head_t* end_block;
+	size_t min_ever_free_size;
+	size_t free_size;
+	uintptr_t first_pointer_address;
 
 	cc_ssize_t count;
 }

@@ -200,30 +200,30 @@ static inline cc_first_fit_block_head_t* cc_first_fit_block_head_pointer(const c
 //===========================================================================
 static inline void cc_first_fit_insert_block_into_free_blocks(cc_first_fit_t* ctx, cc_first_fit_block_head_t* block_to_insert)
 {
-	cc_first_fit_block_head_t* iter;
+	cc_first_fit_block_head_t* block;
 
 	// 이전 블럭 찾기
-	for (iter = &ctx->start_block; iter->next_free_block < block_to_insert; iter = iter->next_free_block)
+	for (block = &ctx->start_block; block->next_free_block < block_to_insert; block = block->next_free_block)
 	{
 		;
 	}
 
 
-	uintptr_t address = (uintptr_t)iter;
-	if ((address + cc_first_fit_block_head_get_size(iter)) == ((uintptr_t)block_to_insert))
+	uintptr_t address = (uintptr_t)block;
+	if ((address + cc_first_fit_block_head_get_size(block)) == ((uintptr_t)block_to_insert))
 	{
-		cc_first_fit_block_head_add_size(iter, cc_first_fit_block_head_get_size(block_to_insert));
-		block_to_insert = iter;
+		cc_first_fit_block_head_add_size(block, cc_first_fit_block_head_get_size(block_to_insert));
+		block_to_insert = block;
 	}
 
 
 	address = (uintptr_t)block_to_insert;
-	if ((address + cc_first_fit_block_head_get_size(block_to_insert)) == ((uintptr_t)iter->next_free_block))
+	if ((address + cc_first_fit_block_head_get_size(block_to_insert)) == ((uintptr_t)block->next_free_block))
 	{
-		if (iter->next_free_block != ctx->end_block)
+		if (block->next_free_block != ctx->end_block)
 		{
-			cc_first_fit_block_head_add_size(block_to_insert, cc_first_fit_block_head_get_size(iter->next_free_block));
-			block_to_insert->next_free_block = iter->next_free_block->next_free_block;
+			cc_first_fit_block_head_add_size(block_to_insert, cc_first_fit_block_head_get_size(block->next_free_block));
+			block_to_insert->next_free_block = block->next_free_block->next_free_block;
 		}
 		else
 		{
@@ -232,13 +232,13 @@ static inline void cc_first_fit_insert_block_into_free_blocks(cc_first_fit_t* ct
 	}
 	else
 	{
-		block_to_insert->next_free_block = iter->next_free_block;
+		block_to_insert->next_free_block = block->next_free_block;
 	}
 
 
-	if (iter != block_to_insert)
+	if (block != block_to_insert)
 	{
-		iter->next_free_block = block_to_insert;
+		block->next_free_block = block_to_insert;
 	}
 }
 
@@ -322,35 +322,31 @@ cc_api bool cc_first_fit_initialize(cc_first_fit_t* ctx, const void* memory_poin
 
 
 	//-----------------------------------------------------------------------
-	ctx->count = 0;
-	ctx->min_ever_free_size = 0;
-	ctx->free_size = 0;
 	ctx->start_block.next_free_block = (cc_first_fit_block_head_t*)memory_pointer;
 	ctx->start_block.flags = cc_first_fit_block_head_flags_make(0, cc_first_fit_block_status_free);
-	ctx->end_block = NULL;
 
 
 	//-----------------------------------------------------------------------
 	cc_first_fit_block_head_t* begin_block;
 	cc_first_fit_block_head_t* end_block;
 
-	uint8_t* pointer;
+	uintptr_t address;
 	size_t count;
 	size_t offset;
 
 
-	pointer = ctx->memory_pointer;
-	begin_block = (cc_first_fit_block_head_t*)(pointer);
+	address = (uintptr_t)ctx->memory_pointer;
+	begin_block = (cc_first_fit_block_head_t*)(address);
 
 	count = ctx->memory_size / cc_first_fit_block_head_aligned_size();
 	offset = (count - 1) * cc_first_fit_block_head_aligned_size();
-	end_block = (cc_first_fit_block_head_t*)(pointer + offset);
+	end_block = (cc_first_fit_block_head_t*)(address + offset);
 
 
 	//-----------------------------------------------------------------------
-	uintptr_t begin_address = (uintptr_t)(begin_block);
-	uintptr_t end_address = (uintptr_t)(end_block);
-	size_t begin_block_size  = end_address - begin_address;
+	uintptr_t begin_block_address = (uintptr_t)(begin_block);
+	uintptr_t end_block_address = (uintptr_t)(end_block);
+	size_t begin_block_size  = end_block_address - begin_block_address;
 	
 
 	begin_block->flags = cc_first_fit_block_head_flags_make(begin_block_size, cc_first_fit_block_status_free);
@@ -360,12 +356,12 @@ cc_api bool cc_first_fit_initialize(cc_first_fit_t* ctx, const void* memory_poin
 	end_block->flags = cc_first_fit_block_head_flags_make(0, cc_first_fit_block_status_free);
 
 
-	ctx->end_block = end_block;
-
-
 	//-----------------------------------------------------------------------
+	ctx->end_block = end_block;
 	ctx->min_ever_free_size = begin_block_size;
 	ctx->free_size = begin_block_size;
+	ctx->first_pointer_address = (uintptr_t)cc_first_fit_block_payload_pointer(ctx, begin_block);
+	ctx->count = 0;
 
 
 	return true;
