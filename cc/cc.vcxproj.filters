@@ -198,6 +198,12 @@
     <ClCompile Include="cc\cc\dynamic\cc_vallocator_helper.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_string_allocator.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_string.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">
@@ -324,6 +330,12 @@
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\dynamic\cc_vallocator.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_string.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_string_allocator.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
   </ItemGroup>
