@@ -462,7 +462,7 @@ cc_api void* cc_first_fit_allocate(cc_first_fit_t* ctx, const size_t size)
 	return block_payload_pointer;
 }
 
-// boundary-tag coalescing
+// Boundary-tag coalescing
 cc_api bool cc_first_fit_free(cc_first_fit_t* ctx, const void* pointer)
 {
 	//-----------------------------------------------------------------------
