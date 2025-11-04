@@ -286,13 +286,13 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_pointer, const size_t memory_size, const cc_heap_memory_config_t* config)
+cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_pointer, const size_t memory_size, const cc_heap_bucket_descriptors_t* bucket_descriptors)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(memory_pointer != NULL);
 	cc_debug_assert(memory_size != 0);
-	cc_debug_assert(config != NULL);
+	cc_debug_assert(bucket_descriptors != NULL);
 
 
 	//-----------------------------------------------------------------------
@@ -300,11 +300,11 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	{
 		return false;
 	}
-	if (config->elements == NULL)
+	if (bucket_descriptors->elements == NULL)
 	{
 		return false;
 	}
-	if (config->count == 0)
+	if (bucket_descriptors->count == 0)
 	{
 		return false;
 	}
@@ -325,7 +325,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	}
 
 
-	size_t buckets_size = sizeof(cc_heap_bucket_t) * config->count;
+	size_t buckets_size = sizeof(cc_heap_bucket_t) * bucket_descriptors->count;
 	size_t buckets_memory_size = cc_heap_memory_calc_aligned_size(buckets_size, cc_heap_memory_buckets_alignment_size());
 	cc_heap_bucket_t* buckets = cc_first_fit_allocate(&ctx->first_fit, buckets_memory_size);
 	if (buckets == NULL)
@@ -340,33 +340,33 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 
 	size_t max_memory_size = ctx->first_fit.free_size - cc_heap_memory_calc_bucket_head_memory_size();
 	size_t max_count;
-	for (size_t i =0; i < config->count; i++)
+	for (size_t i =0; i < bucket_descriptors->count; i++)
 	{
-		if (config->elements[i].size == 0)
+		if (bucket_descriptors->elements[i].size == 0)
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
-		if (config->elements[i].count == 0)
-		{
-			cc_first_fit_free(&ctx->first_fit, buckets);
-			return false;
-		}
-
-		max_count = max_memory_size / config->elements[i].size;
-		if (config->elements[i].count > max_count)
+		if (bucket_descriptors->elements[i].count == 0)
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
 
-		cc_heap_bucket_descriptor_copy(&buckets[i].descriptor, &config->elements[i]);
+		max_count = max_memory_size / bucket_descriptors->elements[i].size;
+		if (bucket_descriptors->elements[i].count > max_count)
+		{
+			cc_first_fit_free(&ctx->first_fit, buckets);
+			return false;
+		}
+
+		cc_heap_bucket_descriptor_copy(&buckets[i].descriptor, &bucket_descriptors->elements[i]);
 		buckets[i].regions = NULL;
 	}
 
 
 	ctx->buckets = buckets;
-	ctx->bucket_count = config->count;
+	ctx->bucket_count = bucket_descriptors->count;
 
 	return true;
 }

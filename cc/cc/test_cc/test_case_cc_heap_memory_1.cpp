@@ -114,7 +114,7 @@ static bool item_pool_initialize()
 	cc_heap_bucket_descriptor_t cc_heap_bucket_descriptors[] = {
 		{ sizeof(item_t), item_max_count }
 	};
-	cc_heap_memory_config_t config;
+	cc_heap_bucket_descriptors_t config;
 	config.elements = cc_heap_bucket_descriptors;
 	config.count = cc_heap_bucket_count;
 

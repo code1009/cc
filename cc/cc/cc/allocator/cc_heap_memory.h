@@ -79,7 +79,7 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_pointer, const size_t memory_size, const cc_heap_memory_config_t* config);
+cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_pointer, const size_t memory_size, const cc_heap_bucket_descriptors_t* bucket_descriptors);
 cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx);
 
 cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size);
