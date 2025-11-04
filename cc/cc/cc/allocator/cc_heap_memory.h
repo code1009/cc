@@ -17,20 +17,20 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_heap_bucket_config_t
+typedef struct _cc_heap_bucket_descriptor_t
 {
 	size_t size;
 	size_t count;
 }
-cc_heap_bucket_config_t;
+cc_heap_bucket_descriptor_t;
 
 //===========================================================================
-typedef struct _cc_heap_memory_config_t
+typedef struct _cc_heap_bucket_descriptors_t
 {
-	cc_heap_bucket_config_t* buckets;
-	size_t bucket_count;
+	cc_heap_bucket_descriptor_t* elements;
+	size_t count;
 }
-cc_heap_memory_config_t;
+cc_heap_bucket_descriptors_t;
 
 
 
@@ -48,7 +48,7 @@ cc_heap_bucket_region_head_t;
 //===========================================================================
 typedef struct _cc_heap_bucket_t
 {
-	cc_heap_bucket_config_t config;
+	cc_heap_bucket_descriptor_t descriptor;
 	cc_heap_bucket_region_head_t* regions;
 }
 cc_heap_bucket_t;

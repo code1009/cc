@@ -61,7 +61,7 @@ static inline bool cc_heap_memory_is_aligned_address(const uintptr_t address)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline void cc_heap_bucket_config_copy(cc_heap_bucket_config_t* dst, const cc_heap_bucket_config_t* src)
+static inline void cc_heap_bucket_descriptor_copy(cc_heap_bucket_descriptor_t* dst, const cc_heap_bucket_descriptor_t* src)
 {
 	cc_debug_assert(dst != NULL);
 	cc_debug_assert(src != NULL);
@@ -97,7 +97,7 @@ static inline cc_heap_bucket_t* cc_heap_memory_find_bucket(const cc_heap_memory_
 	//-----------------------------------------------------------------------
 	for (size_t i = 0; i < ctx->bucket_count; i++)
 	{
-		if (size <= ctx->buckets[i].config.size)
+		if (size <= ctx->buckets[i].descriptor.size)
 		{
 			return &ctx->buckets[i];
 		}
@@ -134,7 +134,7 @@ static inline size_t cc_heap_memory_calc_bucket_body_size(cc_heap_bucket_t* buck
 	cc_debug_assert(bucket != NULL);
 
 
-	size_t body_size = bucket->config.size * bucket->config.count;
+	size_t body_size = bucket->descriptor.size * bucket->descriptor.count;
 
 	return body_size;
 }
@@ -179,8 +179,8 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_add_bucket_storage(cc
 		&bucket_storage->simple_segregated_storage,
 		body_pointer,
 		body_size,
-		bucket->config.size,
-		bucket->config.count
+		bucket->descriptor.size,
+		bucket->descriptor.count
 	);
 	if (rv == false)
 	{
@@ -300,11 +300,11 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	{
 		return false;
 	}
-	if (config->buckets == NULL)
+	if (config->elements == NULL)
 	{
 		return false;
 	}
-	if (config->bucket_count == 0)
+	if (config->count == 0)
 	{
 		return false;
 	}
@@ -325,7 +325,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	}
 
 
-	size_t buckets_size = sizeof(cc_heap_bucket_t) * config->bucket_count;
+	size_t buckets_size = sizeof(cc_heap_bucket_t) * config->count;
 	size_t buckets_memory_size = cc_heap_memory_calc_aligned_size(buckets_size, cc_heap_memory_buckets_alignment_size());
 	cc_heap_bucket_t* buckets = cc_first_fit_allocate(&ctx->first_fit, buckets_memory_size);
 	if (buckets == NULL)
@@ -340,33 +340,33 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 
 	size_t max_memory_size = ctx->first_fit.free_size - cc_heap_memory_calc_bucket_head_memory_size();
 	size_t max_count;
-	for (size_t i =0; i < config->bucket_count; i++)
+	for (size_t i =0; i < config->count; i++)
 	{
-		if (config->buckets[i].size == 0)
+		if (config->elements[i].size == 0)
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
-		if (config->buckets[i].count == 0)
-		{
-			cc_first_fit_free(&ctx->first_fit, buckets);
-			return false;
-		}
-
-		max_count = max_memory_size / config->buckets[i].size;
-		if (config->buckets[i].count > max_count)
+		if (config->elements[i].count == 0)
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
 
-		cc_heap_bucket_config_copy(&buckets[i].config, &config->buckets[i]);
+		max_count = max_memory_size / config->elements[i].size;
+		if (config->elements[i].count > max_count)
+		{
+			cc_first_fit_free(&ctx->first_fit, buckets);
+			return false;
+		}
+
+		cc_heap_bucket_descriptor_copy(&buckets[i].descriptor, &config->elements[i]);
 		buckets[i].regions = NULL;
 	}
 
 
 	ctx->buckets = buckets;
-	ctx->bucket_count = config->bucket_count;
+	ctx->bucket_count = config->count;
 
 	return true;
 }
