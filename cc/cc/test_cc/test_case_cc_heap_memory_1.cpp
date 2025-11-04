@@ -255,7 +255,7 @@ static void allocate(void)
 	padding_size = cc_heap_bucket_padding_size(cc_heap_bucket_count);
 
 	uintptr_t offset =
-		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_t) + padding_size +
+		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_heap_bucket_t) * cc_heap_bucket_count) + padding_size +
 		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_region_head_t)
 		;
 	_p0_address -= offset;
