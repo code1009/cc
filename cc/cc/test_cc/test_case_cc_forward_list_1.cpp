@@ -58,7 +58,7 @@ static bool item_pool_initialize()
 
 static void item_pool_uninitialize()
 {
-	test_out << "item storage count:" << cc_simple_segregated_storage_count(&_item_pool.simple_segregated_storage) << test_tendl;
+	test_out << "cc_simple_segregated_storage_count():" << cc_simple_segregated_storage_count(&_item_pool.simple_segregated_storage) << test_tendl;
 }
 
 static item_t* item_pool_allocate()
