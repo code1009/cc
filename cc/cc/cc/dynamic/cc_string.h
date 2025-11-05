@@ -20,7 +20,7 @@
 typedef struct _cc_string_t
 {
 	cc_string_allocator_t* allocator;
-	size_t size;
+	size_t length;
 	size_t capacity;
 	char* data;
 } cc_string_t;
@@ -47,7 +47,7 @@ cc_api bool cc_string_assign_string(cc_string_t* ctx, const cc_string_t* s);
 cc_api void cc_string_clear(cc_string_t* ctx);
 
 cc_api const char* cc_string_c_str(const cc_string_t* ctx);
-cc_api size_t cc_string_size(const cc_string_t* ctx);
+cc_api size_t cc_string_length(const cc_string_t* ctx);
 cc_api size_t cc_string_capacity(const cc_string_t* ctx);
 
 cc_api char cc_string_at(const cc_string_t* ctx, size_t index);
