@@ -1,9 +1,9 @@
-﻿#ifndef cc_fallocator_helper_h
-#define cc_fallocator_helper_h
+﻿#ifndef cc_fallocator_adapter_h
+#define cc_fallocator_adapter_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_fallocator_helper.h
+// # File: cc_fallocator_adapter.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -28,5 +28,5 @@ cc_api bool cc_simple_segregated_storage_fallocator_initialize(
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_fallocator_helper_h
+#endif // cc_fallocator_adapter_h
 

@@ -1,9 +1,9 @@
-﻿#ifndef cc_vallocator_helper_h
-#define cc_vallocator_helper_h
+﻿#ifndef cc_vallocator_adapter_h
+#define cc_vallocator_adapter_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_vallocator_helper.h
+// # File: cc_vallocator_adapter.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -33,5 +33,5 @@ cc_api bool cc_lf_heap_vallocator_initialize(
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_vallocator_helper_h
+#endif // cc_vallocator_adapter_h
 

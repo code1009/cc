@@ -22,7 +22,7 @@
 #include "cc_lf_heap.h"
 
 #include "cc_vallocator.h"
-#include "cc_vallocator_helper.h"
+#include "cc_vallocator_adapter.h"
 
 #include "cc_string_allocator.h"
 

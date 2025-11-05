@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_fallocator_helper.c
+// # File: cc_fallocator_adapter.c
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -21,7 +21,7 @@
 #include "cc_simple_segregated_storage.h"
 
 //===========================================================================
-#include "cc_fallocator_helper.h"
+#include "cc_fallocator_adapter.h"
 
 
 

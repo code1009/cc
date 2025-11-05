@@ -32,9 +32,10 @@
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 #include "allocator/cc_simple_segregated_storage.h"
+#include "allocator/cc_simple_segregated_storage_dump.h"
 
 #include "allocator/cc_fallocator.h"
-#include "allocator/cc_fallocator_helper.h"
+#include "allocator/cc_fallocator_adapter.h"
 
 //===========================================================================
 #include "algorithm/cc_hash.h"
@@ -77,10 +78,13 @@
 #if (1==cc_config_dynamic)
 
 #include "dynamic/cc_first_fit.h"
+#include "dynamic/cc_first_fit_dump.h"
+
 #include "dynamic/cc_lf_heap.h"
+#include "dynamic/cc_lf_heap_dump.h"
 
 #include "dynamic/cc_vallocator.h"
-#include "dynamic/cc_vallocator_helper.h"
+#include "dynamic/cc_vallocator_adapter.h"
 
 #include "dynamic/cc_string_allocator.h"
 #include "dynamic/cc_string.h"

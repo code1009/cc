@@ -51,9 +51,6 @@
     <ClCompile Include="cc\cc\allocator\cc_fallocator.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\allocator\cc_fallocator_helper.c">
-      <Filter>cc\cc\allocator</Filter>
-    </ClCompile>
     <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage.c">
       <Filter>cc\cc\allocator</Filter>
     </ClCompile>
@@ -195,9 +192,6 @@
     <ClCompile Include="cc\cc\dynamic\cc_vallocator.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\dynamic\cc_vallocator_helper.c">
-      <Filter>cc\cc\dynamic</Filter>
-    </ClCompile>
     <ClCompile Include="cc\cc\dynamic\cc_string_allocator.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
@@ -206,6 +200,21 @@
     </ClCompile>
     <ClCompile Include="cc\test_cc\test_case_cc_string_1.cpp">
       <Filter>cc\test_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_fallocator_adapter.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\allocator\cc_simple_segregated_storage_dump.c">
+      <Filter>cc\cc\allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_first_fit_dump.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_lf_heap_dump.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_vallocator_adapter.c">
+      <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +237,6 @@
       <Filter>cc\cc\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_fallocator.h">
-      <Filter>cc\cc\allocator</Filter>
-    </ClInclude>
-    <ClInclude Include="cc\cc\allocator\cc_fallocator_helper.h">
       <Filter>cc\cc\allocator</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage.h">
@@ -323,9 +329,6 @@
     <ClInclude Include="cc\cc\cc_version.h">
       <Filter>cc\cc</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\dynamic\cc_vallocator_helper.h">
-      <Filter>cc\cc\dynamic</Filter>
-    </ClInclude>
     <ClInclude Include="cc\cc\dynamic\cc_first_fit.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
@@ -339,6 +342,21 @@
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\dynamic\cc_string_allocator.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_fallocator_adapter.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\allocator\cc_simple_segregated_storage_dump.h">
+      <Filter>cc\cc\allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_first_fit_dump.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_lf_heap_dump.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_vallocator_adapter.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
   </ItemGroup>

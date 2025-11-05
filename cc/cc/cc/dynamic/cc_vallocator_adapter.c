@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_vallocator_helper.c
+// # File: cc_vallocator_adapter.c
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -18,14 +18,12 @@
 
 //===========================================================================
 #include "../allocator/cc_simple_segregated_storage.h"
-
-#include "cc_vallocator.h"
 #include "cc_first_fit.h"
-
 #include "cc_lf_heap.h"
 
 //===========================================================================
-#include "cc_vallocator_helper.h"
+#include "cc_vallocator.h"
+#include "cc_vallocator_adapter.h"
 
 
 
