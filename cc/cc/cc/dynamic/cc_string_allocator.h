@@ -28,7 +28,11 @@ typedef struct _cc_string_allocator_t
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const void* memory_pointer, const size_t memory_size);
+cc_api bool cc_default_string_allocator_initialize(void);
+cc_api void cc_default_string_allocator_uninitialize(void);
+
+cc_api cc_string_allocator_t* cc_default_string_allocator(void);
+cc_api void cc_default_string_allocator_dump(void);
 
 
 

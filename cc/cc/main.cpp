@@ -10,11 +10,14 @@
 //===========================================================================
 void test_case_cc_version();
 
+//===========================================================================
 void test_case_cc_code_template();
 
+//===========================================================================
 void test_case_cc_assert_1();
 void test_case_cc_assert_2();
 
+//===========================================================================
 void test_case_cc_vector_1();
 void test_case_cc_vector_2();
 
@@ -37,10 +40,13 @@ void test_case_cc_unordered_map_2();
 
 void test_case_cc_priority_queue_1();
 
+//===========================================================================
 void test_case_cc_sort_1();
 
+//===========================================================================
 void test_case_cc_first_fit_1();
 void test_case_cc_lf_heap_1();
+void test_case_cc_string_1();
 
 
 
@@ -328,11 +334,26 @@ static void test_case_cc_lf_heap()
 	test_runner(&test_suite);
 }
 
+static void test_case_cc_string()
+{
+	test_case_t test_cases[] =
+	{
+		{ "test_case_cc_string_1", test_case_cc_string_1 },
+		{ NULL, NULL }
+	};
+
+
+	test_suite_t test_suite;
+	test_suite.name = "test_case_cc_string";
+	test_suite.items = test_cases;
+	test_suite.count = sizeof(test_cases) / sizeof(test_case_t) - 1;
+	test_runner(&test_suite);
+}
 
 //===========================================================================
 static void test_run()
 {
-#if 1
+#if 0
 	test_suite_cc_version();
 
 //	test_suite_cc_code_template();
@@ -358,9 +379,10 @@ static void test_run()
 	test_suite_cc_sort();
 
 	test_case_cc_first_fit();
+	test_case_cc_lf_heap_1();
 #endif
 
-	test_case_cc_lf_heap_1();
+	test_case_cc_string();
 }
 
 

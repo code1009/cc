@@ -71,6 +71,7 @@
     <ClCompile Include="cc\test_cc\test_case_cc_queue_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_set_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_stack_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_string_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_unordered_map_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_unordered_map_2.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_unordered_set_1.cpp" />

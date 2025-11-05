@@ -204,6 +204,9 @@
     <ClCompile Include="cc\cc\dynamic\cc_string.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_string_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">
