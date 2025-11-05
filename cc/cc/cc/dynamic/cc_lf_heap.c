@@ -214,9 +214,9 @@ static inline cc_lf_heap_bucket_region_head_t* cc_lf_heap_new_bucket_region(cc_l
 	uint8_t* head_pointer = memory_pointer;
 	uint8_t* body_pointer = memory_pointer + head_size;
 
-	cc_lf_heap_bucket_region_head_t* bucket_region_head = (cc_lf_heap_bucket_region_head_t*)head_pointer;
+	cc_lf_heap_bucket_region_head_t* bucket_region = (cc_lf_heap_bucket_region_head_t*)head_pointer;
 	rv = cc_simple_segregated_storage_initialize(
-		&bucket_region_head->simple_segregated_storage,
+		&bucket_region->simple_segregated_storage,
 		body_pointer,
 		body_size,
 		bucket->descriptor.size,
@@ -227,13 +227,13 @@ static inline cc_lf_heap_bucket_region_head_t* cc_lf_heap_new_bucket_region(cc_l
 		cc_first_fit_free(&ctx->first_fit, memory_pointer);
 		return NULL;
 	}
-	bucket_region_head->next = NULL;
+	bucket_region->next = NULL;
 
 
 	//-----------------------------------------------------------------------
 	if (NULL == bucket->regions)
 	{
-		bucket->regions = bucket_region_head;
+		bucket->regions = bucket_region;
 	}
 	else
 	{
@@ -243,11 +243,15 @@ static inline cc_lf_heap_bucket_region_head_t* cc_lf_heap_new_bucket_region(cc_l
 		{
 			current = (cc_lf_heap_bucket_region_head_t*)current->next;
 		}
-		current->next = bucket_region_head;
+		current->next = bucket_region;
 	}
 
 
-	return bucket_region_head;
+	//-----------------------------------------------------------------------
+	bucket->cache_region = bucket_region;
+
+
+	return bucket_region;
 }
 
 static inline void* cc_lf_heap_allocate_from_bucket(cc_lf_heap_bucket_t* bucket)
@@ -564,10 +568,6 @@ cc_api void* cc_lf_heap_allocate(cc_lf_heap_t* ctx, const size_t size)
 	{
 		return NULL;
 	}
-
-
-	//-----------------------------------------------------------------------
-	bucket->cache_region = bucket_region;
 
 
 	//-----------------------------------------------------------------------
