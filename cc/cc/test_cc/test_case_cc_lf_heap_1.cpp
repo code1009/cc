@@ -49,7 +49,7 @@ typedef struct _item_t
 //===========================================================================
 typedef struct _item_pool_t
 {
-	cc_lf_heap_t heap_memory;
+	cc_lf_heap_t lf_heap;
 	uint8_t memory[item_memory_size];
 	cc_vallocator_t allocator;
 }
@@ -62,9 +62,9 @@ static item_pool_t _item_pool;
 static void item_pool_dump(void)
 {
 	test_out
-		<< "first_fit.min_ever_free_size:" << _item_pool.heap_memory.first_fit.min_ever_free_size << test_tendl
-		<< "first_fit.free_size         :" << _item_pool.heap_memory.first_fit.free_size << test_tendl
-		<< "first_fit.count             :" << _item_pool.heap_memory.first_fit.count << test_tendl
+		<< "first_fit.min_ever_free_size:" << _item_pool.lf_heap.first_fit.min_ever_free_size << test_tendl
+		<< "first_fit.free_size         :" << _item_pool.lf_heap.first_fit.free_size << test_tendl
+		<< "first_fit.count             :" << _item_pool.lf_heap.first_fit.count << test_tendl
 		<< test_tendl
 		;
 }
@@ -93,7 +93,7 @@ static bool item_pool_initialize()
 
 	rv = cc_lf_heap_vallocator_initialize(
 		&_item_pool.allocator,
-		&_item_pool.heap_memory,
+		&_item_pool.lf_heap,
 		&_item_pool.memory[0], sizeof(_item_pool.memory),
 		&cc_lf_heap_bucket_descriptors
 	);
@@ -108,10 +108,10 @@ static bool item_pool_initialize()
 	item_pool_dump();
 
 	_begin_address = (uintptr_t)&_item_pool.memory[0];
-	_end_address = (uintptr_t)_item_pool.heap_memory.first_fit.end_block;
+	_end_address = (uintptr_t)_item_pool.lf_heap.first_fit.end_block;
 
 	test_out
-		<< "memory_size  :" << (void*)_item_pool.heap_memory.first_fit.memory_size << "(" << _item_pool.heap_memory.first_fit.memory_size << ")" << test_tendl
+		<< "memory_size  :" << (void*)_item_pool.lf_heap.first_fit.memory_size << "(" << _item_pool.lf_heap.first_fit.memory_size << ")" << test_tendl
 		<< "begin_address:" << (void*)_begin_address << test_tendl
 		<< "end_address  :" << (void*)_end_address << test_tendl
 		<< "end-begin    :" << _end_address - _begin_address << test_tendl
@@ -132,18 +132,18 @@ static void item_pool_uninitialize()
 	item_pool_dump();
 
 	test_out
-		<< "cc_lf_heap_count():" << cc_lf_heap_count(&_item_pool.heap_memory) << test_tendl
+		<< "cc_lf_heap_count():" << cc_lf_heap_count(&_item_pool.lf_heap) << test_tendl
 		;
 	test_out
-		<< "cc_first_fit_count():" << cc_first_fit_count(&_item_pool.heap_memory.first_fit) << test_tendl
+		<< "cc_first_fit_count():" << cc_first_fit_count(&_item_pool.lf_heap.first_fit) << test_tendl
 		;
 
-	cc_lf_heap_uninitialize(&_item_pool.heap_memory);
+	cc_lf_heap_uninitialize(&_item_pool.lf_heap);
 }
 
 static item_t* item_pool_allocate(size_t size)
 {
-	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.heap_memory, size);
+	item_t* item_pointer = (item_t*)_item_pool.allocator.allocate(&_item_pool.lf_heap, size);
 	if (item_pointer == NULL)
 	{
 		test_out << "_item_pool.allocator.allocate() failed" << test_tendl;
@@ -164,7 +164,7 @@ static void item_pool_free(item_t* item)
 {
 	bool rv;
 
-	rv = _item_pool.allocator.free(&_item_pool.heap_memory, item);
+	rv = _item_pool.allocator.free(&_item_pool.lf_heap, item);
 	if (rv == false)
 	{
 		test_out << "_item_pool.allocator.free() failed" << test_tendl;
