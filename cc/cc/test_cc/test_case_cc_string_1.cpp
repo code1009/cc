@@ -47,6 +47,9 @@ static void string_append(void)
 static void run(void)
 {
 	string_append();
+
+	cc_default_string_allocator_dump();
+
 	string_append();
 }
 

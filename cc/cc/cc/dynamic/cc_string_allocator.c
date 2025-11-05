@@ -90,7 +90,7 @@ static inline int64_t cc_offset_address(void* pointer, uintptr_t base_address)
 static inline void cc_first_fit_dump(cc_first_fit_t* first_fit, size_t number, uintptr_t base_address)
 {
 	//-----------------------------------------------------------------------
-	printf("# [%lld] first_fit: %p(%4lld) \n", (int64_t)number, first_fit, cc_offset_address(first_fit, base_address));
+	printf("# [%lld] %p(%4lld): first_fit \n", (int64_t)number, first_fit, cc_offset_address(first_fit, base_address));
 
 
 	//-----------------------------------------------------------------------
@@ -149,7 +149,7 @@ static inline void cc_first_fit_dump(cc_first_fit_t* first_fit, size_t number, u
 
 
 		printf(
-			"@ block[%4lld] : address=%p(%4lld), pointer=%p(%4lld) size=%6lld bytes %s \n",
+			"- block[%3lld] address = %p(%4lld), pointer = %p(%4lld) size = %6lld bytes %s \n",
 			(int64_t)block_count,
 			(void*)block, cc_offset_address(block, base_address),
 			(void*)(block_address + block_head_size), cc_offset_address((void*)(block_address + block_head_size), base_address),
@@ -162,33 +162,34 @@ static inline void cc_first_fit_dump(cc_first_fit_t* first_fit, size_t number, u
 	}
 
 
+	printf("- block_count        = %lld       \n", (int64_t)block_count);
 	printf("- total_block_size   = %lld bytes \n", (int64_t)total_block_size);
 }
 
 static inline void cc_simple_segregated_storage_dump(cc_simple_segregated_storage_t* simple_segregated_storage, size_t number, uintptr_t base_address)
 {
 	//-----------------------------------------------------------------------
-	printf("# [%lld] simple_segregated_storage: %p(%4lld) \n", (int64_t)number, simple_segregated_storage, cc_offset_address(simple_segregated_storage, base_address));
+	printf("# [%lld] %p(%4lld): simple_segregated_storage \n", (int64_t)number, simple_segregated_storage, cc_offset_address(simple_segregated_storage, base_address));
 
 
 	//-----------------------------------------------------------------------
-	printf("- count           = %lld       \n", (int64_t)simple_segregated_storage->count);
-	printf("- memory_pointer  = %p(%4lld)  \n", (void*)simple_segregated_storage->memory_pointer, cc_offset_address(simple_segregated_storage->memory_pointer, base_address));
-	printf("- memory_size     = %lld bytes \n", (int64_t)simple_segregated_storage->memory_size);
-	printf("- data_size       = %lld bytes \n", (int64_t)simple_segregated_storage->data_size);
-	printf("- max_count       = %lld       \n", (int64_t)simple_segregated_storage->max_count);
-	printf("- chunk_size      = %lld bytes \n", (int64_t)simple_segregated_storage->chunk_size);
-	printf("- free_chunk_head = %p(%4lld)  \n", (void*)simple_segregated_storage->free_chunk_head, cc_offset_address(simple_segregated_storage->free_chunk_head, base_address));
+	printf("- count              = %lld       \n", (int64_t)simple_segregated_storage->count);
+	printf("- memory_pointer     = %p(%4lld)  \n", (void*)simple_segregated_storage->memory_pointer, cc_offset_address(simple_segregated_storage->memory_pointer, base_address));
+	printf("- memory_size        = %lld bytes \n", (int64_t)simple_segregated_storage->memory_size);
+	printf("- data_size          = %lld bytes \n", (int64_t)simple_segregated_storage->data_size);
+	printf("- max_count          = %lld       \n", (int64_t)simple_segregated_storage->max_count);
+	printf("- chunk_size         = %lld bytes \n", (int64_t)simple_segregated_storage->chunk_size);
+	printf("- free_chunk_head    = %p(%4lld)  \n", (void*)simple_segregated_storage->free_chunk_head, cc_offset_address(simple_segregated_storage->free_chunk_head, base_address));
 }
 
 static inline void cc_cc_lf_heap_bucket_region_dump(cc_lf_heap_bucket_region_head_t* lf_heap_bucket_region, size_t number, uintptr_t base_address)
 {
 	//-----------------------------------------------------------------------
-	printf("# [%llu] lf_heap_bucket_region : %p(%4lld) \n", (int64_t)number, lf_heap_bucket_region, cc_offset_address(lf_heap_bucket_region, base_address));
+	printf("# [%llu] %p(%4lld): lf_heap_bucket_region\n", (int64_t)number, lf_heap_bucket_region, cc_offset_address(lf_heap_bucket_region, base_address));
 
 
 	//-----------------------------------------------------------------------
-	printf("- next = %p(%4lld) \n", lf_heap_bucket_region->next, cc_offset_address(lf_heap_bucket_region->next, base_address));
+	printf("- next               = %p(%4lld) \n", lf_heap_bucket_region->next, cc_offset_address(lf_heap_bucket_region->next, base_address));
 
 
 	cc_simple_segregated_storage_dump(&lf_heap_bucket_region->simple_segregated_storage, number, base_address);
@@ -197,14 +198,14 @@ static inline void cc_cc_lf_heap_bucket_region_dump(cc_lf_heap_bucket_region_hea
 static inline void cc_cc_lf_heap_bucket_dump(cc_lf_heap_bucket_t* lf_heap_bucket, size_t number, uintptr_t base_address)
 {
 	//-----------------------------------------------------------------------
-	printf("# [%lld] lf_heap_bucket: %p(%4lld) \n", (int64_t)number, lf_heap_bucket, cc_offset_address(lf_heap_bucket, base_address));
+	printf("# [%lld] %p(%4lld): lf_heap_bucket\n", (int64_t)number, lf_heap_bucket, cc_offset_address(lf_heap_bucket, base_address));
 
 
 	//-----------------------------------------------------------------------
-	printf("- descriptor.size  = %lld bytes \n", (int64_t)lf_heap_bucket->descriptor.size);
-	printf("- descriptor.count = %lld       \n", (int64_t)lf_heap_bucket->descriptor.count);
-	printf("- regions          = %p(%4lld)  \n", (void*)lf_heap_bucket->regions, cc_offset_address((void*)lf_heap_bucket->regions, base_address));
-	printf("- cache_region     = %p(%4lld)  \n", (void*)lf_heap_bucket->cache_region, cc_offset_address((void*)lf_heap_bucket->cache_region, base_address));
+	printf("- descriptor.size    = %lld bytes \n", (int64_t)lf_heap_bucket->descriptor.size);
+	printf("- descriptor.count   = %lld       \n", (int64_t)lf_heap_bucket->descriptor.count);
+	printf("- regions            = %p(%4lld)  \n", (void*)lf_heap_bucket->regions, cc_offset_address((void*)lf_heap_bucket->regions, base_address));
+	printf("- cache_region       = %p(%4lld)  \n", (void*)lf_heap_bucket->cache_region, cc_offset_address((void*)lf_heap_bucket->cache_region, base_address));
 
 
 	//-----------------------------------------------------------------------
@@ -219,12 +220,17 @@ static inline void cc_cc_lf_heap_bucket_dump(cc_lf_heap_bucket_t* lf_heap_bucket
 static inline void cc_cc_lf_heap_dump(cc_lf_heap_t* lf_heap, size_t number, uintptr_t base_address)
 {
 	//-----------------------------------------------------------------------
-	printf("# [%lld] lf_heap: %p(%4lld) \n", (int64_t)number, lf_heap, cc_offset_address(lf_heap, base_address));
+	printf("# [%lld] %p(%4lld): lf_heap\n", (int64_t)number, lf_heap, cc_offset_address(lf_heap, base_address));
 
 
 	//-----------------------------------------------------------------------
-	printf("- count   = %lld \n", (int64_t)cc_lf_heap_count(lf_heap));
-	printf("- buckets = %lld \n", (int64_t)lf_heap->buckets.count);
+	printf("- count              = %lld \n", (int64_t)cc_lf_heap_count(lf_heap));
+	printf("- buckets            = %lld \n", (int64_t)lf_heap->buckets.count);
+
+
+	//-----------------------------------------------------------------------
+	cc_first_fit_t* first_fit = &lf_heap->first_fit;
+	cc_first_fit_dump(first_fit, number, base_address);
 
 
 	//-----------------------------------------------------------------------
@@ -236,25 +242,16 @@ static inline void cc_cc_lf_heap_dump(cc_lf_heap_t* lf_heap, size_t number, uint
 			cc_cc_lf_heap_bucket_dump(lf_heap_bucket, i, base_address);
 		}
 	}
-
-
-	//-----------------------------------------------------------------------
-	cc_first_fit_t* first_fit = &lf_heap->first_fit;
-	cc_first_fit_dump(first_fit, number, base_address);
 }
 
 cc_api void cc_string_allocator_dump(cc_string_allocator_t* string_allocator, size_t number, uintptr_t base_address)
 {
 	//-----------------------------------------------------------------------
-	printf("# [%lld] string_allocator: %p(%4lld) \n", (int64_t)number, string_allocator, cc_offset_address(string_allocator, base_address));
+	printf("# [%lld] %p(%4lld): string_allocator\n", (int64_t)number, string_allocator, cc_offset_address(string_allocator, base_address));
 
 
 	//-----------------------------------------------------------------------
 	cc_cc_lf_heap_dump(&string_allocator->lf_heap, number, (uintptr_t)(&string_allocator->lf_heap.first_fit.memory_pointer[0]));
-
-
-	//-----------------------------------------------------------------------
-	printf("\n");
 }
 
 
@@ -371,6 +368,7 @@ cc_api cc_string_allocator_t* cc_default_string_allocator(void)
 cc_api void cc_default_string_allocator_dump(void)
 {
 	//-----------------------------------------------------------------------
+	printf("\n");
 	printf("# default_string_allocator \n");
 
 
