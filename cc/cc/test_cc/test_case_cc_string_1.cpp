@@ -18,16 +18,20 @@ static void string_append(void)
 
 	cc_string_t s1;
 	cc_string_create(&s1, cc_default_string_allocator());
-	cc_string_append(&s1, "Hello, ");
-	cc_string_append(&s1, "World! ");
+	cc_string_append(&s1, "<Hello, ");
+	cc_string_append(&s1, "World!>");
 
 
 	cc_string_append(&s0, cc_string_c_str(&s1));
 	cc_string_append(&s0, cc_string_c_str(&s1));
 	cc_string_append(&s0, cc_string_c_str(&s1));
 	cc_string_append(&s0, cc_string_c_str(&s1));
+
 	cc_string_append(&s0, cc_string_c_str(&s1));
 	cc_string_append(&s0, cc_string_c_str(&s1));
+	cc_string_append(&s0, cc_string_c_str(&s1));
+	cc_string_append(&s0, cc_string_c_str(&s1));
+
 	cc_string_append(&s0, cc_string_c_str(&s1));
 	cc_string_append(&s0, cc_string_c_str(&s1));
 	cc_string_append(&s0, cc_string_c_str(&s1));
