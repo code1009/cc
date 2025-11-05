@@ -50,6 +50,7 @@ typedef struct _cc_heap_bucket_t
 {
 	cc_heap_bucket_descriptor_t descriptor;
 	cc_heap_bucket_region_head_t* regions;
+	cc_heap_bucket_region_head_t* cache;
 }
 cc_heap_bucket_t;
 
@@ -77,6 +78,7 @@ cc_heap_memory_t;
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
 cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const void* pointer);
+cc_api bool cc_heap_memory_add_bucket_region(cc_heap_memory_t* ctx, size_t index);
 
 
 

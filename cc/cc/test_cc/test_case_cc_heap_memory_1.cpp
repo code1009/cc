@@ -21,58 +21,25 @@ typedef struct _item_t
 //===========================================================================
 #define cc_heap_bucket_count  1
 
-/*
-static inline size_t cc_heap_bucket_padding_size(size_t bucket_count)
-{
-	uintptr_t aligment_size = sizeof(cc_first_fit_block_head_t);
-	uintptr_t source_size;
-	uintptr_t padding_size;
-	source_size = sizeof(cc_heap_bucket_t) * bucket_count;
-	if ((source_size % aligment_size)
-	{
-		padding_size = aligment_size - (source_size % aligment_size);
-	}
-	else
-	{
-		padding_size = 0;
-	}
-
-	return padding_size;
-}
-*/
-
-#define cc_heap_bucket_padding_size(bucket_count) \
-	(                                                             \
-		(                                                         \
-			(                                                     \
-				(                                                 \
-					(sizeof(cc_heap_bucket_t) * (bucket_count)) + \
-					sizeof(cc_first_fit_block_head_t) - 1         \
-				)                                                 \
-				/ sizeof(cc_first_fit_block_head_t)               \
-			)                                                     \
-			* sizeof(cc_first_fit_block_head_t)                   \
-		)                                                         \
-		- (sizeof(cc_heap_bucket_t) * (bucket_count))             \
-	)
-
 //===========================================================================
 #define item_max_count 4
 #define item_memory_size ( \
 	(sizeof(cc_first_fit_block_head_t                )                        ) + \
 	(sizeof(cc_heap_bucket_t                         ) * cc_heap_bucket_count ) + \
-	(cc_heap_bucket_padding_size(cc_heap_bucket_count)                        ) + \
 	\
 	(sizeof(cc_first_fit_block_head_t                )                        ) + \
 	(sizeof(cc_heap_bucket_region_head_t             )                        ) + \
 	(sizeof(item_t                                   ) * item_max_count       ) + \
+	\
 	(sizeof(cc_first_fit_block_head_t                )                        ) )
-
-// 64bit
-// cc_first_fit_block_head_t:16 + cc_heap_bucket_t:24 + cc_heap_bucket_padding_size:8 = 48
-// cc_first_fit_block_head_t:16 + cc_heap_bucket_region_head_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
-// 48 + 1104 = 1152
-// 1152 + 16(end_block) = 1168 = 16 * 73
+/*
+# 64bit
+@ first_fit_block[0] = cc_first_fit_block_head_t:16 + cc_heap_bucket_t:32*1 = 48
+@ first_fit_block[1] = cc_first_fit_block_head_t:16 + cc_heap_bucket_region_head_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
+  48 + 1104 = 1152
+@ first_fit_block[2] = cc_first_fit_block_head_t:16 = 16(end_block)
+  1152 + 16 = 1168 = 16 * 73
+*/
 
 
 
@@ -251,12 +218,9 @@ static void allocate(void)
 	_p3_address -= _begin_address;
 
 	
-	uintptr_t padding_size;
-	padding_size = cc_heap_bucket_padding_size(cc_heap_bucket_count);
-
 	uintptr_t offset =
-		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_heap_bucket_t) * cc_heap_bucket_count) + padding_size +
-		sizeof(cc_first_fit_block_head_t) + sizeof(cc_heap_bucket_region_head_t)
+		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_heap_bucket_t) * cc_heap_bucket_count) +
+		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_heap_bucket_region_head_t))
 		;
 	_p0_address -= offset;
 	_p1_address -= offset;
