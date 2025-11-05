@@ -40,7 +40,7 @@ void test_case_cc_priority_queue_1();
 void test_case_cc_sort_1();
 
 void test_case_cc_first_fit_1();
-void test_case_cc_heap_memory_1();
+void test_case_cc_lf_heap_1();
 
 
 
@@ -312,17 +312,17 @@ static void test_case_cc_first_fit()
 	test_runner(&test_suite);
 }
 
-static void test_case_cc_heap_memory()
+static void test_case_cc_lf_heap()
 {
 	test_case_t test_cases[] =
 	{
-		{ "test_case_cc_heap_memory_1", test_case_cc_heap_memory_1 },
+		{ "test_case_cc_lf_heap_1", test_case_cc_lf_heap_1 },
 		{ NULL, NULL }
 	};
 
 
 	test_suite_t test_suite;
-	test_suite.name = "test_case_cc_heap_memory";
+	test_suite.name = "test_case_cc_lf_heap";
 	test_suite.items = test_cases;
 	test_suite.count = sizeof(test_cases) / sizeof(test_case_t) - 1;
 	test_runner(&test_suite);
@@ -360,7 +360,7 @@ static void test_run()
 	test_case_cc_first_fit();
 #endif
 
-	test_case_cc_heap_memory();
+	test_case_cc_lf_heap_1();
 }
 
 

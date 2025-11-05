@@ -22,7 +22,7 @@
 #include "cc_vallocator.h"
 #include "cc_first_fit.h"
 
-#include "cc_heap_memory.h"
+#include "cc_lf_heap.h"
 
 //===========================================================================
 #include "cc_vallocator_helper.h"
@@ -69,13 +69,13 @@ cc_api bool cc_first_fit_vallocator_initialize(
 }
 
 //===========================================================================
-cc_api bool cc_heap_memory_vallocator_initialize(
+cc_api bool cc_lf_heap_vallocator_initialize(
 	cc_vallocator_t* vallocator,
-	cc_heap_memory_t* heap_memory, const void* memory_pointer, const size_t memory_size, const cc_heap_bucket_descriptors_t* bucket_descriptors
+	cc_lf_heap_t* lf_heap, const void* memory_pointer, const size_t memory_size, const cc_lf_heap_bucket_descriptors_t* bucket_descriptors
 )
 {
 	cc_debug_assert(vallocator != NULL);
-	cc_debug_assert(heap_memory != NULL);
+	cc_debug_assert(lf_heap != NULL);
 	cc_debug_assert(memory_pointer != NULL);
 	cc_debug_assert(memory_size != 0);
 	cc_debug_assert(bucket_descriptors != NULL);
@@ -83,8 +83,8 @@ cc_api bool cc_heap_memory_vallocator_initialize(
 
 	bool rv;
 
-	rv = cc_heap_memory_initialize(
-		heap_memory,
+	rv = cc_lf_heap_initialize(
+		lf_heap,
 		memory_pointer, memory_size,
 		bucket_descriptors
 	);
@@ -99,7 +99,7 @@ cc_api bool cc_heap_memory_vallocator_initialize(
 
 	cc_vallocator_initialize(
 		vallocator,
-		heap_memory, (cc_vallocate_t)cc_heap_memory_allocate, (cc_vfree_t)cc_heap_memory_free
+		lf_heap, (cc_vallocate_t)cc_lf_heap_allocate, (cc_vfree_t)cc_lf_heap_free
 	);
 
 	return true;

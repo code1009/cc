@@ -19,8 +19,9 @@
 //===========================================================================
 typedef struct _cc_string_allocator_t
 {
-	cc_heap_memory_t heap_memory;
+	cc_lf_heap_t lf_heap;
 } cc_string_allocator_t;
+
 
 
 

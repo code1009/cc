@@ -1,12 +1,12 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_heap_memory.c
+// # File: cc_lf_heap.c
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
 // 
 // # Description:
-//   @ Low fragmentation heap memory.
+//   @ Low fragmentation heap.
 // 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
@@ -23,7 +23,7 @@
 #include "../allocator/cc_simple_segregated_storage.h"
 #include "cc_first_fit.h"
 
-#include "cc_heap_memory.h"
+#include "cc_lf_heap.h"
 
 
 
@@ -31,12 +31,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline bool cc_heap_memory_add_overflow(const size_t a, const size_t b)
+static inline bool cc_lf_heap_add_overflow(const size_t a, const size_t b)
 {
 	return (a > ((size_t)-1 - b));
 }
 
-static inline bool cc_heap_memory_mul_overflow(const size_t a, const size_t b)
+static inline bool cc_lf_heap_mul_overflow(const size_t a, const size_t b)
 {
 	if (a == 0 || b == 0)
 	{
@@ -46,12 +46,12 @@ static inline bool cc_heap_memory_mul_overflow(const size_t a, const size_t b)
 	return (a > c);
 }
 
-static inline size_t cc_heap_memory_alignment(void)
+static inline size_t cc_lf_heap_alignment(void)
 {
 	return sizeof(void*);
 }
 
-static inline size_t cc_heap_memory_align(const size_t value, const size_t alignment)
+static inline size_t cc_lf_heap_align(const size_t value, const size_t alignment)
 {
 	cc_debug_assert(alignment != 0);
 
@@ -62,14 +62,14 @@ static inline size_t cc_heap_memory_align(const size_t value, const size_t align
 	{
 		count++;
 	}
-	if (cc_heap_memory_mul_overflow(alignment, count))
+	if (cc_lf_heap_mul_overflow(alignment, count))
 	{
 		return cc_invalid_size;
 	}
 	return alignment * count;
 }
 
-static inline bool cc_heap_memory_is_aligned(const uintptr_t value, const size_t alignment)
+static inline bool cc_lf_heap_is_aligned(const uintptr_t value, const size_t alignment)
 {
 	cc_debug_assert(alignment != 0);
 
@@ -83,7 +83,7 @@ static inline bool cc_heap_memory_is_aligned(const uintptr_t value, const size_t
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline void cc_heap_bucket_descriptor_copy(cc_heap_bucket_descriptor_t* dst, const cc_heap_bucket_descriptor_t* src)
+static inline void cc_lf_heap_bucket_descriptor_copy(cc_lf_heap_bucket_descriptor_t* dst, const cc_lf_heap_bucket_descriptor_t* src)
 {
 	cc_debug_assert(dst != NULL);
 	cc_debug_assert(src != NULL);
@@ -99,18 +99,18 @@ static inline void cc_heap_bucket_descriptor_copy(cc_heap_bucket_descriptor_t* d
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline size_t cc_heap_memory_buckets_alignment_size(void)
+static inline size_t cc_lf_heap_buckets_alignment_size(void)
 {
-	return cc_heap_memory_align(sizeof(cc_first_fit_block_head_t), cc_heap_memory_alignment());
+	return cc_lf_heap_align(sizeof(cc_first_fit_block_head_t), cc_lf_heap_alignment());
 }
 
-static inline size_t cc_heap_memory_buckets_aligned_size(const size_t bucket_count)
+static inline size_t cc_lf_heap_buckets_aligned_size(const size_t bucket_count)
 {
-	if (cc_heap_memory_mul_overflow(sizeof(cc_heap_bucket_t), bucket_count))
+	if (cc_lf_heap_mul_overflow(sizeof(cc_lf_heap_bucket_t), bucket_count))
 	{
 		return cc_invalid_size;
 	}
-	return cc_heap_memory_align(sizeof(cc_heap_bucket_t) * bucket_count, cc_heap_memory_buckets_alignment_size());
+	return cc_lf_heap_align(sizeof(cc_lf_heap_bucket_t) * bucket_count, cc_lf_heap_buckets_alignment_size());
 }
 
 
@@ -119,43 +119,43 @@ static inline size_t cc_heap_memory_buckets_aligned_size(const size_t bucket_cou
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline size_t cc_heap_memory_bucket_region_head_alignment_size(void)
+static inline size_t cc_lf_heap_bucket_region_head_alignment_size(void)
 {
-	return cc_heap_memory_alignment();
+	return cc_lf_heap_alignment();
 }
 
-static inline size_t cc_heap_memory_bucket_region_body_alignment_size(void)
+static inline size_t cc_lf_heap_bucket_region_body_alignment_size(void)
 {
-	return cc_heap_memory_alignment();
+	return cc_lf_heap_alignment();
 }
 
-static inline size_t cc_heap_memory_bucket_region_alignment_size(void)
+static inline size_t cc_lf_heap_bucket_region_alignment_size(void)
 {
-	return cc_heap_memory_alignment();
+	return cc_lf_heap_alignment();
 }
 
 //===========================================================================
-static inline size_t cc_heap_memory_bucket_region_head_aligned_size(void)
+static inline size_t cc_lf_heap_bucket_region_head_aligned_size(void)
 {
-	return cc_heap_memory_align(sizeof(cc_heap_bucket_region_head_t), cc_heap_memory_bucket_region_head_alignment_size());
+	return cc_lf_heap_align(sizeof(cc_lf_heap_bucket_region_head_t), cc_lf_heap_bucket_region_head_alignment_size());
 }
 
-static inline size_t cc_heap_memory_bucket_region_body_aligned_size(const size_t body_size)
+static inline size_t cc_lf_heap_bucket_region_body_aligned_size(const size_t body_size)
 {
-	return cc_heap_memory_align(body_size, cc_heap_memory_bucket_region_body_alignment_size());
+	return cc_lf_heap_align(body_size, cc_lf_heap_bucket_region_body_alignment_size());
 }
 
-static inline size_t cc_heap_memory_bucket_region_aligned_size(const size_t body_size)
+static inline size_t cc_lf_heap_bucket_region_aligned_size(const size_t body_size)
 {
-	size_t head_aligned_size = cc_heap_memory_bucket_region_head_aligned_size();
-	size_t body_aligned_size = cc_heap_memory_bucket_region_body_aligned_size(body_size);
-	if (cc_heap_memory_add_overflow(head_aligned_size, body_aligned_size))
+	size_t head_aligned_size = cc_lf_heap_bucket_region_head_aligned_size();
+	size_t body_aligned_size = cc_lf_heap_bucket_region_body_aligned_size(body_size);
+	if (cc_lf_heap_add_overflow(head_aligned_size, body_aligned_size))
 	{
 		return cc_invalid_size;
 	}
-	return cc_heap_memory_align(
+	return cc_lf_heap_align(
 		head_aligned_size + body_aligned_size,
-		cc_heap_memory_bucket_region_alignment_size()
+		cc_lf_heap_bucket_region_alignment_size()
 	);
 }
 
@@ -165,7 +165,7 @@ static inline size_t cc_heap_memory_bucket_region_aligned_size(const size_t body
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline cc_heap_bucket_t* cc_heap_memory_find_bucket(const cc_heap_memory_t* ctx, const size_t size)
+static inline cc_lf_heap_bucket_t* cc_lf_heap_find_bucket(const cc_lf_heap_t* ctx, const size_t size)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -183,7 +183,7 @@ static inline cc_heap_bucket_t* cc_heap_memory_find_bucket(const cc_heap_memory_
 	return NULL;
 }
 
-static inline cc_heap_bucket_region_head_t* cc_heap_memory_append_bucket_region(cc_heap_memory_t* ctx, cc_heap_bucket_t* bucket)
+static inline cc_lf_heap_bucket_region_head_t* cc_lf_heap_new_bucket_region(cc_lf_heap_t* ctx, cc_lf_heap_bucket_t* bucket)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -192,15 +192,15 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_append_bucket_region(
 
 	//-----------------------------------------------------------------------
 	size_t simple_segregated_storage_memory_size = cc_simple_segregated_storage_memory_size(bucket->descriptor.size, bucket->descriptor.count);
-	size_t body_size = cc_heap_memory_bucket_region_body_aligned_size(simple_segregated_storage_memory_size);
+	size_t body_size = cc_lf_heap_bucket_region_body_aligned_size(simple_segregated_storage_memory_size);
 
 	
 	//-----------------------------------------------------------------------
-	size_t head_size = cc_heap_memory_bucket_region_head_aligned_size();
+	size_t head_size = cc_lf_heap_bucket_region_head_aligned_size();
 
 
 	//-----------------------------------------------------------------------
-	size_t memory_size = cc_heap_memory_bucket_region_aligned_size(simple_segregated_storage_memory_size);
+	size_t memory_size = cc_lf_heap_bucket_region_aligned_size(simple_segregated_storage_memory_size);
 	uint8_t* memory_pointer = (uint8_t*)cc_first_fit_allocate(&ctx->first_fit, memory_size);
 	if(NULL==memory_pointer)
 	{
@@ -214,7 +214,7 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_append_bucket_region(
 	uint8_t* head_pointer = memory_pointer;
 	uint8_t* body_pointer = memory_pointer + head_size;
 
-	cc_heap_bucket_region_head_t* bucket_region_head = (cc_heap_bucket_region_head_t*)head_pointer;
+	cc_lf_heap_bucket_region_head_t* bucket_region_head = (cc_lf_heap_bucket_region_head_t*)head_pointer;
 	rv = cc_simple_segregated_storage_initialize(
 		&bucket_region_head->simple_segregated_storage,
 		body_pointer,
@@ -237,11 +237,11 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_append_bucket_region(
 	}
 	else
 	{
-		cc_heap_bucket_region_head_t* current;
+		cc_lf_heap_bucket_region_head_t* current;
 		current = bucket->regions;
 		while (current->next != NULL)
 		{
-			current = (cc_heap_bucket_region_head_t*)current->next;
+			current = (cc_lf_heap_bucket_region_head_t*)current->next;
 		}
 		current->next = bucket_region_head;
 	}
@@ -250,16 +250,16 @@ static inline cc_heap_bucket_region_head_t* cc_heap_memory_append_bucket_region(
 	return bucket_region_head;
 }
 
-static inline void* cc_heap_memory_allocate_from_bucket(cc_heap_bucket_t* bucket)
+static inline void* cc_lf_heap_allocate_from_bucket(cc_lf_heap_bucket_t* bucket)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(bucket != NULL);
 
 
 	//-----------------------------------------------------------------------
-	if (NULL != bucket->cache)
+	if (NULL != bucket->cache_region)
 	{
-		void* pointer = cc_simple_segregated_storage_allocate(&bucket->cache->simple_segregated_storage);
+		void* pointer = cc_simple_segregated_storage_allocate(&bucket->cache_region->simple_segregated_storage);
 		if (pointer != NULL)
 		{
 			return pointer;
@@ -268,19 +268,19 @@ static inline void* cc_heap_memory_allocate_from_bucket(cc_heap_bucket_t* bucket
 
 
 	//-----------------------------------------------------------------------
-	cc_heap_bucket_region_head_t* current = bucket->regions;
+	cc_lf_heap_bucket_region_head_t* current = bucket->regions;
 	
 	while (current)
 	{
 		void* pointer = cc_simple_segregated_storage_allocate(&current->simple_segregated_storage);
 		if (pointer != NULL)
 		{
-			bucket->cache = current;
+			bucket->cache_region = current;
 
 			return pointer;
 		}
 
-		current = (cc_heap_bucket_region_head_t*)current->next;
+		current = (cc_lf_heap_bucket_region_head_t*)current->next;
 	}
 
 	return NULL;
@@ -292,7 +292,7 @@ static inline void* cc_heap_memory_allocate_from_bucket(cc_heap_bucket_t* bucket
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const void* pointer)
+cc_api bool cc_lf_heap_validate_pointer(const cc_lf_heap_t* ctx, const void* pointer)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(ctx->buckets.count != 0);
@@ -317,22 +317,22 @@ cc_api bool cc_heap_memory_validate_pointer(const cc_heap_memory_t* ctx, const v
 
 	for (size_t i = 0; i < ctx->buckets.count; ++i)
 	{
-		cc_heap_bucket_t* bucket = &ctx->buckets.elements[i];
-		cc_heap_bucket_region_head_t* current = bucket->regions;
+		cc_lf_heap_bucket_t* bucket = &ctx->buckets.elements[i];
+		cc_lf_heap_bucket_region_head_t* current = bucket->regions;
 		while (current)
 		{
 			if (cc_simple_segregated_storage_validate_pointer(&current->simple_segregated_storage, pointer))
 			{
 				return true;
 			}
-			current = (cc_heap_bucket_region_head_t*)current->next;
+			current = (cc_lf_heap_bucket_region_head_t*)current->next;
 		}
 	}
 
 	return cc_first_fit_validate_pointer(&ctx->first_fit, pointer);
 }
 
-cc_api bool cc_heap_memory_add_bucket_region(cc_heap_memory_t* ctx, size_t index)
+cc_api bool cc_lf_heap_add_bucket_region(cc_lf_heap_t* ctx, size_t index)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -350,8 +350,8 @@ cc_api bool cc_heap_memory_add_bucket_region(cc_heap_memory_t* ctx, size_t index
 	}
 
 
-	cc_heap_bucket_t* bucket = &ctx->buckets.elements[index];
-	cc_heap_bucket_region_head_t* bucket_region = cc_heap_memory_append_bucket_region(ctx, bucket);
+	cc_lf_heap_bucket_t* bucket = &ctx->buckets.elements[index];
+	cc_lf_heap_bucket_region_head_t* bucket_region = cc_lf_heap_new_bucket_region(ctx, bucket);
 	if (bucket_region == NULL)
 	{
 		return false;
@@ -366,7 +366,7 @@ cc_api bool cc_heap_memory_add_bucket_region(cc_heap_memory_t* ctx, size_t index
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_pointer, const size_t memory_size, const cc_heap_bucket_descriptors_t* bucket_descriptors)
+cc_api bool cc_lf_heap_initialize(cc_lf_heap_t* ctx, const void* memory_pointer, const size_t memory_size, const cc_lf_heap_bucket_descriptors_t* bucket_descriptors)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -376,7 +376,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 
 
 	//-----------------------------------------------------------------------
-	if (cc_heap_memory_is_aligned((uintptr_t)memory_pointer, cc_heap_memory_alignment()) == false)
+	if (cc_lf_heap_is_aligned((uintptr_t)memory_pointer, cc_lf_heap_alignment()) == false)
 	{
 		return false;
 	}
@@ -390,7 +390,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	}
 
 
-	size_t buckets_size = cc_heap_memory_buckets_aligned_size(bucket_descriptors->count);
+	size_t buckets_size = cc_lf_heap_buckets_aligned_size(bucket_descriptors->count);
 	if (cc_invalid_size == buckets_size)
 	{
 		return false;
@@ -408,7 +408,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 
 
 	//-----------------------------------------------------------------------
-	cc_heap_bucket_t* buckets = cc_first_fit_allocate(&ctx->first_fit, buckets_size);
+	cc_lf_heap_bucket_t* buckets = cc_first_fit_allocate(&ctx->first_fit, buckets_size);
 	if (buckets == NULL)
 	{
 		return false;
@@ -442,13 +442,13 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
-		bucket_region_size = cc_heap_memory_bucket_region_aligned_size(simple_segregated_storage_memory_size);
+		bucket_region_size = cc_lf_heap_bucket_region_aligned_size(simple_segregated_storage_memory_size);
 		if (cc_invalid_size == bucket_region_size)
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
 		}
-		if (cc_heap_memory_add_overflow(first_fit_block_head_size, bucket_region_size))
+		if (cc_lf_heap_add_overflow(first_fit_block_head_size, bucket_region_size))
 		{
 			cc_first_fit_free(&ctx->first_fit, buckets);
 			return false;
@@ -463,9 +463,9 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 		}
 
 
-		cc_heap_bucket_descriptor_copy(&buckets[i].descriptor, &bucket_descriptors->elements[i]);
+		cc_lf_heap_bucket_descriptor_copy(&buckets[i].descriptor, &bucket_descriptors->elements[i]);
 		buckets[i].regions = NULL;
-		buckets[i].cache = NULL;
+		buckets[i].cache_region = NULL;
 	}
 
 
@@ -478,7 +478,7 @@ cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, const void* memory_
 	return true;
 }
 
-cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
+cc_api void cc_lf_heap_uninitialize(cc_lf_heap_t* ctx)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -490,11 +490,11 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 	//-----------------------------------------------------------------------
 	for (size_t i = 0; i < ctx->buckets.count; ++i)
 	{
-		cc_heap_bucket_t* bucket = &ctx->buckets.elements[i];
-		cc_heap_bucket_region_head_t* current = bucket->regions;
+		cc_lf_heap_bucket_t* bucket = &ctx->buckets.elements[i];
+		cc_lf_heap_bucket_region_head_t* current = bucket->regions;
 		while (current)
 		{
-			cc_heap_bucket_region_head_t* next = current->next;
+			cc_lf_heap_bucket_region_head_t* next = current->next;
 
 			cc_first_fit_free(&ctx->first_fit, (void*)current);
 			current = next;
@@ -515,7 +515,7 @@ cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx)
 }
 
 //===========================================================================
-cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
+cc_api void* cc_lf_heap_allocate(cc_lf_heap_t* ctx, const size_t size)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -535,7 +535,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 
 
 	//-----------------------------------------------------------------------
-	cc_heap_bucket_t* bucket = cc_heap_memory_find_bucket(ctx, size);
+	cc_lf_heap_bucket_t* bucket = cc_lf_heap_find_bucket(ctx, size);
 	if (bucket == NULL)
 	{
 		pointer = cc_first_fit_allocate(&ctx->first_fit, size);
@@ -550,7 +550,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 
 
 	//-----------------------------------------------------------------------
-	pointer = cc_heap_memory_allocate_from_bucket(bucket);
+	pointer = cc_lf_heap_allocate_from_bucket(bucket);
 	if (pointer != NULL)
 	{ 
 		ctx->count++;
@@ -559,7 +559,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 
 
 	//-----------------------------------------------------------------------
-	cc_heap_bucket_region_head_t* bucket_region= cc_heap_memory_append_bucket_region(ctx, bucket);
+	cc_lf_heap_bucket_region_head_t* bucket_region= cc_lf_heap_new_bucket_region(ctx, bucket);
 	if (bucket_region == NULL)
 	{
 		return NULL;
@@ -567,7 +567,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 
 
 	//-----------------------------------------------------------------------
-	bucket->cache = bucket_region;
+	bucket->cache_region = bucket_region;
 
 
 	//-----------------------------------------------------------------------
@@ -583,7 +583,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 	return NULL;
 }
 
-cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
+cc_api bool cc_lf_heap_free(cc_lf_heap_t* ctx, const void* pointer)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);
@@ -596,32 +596,32 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 	//-----------------------------------------------------------------------
 	for (size_t i=0; i<ctx->buckets.count; i++)
 	{
-		cc_heap_bucket_t* bucket = &ctx->buckets.elements[i];
+		cc_lf_heap_bucket_t* bucket = &ctx->buckets.elements[i];
 
 
-		if (bucket->cache != NULL)
+		if (bucket->cache_region != NULL)
 		{
-			if (cc_simple_segregated_storage_validate_pointer(&bucket->cache->simple_segregated_storage, pointer))
+			if (cc_simple_segregated_storage_validate_pointer(&bucket->cache_region->simple_segregated_storage, pointer))
 			{
-				bool rv = cc_simple_segregated_storage_free(&bucket->cache->simple_segregated_storage, pointer);
+				bool rv = cc_simple_segregated_storage_free(&bucket->cache_region->simple_segregated_storage, pointer);
 				if (rv)
 				{
 					ctx->count--;
-					if (bucket->cache->simple_segregated_storage.count == 0)
+					if (bucket->cache_region->simple_segregated_storage.count == 0)
 					{
-						cc_heap_bucket_region_head_t* cache = bucket->cache;
-						bucket->cache = NULL;
+						cc_lf_heap_bucket_region_head_t* cache_region = bucket->cache_region;
+						bucket->cache_region = NULL;
 
 
-						cc_heap_bucket_region_head_t* current = bucket->regions;
-						cc_heap_bucket_region_head_t* previous = NULL;
+						cc_lf_heap_bucket_region_head_t* current = bucket->regions;
+						cc_lf_heap_bucket_region_head_t* previous = NULL;
 						while (current)
 						{
-							if (current == cache)
+							if (current == cache_region)
 							{
 								if (previous == NULL)
 								{
-									bucket->regions = (cc_heap_bucket_region_head_t*)current->next;
+									bucket->regions = (cc_lf_heap_bucket_region_head_t*)current->next;
 								}
 								else
 								{
@@ -631,7 +631,7 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 								break;
 							}
 							previous = current;
-							current = (cc_heap_bucket_region_head_t*)current->next;
+							current = (cc_lf_heap_bucket_region_head_t*)current->next;
 						}
 					}
 					return true;
@@ -641,8 +641,8 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 		}
 
 
-		cc_heap_bucket_region_head_t* current = bucket->regions;
-		cc_heap_bucket_region_head_t* previous = NULL;
+		cc_lf_heap_bucket_region_head_t* current = bucket->regions;
+		cc_lf_heap_bucket_region_head_t* previous = NULL;
 		while (current)
 		{
 			if (cc_simple_segregated_storage_validate_pointer(&current->simple_segregated_storage, pointer))
@@ -656,7 +656,7 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 					{
 						if (previous == NULL)
 						{
-							bucket->regions = (cc_heap_bucket_region_head_t*)current->next;
+							bucket->regions = (cc_lf_heap_bucket_region_head_t*)current->next;
 						}
 						else
 						{
@@ -664,9 +664,9 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 						}
 
 
-						if (bucket->cache == current)
+						if (bucket->cache_region == current)
 						{
-							bucket->cache = NULL;
+							bucket->cache_region = NULL;
 						}
 
 
@@ -680,7 +680,7 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 			previous = current;
 
 
-			current = (cc_heap_bucket_region_head_t*)current->next;
+			current = (cc_lf_heap_bucket_region_head_t*)current->next;
 		}
 	}
 
@@ -703,7 +703,7 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, const void* pointer)
 	return false;
 }
 
-cc_api cc_ssize_t cc_heap_memory_count(cc_heap_memory_t* ctx)
+cc_api cc_ssize_t cc_lf_heap_count(cc_lf_heap_t* ctx)
 {
 	//-----------------------------------------------------------------------
 	cc_debug_assert(ctx != NULL);

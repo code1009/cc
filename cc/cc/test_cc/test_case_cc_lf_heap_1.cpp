@@ -19,23 +19,23 @@ typedef struct _item_t
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#define cc_heap_bucket_count  1
+#define cc_lf_heap_bucket_count  1
 
 //===========================================================================
 #define item_max_count 4
 #define item_memory_size ( \
-	(sizeof(cc_first_fit_block_head_t                )                        ) + \
-	(sizeof(cc_heap_bucket_t                         ) * cc_heap_bucket_count ) + \
+	(sizeof(cc_first_fit_block_head_t      )                           ) + \
+	(sizeof(cc_lf_heap_bucket_t            ) * cc_lf_heap_bucket_count ) + \
 	\
-	(sizeof(cc_first_fit_block_head_t                )                        ) + \
-	(sizeof(cc_heap_bucket_region_head_t             )                        ) + \
-	(sizeof(item_t                                   ) * item_max_count       ) + \
+	(sizeof(cc_first_fit_block_head_t      )                           ) + \
+	(sizeof(cc_lf_heap_bucket_region_head_t)                           ) + \
+	(sizeof(item_t                         ) * item_max_count          ) + \
 	\
-	(sizeof(cc_first_fit_block_head_t                )                        ) )
+	(sizeof(cc_first_fit_block_head_t      )                           ) )
 /*
 # 64bit
-@ first_fit_block[0] = cc_first_fit_block_head_t:16 + cc_heap_bucket_t:32*1 = 48
-@ first_fit_block[1] = cc_first_fit_block_head_t:16 + cc_heap_bucket_region_head_t:64 + item_t:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
+@ first_fit_block[0] = cc_first_fit_block_head_t:16 + cc_lf_heap_bucket_t:32*1                             = 48
+@ first_fit_block[1] = cc_first_fit_block_head_t:16 + cc_lf_heap_bucket_region_head_t:64 + item_t[4]:256*4 = 16 + 64 + 1024 = 16 + 1088 = 1104
   48 + 1104 = 1152
 @ first_fit_block[2] = cc_first_fit_block_head_t:16 = 16(end_block)
   1152 + 16 = 1168 = 16 * 73
@@ -49,7 +49,7 @@ typedef struct _item_t
 //===========================================================================
 typedef struct _item_pool_t
 {
-	cc_heap_memory_t heap_memory;
+	cc_lf_heap_t heap_memory;
 	uint8_t memory[item_memory_size];
 	cc_vallocator_t allocator;
 }
@@ -83,23 +83,23 @@ static bool item_pool_initialize()
 
 	bool rv;
 
-	cc_heap_bucket_descriptor_t cc_heap_bucket_descriptor_elements[] = {
+	cc_lf_heap_bucket_descriptor_t cc_lf_heap_bucket_descriptor_elements[] = {
 		{ sizeof(item_t), item_max_count }
 	};
-	cc_heap_bucket_descriptors_t cc_heap_bucket_descriptors;
-	cc_heap_bucket_descriptors.elements = cc_heap_bucket_descriptor_elements;
-	cc_heap_bucket_descriptors.count = cc_heap_bucket_count;
+	cc_lf_heap_bucket_descriptors_t cc_lf_heap_bucket_descriptors;
+	cc_lf_heap_bucket_descriptors.elements = cc_lf_heap_bucket_descriptor_elements;
+	cc_lf_heap_bucket_descriptors.count = cc_lf_heap_bucket_count;
 
 
-	rv = cc_heap_memory_vallocator_initialize(
+	rv = cc_lf_heap_vallocator_initialize(
 		&_item_pool.allocator,
 		&_item_pool.heap_memory,
 		&_item_pool.memory[0], sizeof(_item_pool.memory),
-		&cc_heap_bucket_descriptors
+		&cc_lf_heap_bucket_descriptors
 	);
 	if (rv == false)
 	{
-		test_out << "cc_heap_memory_vallocator_initialize() failed" << test_tendl;
+		test_out << "cc_lf_heap_vallocator_initialize() failed" << test_tendl;
 		test_assert(0);
 		return false;
 	}
@@ -132,13 +132,13 @@ static void item_pool_uninitialize()
 	item_pool_dump();
 
 	test_out
-		<< "cc_heap_memory_count():" << cc_heap_memory_count(&_item_pool.heap_memory) << test_tendl
+		<< "cc_lf_heap_count():" << cc_lf_heap_count(&_item_pool.heap_memory) << test_tendl
 		;
 	test_out
 		<< "cc_first_fit_count():" << cc_first_fit_count(&_item_pool.heap_memory.first_fit) << test_tendl
 		;
 
-	cc_heap_memory_uninitialize(&_item_pool.heap_memory);
+	cc_lf_heap_uninitialize(&_item_pool.heap_memory);
 }
 
 static item_t* item_pool_allocate(size_t size)
@@ -219,8 +219,8 @@ static void allocate(void)
 
 	
 	uintptr_t offset =
-		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_heap_bucket_t) * cc_heap_bucket_count) +
-		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_heap_bucket_region_head_t))
+		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_lf_heap_bucket_count) +
+		sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t))
 		;
 	_p0_address -= offset;
 	_p1_address -= offset;
@@ -273,7 +273,7 @@ static void run(void)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-void test_case_cc_heap_memory_1()
+void test_case_cc_lf_heap_1()
 {
 	if (!item_pool_initialize())
 	{

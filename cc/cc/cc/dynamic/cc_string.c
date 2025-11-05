@@ -19,7 +19,7 @@
 //===========================================================================
 #include "../allocator/cc_simple_segregated_storage.h"
 #include "cc_first_fit.h"
-#include "cc_heap_memory.h"
+#include "cc_lf_heap.h"
 
 #include "cc_string_allocator.h"
 

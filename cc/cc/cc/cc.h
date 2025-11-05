@@ -77,7 +77,7 @@
 #if (1==cc_config_dynamic)
 
 #include "dynamic/cc_first_fit.h"
-#include "dynamic/cc_heap_memory.h"
+#include "dynamic/cc_lf_heap.h"
 
 #include "dynamic/cc_vallocator.h"
 #include "dynamic/cc_vallocator_helper.h"

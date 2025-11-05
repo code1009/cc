@@ -42,7 +42,7 @@
     <ClCompile Include="cc\cc\container\cc_unordered_set.c" />
     <ClCompile Include="cc\cc\container\cc_vector.c" />
     <ClCompile Include="cc\cc\dynamic\cc_first_fit.c" />
-    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_lf_heap.c" />
     <ClCompile Include="cc\cc\dynamic\cc_string.c" />
     <ClCompile Include="cc\cc\dynamic\cc_string_allocator.c" />
     <ClCompile Include="cc\cc\dynamic\cc_vallocator.c" />
@@ -62,7 +62,7 @@
     <ClCompile Include="cc\test_cc\test_case_cc_deque_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_first_fit_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_forward_list_1.cpp" />
-    <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp" />
+    <ClCompile Include="cc\test_cc\test_case_cc_lf_heap_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_list_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_map_1.cpp" />
     <ClCompile Include="cc\test_cc\test_case_cc_map_2.cpp" />
@@ -107,7 +107,7 @@
     <ClInclude Include="cc\cc\container\cc_unordered_set.h" />
     <ClInclude Include="cc\cc\container\cc_vector.h" />
     <ClInclude Include="cc\cc\dynamic\cc_first_fit.h" />
-    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_lf_heap.h" />
     <ClInclude Include="cc\cc\dynamic\cc_string.h" />
     <ClInclude Include="cc\cc\dynamic\cc_string_allocator.h" />
     <ClInclude Include="cc\cc\dynamic\cc_vallocator.h" />

@@ -22,9 +22,9 @@ cc_api bool cc_first_fit_vallocator_initialize(
 	cc_first_fit_t* first_fit, const void* memory_pointer, const size_t memory_size
 );
 
-cc_api bool cc_heap_memory_vallocator_initialize(
+cc_api bool cc_lf_heap_vallocator_initialize(
 	cc_vallocator_t* vallocator,
-	cc_heap_memory_t* heap_memory, const void* memory_pointer, const size_t memory_size, const cc_heap_bucket_descriptors_t* bucket_descriptors
+	cc_lf_heap_t* lf_heap, const void* memory_pointer, const size_t memory_size, const cc_lf_heap_bucket_descriptors_t* bucket_descriptors
 );
 
 

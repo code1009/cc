@@ -183,13 +183,13 @@
     <ClCompile Include="cc\test_cc\test_case_cc_first_fit_1.cpp">
       <Filter>cc\test_cc</Filter>
     </ClCompile>
-    <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp">
+    <ClCompile Include="cc\test_cc\test_case_cc_lf_heap_1.cpp">
       <Filter>cc\test_cc</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\dynamic\cc_first_fit.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c">
+    <ClCompile Include="cc\cc\dynamic\cc_lf_heap.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\dynamic\cc_vallocator.c">
@@ -326,7 +326,7 @@
     <ClInclude Include="cc\cc\dynamic\cc_first_fit.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h">
+    <ClInclude Include="cc\cc\dynamic\cc_lf_heap.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\dynamic\cc_vallocator.h">
