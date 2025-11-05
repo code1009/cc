@@ -36,117 +36,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#define cc_string_allocator_lf_heap_bucket_count 4
-
-#if (1==cc_config_platform_64bit)
-#define cc_string_allocator_memory_size ( \
-	0 \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_string_allocator_lf_heap_bucket_count) \
-	\
-    + ( \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 16 * 27 /*+  0*/)) \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 32 * 61 /*+ 16*/)) \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 64 * 14 /*+ 48*/)) \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + (128 *  7 /*+ 48*/)) \
-	) * 2 \
-	+ sizeof(cc_first_fit_block_head_t) \
-	)
-#endif
-
-#if (1==cc_config_platform_32bit)
-#define cc_string_allocator_memory_size ( \
-	0 \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_string_allocator_lf_heap_bucket_count) \
-	\
-    + ( \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 16 * 29 /*+  8*/)) \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 32 * 62 /*+ 24*/)) \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 64 * 15 /*+ 24*/)) \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + (128 *  7 /*+ 88*/)) \
-	) * 2 \
-	+ sizeof(cc_first_fit_block_head_t) \
-	)
-#endif
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const void* memory_pointer, const size_t memory_size)
-{
-	cc_lf_heap_bucket_descriptor_t lf_heap_bucket_descriptor_elements[cc_string_allocator_lf_heap_bucket_count] =
-	{
-#if (1==cc_config_platform_64bit)
-		// cc_first_fit_block_head_t:16 + cc_lf_heap_bucket_region_head_t:64 = 80
-//		  8, ( 512 - 80) /   8, // ( 512 - 80) /   8 =  432 /   8 = 54  (나머지   0)
-		 16, ( 512 - 80) /  16, // ( 512 - 80) /  16 =  432 /  16 = 27  (나머지   0)
-		 32, (2048 - 80) /  32, // (2048 - 80) /  32 = 1968 /  32 = 61  (나머지  16)
-//		 48, (2048 - 80) /  48, // (2048 - 80) /  48 = 1968 /  48 = 41  (나머지   0)
-		 64, (1024 - 80) /  64, // (1024 - 80) /  64 =  944 /  64 = 14  (나머지  48)
-//		 96, (1024 - 80) /  96, // (1024 - 80) /  96 =  944 /  96 =  9  (나머지  80)
-		128, (1024 - 80) / 128  // (1024 - 80) / 128 =  944 / 128 =  7  (나머지  48)
-//		256, (4096 - 80) / 256  // (4096 - 80) / 256 = 4016 / 256 = 15  (나머지 176)
-#endif
-#if (1==cc_config_platform_32bit)
-		// cc_first_fit_block_head_t:8 + cc_lf_heap_bucket_region_head_t:32 = 40
-//		  8, (512  - 40) /   8, // ( 512 - 40) /   8 =  472 /   8 = 59 (나머지   0)
-		 16, (512  - 40) /  16, // ( 512 - 40) /  16 =  472 /  16 = 29 (나머지   8)
-		 32, (2048 - 40) /  32, // (2048 - 40) /  32 = 2008 /  32 = 62 (나머지  24)
-//		 48, (2048 - 40) /  48, // (2048 - 40) /  48 = 2008 /  48 = 41 (나머지  40)
-		 64, (1024 - 40) /  64, // (1024 - 40) /  64 =  984 /  64 = 15 (나머지  24)
-//		 96, (1024 - 40) /  96, // (1024 - 40) /  96 =  984 /  96 = 10 (나머지  24)
-		128, (1024 - 40) / 128  // (1024 - 40) / 128 =  984 / 128 =  7 (나머지  88)
-//		256, (4096 - 40) / 256  // (4096 - 40) / 256 = 4056 / 256 = 15 (나머지 216)
-#endif
-};
-
-
-	cc_lf_heap_bucket_descriptors_t lf_heap_bucket_descriptors;
-	lf_heap_bucket_descriptors.elements = lf_heap_bucket_descriptor_elements;
-	lf_heap_bucket_descriptors.count = sizeof(lf_heap_bucket_descriptor_elements) / sizeof(cc_lf_heap_bucket_descriptor_t);
-
-
-	return cc_lf_heap_vallocator_initialize(
-		&ctx->iallocator,
-		&ctx->lf_heap,
-		memory_pointer, memory_size,
-		&lf_heap_bucket_descriptors
-	);
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-static cc_string_allocator_t _cc_default_string_allocator;
-static uint8_t _default_cc_string_allocator_memory[cc_string_allocator_memory_size];
-
-//===========================================================================
-cc_api bool cc_default_string_allocator_initialize(void)
-{
-	return cc_string_allocator_initialize(&_cc_default_string_allocator, &_default_cc_string_allocator_memory[0], sizeof(_default_cc_string_allocator_memory));
-}
-
-cc_api void cc_default_string_allocator_uninitialize(void)
-{
-	cc_lf_heap_uninitialize(&_cc_default_string_allocator.lf_heap);
-}
-
-cc_api cc_string_allocator_t* cc_default_string_allocator(void)
-{
-	return &_cc_default_string_allocator;
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
 #define cc_first_fit_block_status_free      0U
 #define cc_first_fit_block_status_allocated 1U
 
@@ -340,8 +229,133 @@ static inline void cc_cc_lf_heap_dump(cc_lf_heap_t* lf_heap, uintptr_t base_addr
 
 
 	//-----------------------------------------------------------------------
-	cc_first_fit_t* first_fit = &_cc_default_string_allocator.lf_heap.first_fit;
+	cc_first_fit_t* first_fit = &lf_heap->first_fit;
 	cc_first_fit_dump(first_fit, base_address);
+}
+
+cc_api void cc_string_allocator_dump(cc_string_allocator_t* ctx)
+{
+	//-----------------------------------------------------------------------
+	printf("# string_allocator: %p \n", ctx);
+
+
+	//-----------------------------------------------------------------------
+	cc_cc_lf_heap_dump(&ctx->lf_heap, (uintptr_t)(&ctx->lf_heap.first_fit.memory_pointer[0]));
+
+
+	//-----------------------------------------------------------------------
+	printf("\n");
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#define cc_string_allocator_lf_heap_bucket_count 4
+
+#if (1==cc_config_platform_64bit)
+#define cc_string_allocator_memory_size ( \
+	0 \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_string_allocator_lf_heap_bucket_count) \
+	\
+    + ( \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 16 * 27 /*+  0*/)) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 32 * 61 /*+ 16*/)) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 64 * 14 /*+ 48*/)) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + (128 *  7 /*+ 48*/)) \
+	) * 2 \
+	+ sizeof(cc_first_fit_block_head_t) \
+	)
+#endif
+
+#if (1==cc_config_platform_32bit)
+#define cc_string_allocator_memory_size ( \
+	0 \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_string_allocator_lf_heap_bucket_count) \
+	\
+    + ( \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 16 * 29 /*+  8*/)) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 32 * 62 /*+ 24*/)) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 64 * 15 /*+ 24*/)) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + (128 *  7 /*+ 88*/)) \
+	) * 2 \
+	+ sizeof(cc_first_fit_block_head_t) \
+	)
+#endif
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const void* memory_pointer, const size_t memory_size)
+{
+	cc_lf_heap_bucket_descriptor_t lf_heap_bucket_descriptor_elements[cc_string_allocator_lf_heap_bucket_count] =
+	{
+#if (1==cc_config_platform_64bit)
+		// cc_first_fit_block_head_t:16 + cc_lf_heap_bucket_region_head_t:64 = 80
+//		  8, ( 512 - 80) /   8, // ( 512 - 80) /   8 =  432 /   8 = 54  (나머지   0)
+		 16, ( 512 - 80) /  16, // ( 512 - 80) /  16 =  432 /  16 = 27  (나머지   0)
+		 32, (2048 - 80) /  32, // (2048 - 80) /  32 = 1968 /  32 = 61  (나머지  16)
+//		 48, (2048 - 80) /  48, // (2048 - 80) /  48 = 1968 /  48 = 41  (나머지   0)
+		 64, (1024 - 80) /  64, // (1024 - 80) /  64 =  944 /  64 = 14  (나머지  48)
+//		 96, (1024 - 80) /  96, // (1024 - 80) /  96 =  944 /  96 =  9  (나머지  80)
+		128, (1024 - 80) / 128  // (1024 - 80) / 128 =  944 / 128 =  7  (나머지  48)
+//		256, (4096 - 80) / 256  // (4096 - 80) / 256 = 4016 / 256 = 15  (나머지 176)
+#endif
+#if (1==cc_config_platform_32bit)
+		// cc_first_fit_block_head_t:8 + cc_lf_heap_bucket_region_head_t:32 = 40
+//		  8, (512  - 40) /   8, // ( 512 - 40) /   8 =  472 /   8 = 59 (나머지   0)
+		 16, (512  - 40) /  16, // ( 512 - 40) /  16 =  472 /  16 = 29 (나머지   8)
+		 32, (2048 - 40) /  32, // (2048 - 40) /  32 = 2008 /  32 = 62 (나머지  24)
+//		 48, (2048 - 40) /  48, // (2048 - 40) /  48 = 2008 /  48 = 41 (나머지  40)
+		 64, (1024 - 40) /  64, // (1024 - 40) /  64 =  984 /  64 = 15 (나머지  24)
+//		 96, (1024 - 40) /  96, // (1024 - 40) /  96 =  984 /  96 = 10 (나머지  24)
+		128, (1024 - 40) / 128  // (1024 - 40) / 128 =  984 / 128 =  7 (나머지  88)
+//		256, (4096 - 40) / 256  // (4096 - 40) / 256 = 4056 / 256 = 15 (나머지 216)
+#endif
+};
+
+
+	cc_lf_heap_bucket_descriptors_t lf_heap_bucket_descriptors;
+	lf_heap_bucket_descriptors.elements = lf_heap_bucket_descriptor_elements;
+	lf_heap_bucket_descriptors.count = sizeof(lf_heap_bucket_descriptor_elements) / sizeof(cc_lf_heap_bucket_descriptor_t);
+
+
+	return cc_lf_heap_vallocator_initialize(
+		&ctx->iallocator,
+		&ctx->lf_heap,
+		memory_pointer, memory_size,
+		&lf_heap_bucket_descriptors
+	);
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static cc_string_allocator_t _cc_default_string_allocator;
+static uint8_t _default_cc_string_allocator_memory[cc_string_allocator_memory_size];
+
+//===========================================================================
+cc_api bool cc_default_string_allocator_initialize(void)
+{
+	return cc_string_allocator_initialize(&_cc_default_string_allocator, &_default_cc_string_allocator_memory[0], sizeof(_default_cc_string_allocator_memory));
+}
+
+cc_api void cc_default_string_allocator_uninitialize(void)
+{
+	cc_lf_heap_uninitialize(&_cc_default_string_allocator.lf_heap);
+}
+
+cc_api cc_string_allocator_t* cc_default_string_allocator(void)
+{
+	return &_cc_default_string_allocator;
 }
 
 cc_api void cc_default_string_allocator_dump(void)
@@ -351,9 +365,13 @@ cc_api void cc_default_string_allocator_dump(void)
 
 
 	//-----------------------------------------------------------------------
-	cc_cc_lf_heap_dump(&_cc_default_string_allocator.lf_heap, (uintptr_t)(&_default_cc_string_allocator_memory[0]));
+	cc_string_allocator_dump(&_cc_default_string_allocator);
 
 
 	//-----------------------------------------------------------------------
 	printf("\n");
 }
+
+
+
+
