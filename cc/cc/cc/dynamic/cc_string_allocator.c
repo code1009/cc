@@ -24,6 +24,9 @@
 #include "cc_first_fit.h"
 #include "cc_lf_heap.h"
 
+#include "cc_vallocator.h"
+#include "cc_vallocator_helper.h"
+
 //===========================================================================
 #include "cc_string_allocator.h"
 
@@ -98,12 +101,15 @@ cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const voi
 //		256, (4096 - 40) / 256  // (4096 - 40) / 256 = 4056 / 256 = 15 (나머지 216)
 #endif
 };
+
+
 	cc_lf_heap_bucket_descriptors_t lf_heap_bucket_descriptors;
 	lf_heap_bucket_descriptors.elements = lf_heap_bucket_descriptor_elements;
 	lf_heap_bucket_descriptors.count = sizeof(lf_heap_bucket_descriptor_elements) / sizeof(cc_lf_heap_bucket_descriptor_t);
 
-	
-	return cc_lf_heap_initialize(
+
+	return cc_lf_heap_vallocator_initialize(
+		&ctx->iallocator,
 		&ctx->lf_heap,
 		memory_pointer, memory_size,
 		&lf_heap_bucket_descriptors

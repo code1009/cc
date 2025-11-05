@@ -20,6 +20,7 @@
 typedef struct _cc_string_allocator_t
 {
 	cc_lf_heap_t lf_heap;
+	cc_vallocator_t iallocator;
 } cc_string_allocator_t;
 
 
