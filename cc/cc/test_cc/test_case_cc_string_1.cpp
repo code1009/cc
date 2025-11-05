@@ -47,6 +47,7 @@ static void string_append(void)
 static void run(void)
 {
 	string_append();
+	string_append();
 }
 
 
