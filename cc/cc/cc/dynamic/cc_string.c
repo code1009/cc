@@ -142,6 +142,7 @@ cc_api bool cc_string_destroy(cc_string_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
 
+
 	bool rv = true;
 	if (ctx->data)
 	{
@@ -165,6 +166,7 @@ cc_api bool cc_string_destroy(cc_string_t* ctx)
 cc_api bool cc_string_reserve(cc_string_t* ctx, size_t capacity)
 {
 	cc_debug_assert(ctx != NULL);
+
 
 	if (capacity == 0) return true; // nothing to do
 
@@ -209,6 +211,7 @@ cc_api bool cc_string_append_n(cc_string_t* ctx, const char* s, size_t n)
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(s != NULL);
 
+
 	if (n == 0) return true;
 
 	size_t needed = ctx->length + n;
@@ -229,6 +232,7 @@ cc_api bool cc_string_append(cc_string_t* ctx, const char* s)
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(s != NULL);
 
+
 	size_t n = cc_string_strlen(s);
 	return cc_string_append_n(ctx, s, n);
 }
@@ -237,6 +241,8 @@ cc_api bool cc_string_append_string(cc_string_t* ctx, const cc_string_t* s)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(s != NULL);
+
+
 	return cc_string_append_n(ctx, s->data, s->length);
 }
 
@@ -245,6 +251,7 @@ cc_api bool cc_string_assign_n(cc_string_t* ctx, const char* s, size_t n)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(s != NULL);
+
 
 	// ensure capacity then copy
 	if (!cc_string_reserve(ctx, n)) return false;
@@ -260,6 +267,7 @@ cc_api bool cc_string_assign(cc_string_t* ctx, const char* s)
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(s != NULL);
 
+
 	size_t n = cc_string_strlen(s);
 	return cc_string_assign_n(ctx, s, n);
 }
@@ -269,6 +277,7 @@ cc_api bool cc_string_assign_string(cc_string_t* ctx, const cc_string_t* s)
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(s != NULL);
 
+
 	return cc_string_assign_n(ctx, s->data, s->length);
 }
 
@@ -276,6 +285,7 @@ cc_api bool cc_string_assign_string(cc_string_t* ctx, const cc_string_t* s)
 cc_api void cc_string_clear(cc_string_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
+
 
 	ctx->length = 0;
 	if (ctx->data) ctx->data[0] = '\0';
@@ -286,6 +296,7 @@ cc_api const char* cc_string_c_str(const cc_string_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
 
+
 	static const char empty_string = '\0';
 	if (ctx->data) return ctx->data;
 	return &empty_string;
@@ -294,12 +305,16 @@ cc_api const char* cc_string_c_str(const cc_string_t* ctx)
 cc_api size_t cc_string_length(const cc_string_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
+
+
 	return ctx->length;
 }
 
 cc_api size_t cc_string_capacity(const cc_string_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
+
+
 	return ctx->capacity;
 }
 
@@ -308,6 +323,8 @@ cc_api char cc_string_at(const cc_string_t* ctx, size_t index)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(index < ctx->length);
+
+
 	if (index >= ctx->length)
 	{
 		return '\0';
