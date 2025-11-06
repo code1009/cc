@@ -173,7 +173,7 @@ cc_api void cc_default_string_heap_memory_dump(void)
 
 
 	//-----------------------------------------------------------------------
-	cc_heap_memory_dump(&_default_string_heap_memory, 0, 0);
+	cc_heap_memory_dump(&_default_string_heap_memory, 0, (uintptr_t)(&_default_string_heap_memory.lf_heap.first_fit.memory_pointer[0]));
 
 
 	//-----------------------------------------------------------------------
