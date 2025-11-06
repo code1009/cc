@@ -47,7 +47,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static cc_snode_t* cc_forward_list_snode_allocate(cc_forward_list_t* ctx)
+static inline cc_snode_t* cc_forward_list_snode_allocate(cc_forward_list_t* ctx)
 {
 	cc_debug_assert(ctx != NULL);
 
@@ -55,7 +55,7 @@ static cc_snode_t* cc_forward_list_snode_allocate(cc_forward_list_t* ctx)
 	return (cc_snode_t*)ctx->nallocator.allocate((void*)ctx->nallocator.handle);
 }
 
-static bool cc_forward_list_snode_free(cc_forward_list_t* ctx, const cc_snode_t* node)
+static inline bool cc_forward_list_snode_free(cc_forward_list_t* ctx, const cc_snode_t* node)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(node != NULL);

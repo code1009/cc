@@ -1,9 +1,9 @@
-﻿#ifndef cc_string_allocator_h
-#define cc_string_allocator_h
+﻿#ifndef cc_heap_memory_h
+#define cc_heap_memory_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_string_allocator.h
+// # File: cc_heap_memory.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -17,11 +17,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-typedef struct _cc_string_allocator_t
+typedef struct _cc_heap_memory_t
 {
 	cc_lf_heap_t lf_heap;
-	cc_vallocator_t iallocator;
-} cc_string_allocator_t;
+	cc_vallocator_t allocator;
+} cc_heap_memory_t;
 
 
 
@@ -29,7 +29,12 @@ typedef struct _cc_string_allocator_t
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api void cc_string_allocator_dump(cc_string_allocator_t* string_allocator, size_t number, uintptr_t base_address);
+cc_api bool cc_heap_memory_initialize(cc_heap_memory_t* ctx, 
+	const void* memory_pointer, const size_t memory_size, 
+	const cc_lf_heap_bucket_descriptors_t* lf_heap_bucket_descriptors
+);
+
+cc_api void cc_heap_memory_uninitialize(cc_heap_memory_t* ctx);
 
 
 
@@ -37,7 +42,9 @@ cc_api void cc_string_allocator_dump(cc_string_allocator_t* string_allocator, si
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const void* memory_pointer, const size_t memory_size);
+cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size);
+cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, void* data);
+cc_api void* cc_heap_memory_reallocate(cc_heap_memory_t* ctx, char* old_data, const size_t old_size, const size_t new_size);
 
 
 
@@ -45,18 +52,5 @@ cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const voi
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_default_string_allocator_initialize(void);
-cc_api void cc_default_string_allocator_uninitialize(void);
-
-cc_api cc_string_allocator_t* cc_default_string_allocator(void);
-
-cc_api void cc_default_string_allocator_dump(void);
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-#endif // cc_string_allocator_h
+#endif // cc_heap_memory_h
 

@@ -33,7 +33,7 @@ cc_api void cc_vallocator_initialize(cc_vallocator_t* ctx, const void* handle, c
 	cc_debug_assert(free != NULL);
 
 
-	ctx->handle = handle;
+	ctx->handle = (void*)handle;
 	ctx->allocate = allocate;
 	ctx->free = free;
 }

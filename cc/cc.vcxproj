@@ -44,10 +44,12 @@
     <ClCompile Include="cc\cc\container\cc_vector.c" />
     <ClCompile Include="cc\cc\dynamic\cc_first_fit.c" />
     <ClCompile Include="cc\cc\dynamic\cc_first_fit_dump.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory_dump.c" />
     <ClCompile Include="cc\cc\dynamic\cc_lf_heap.c" />
     <ClCompile Include="cc\cc\dynamic\cc_lf_heap_dump.c" />
     <ClCompile Include="cc\cc\dynamic\cc_string.c" />
-    <ClCompile Include="cc\cc\dynamic\cc_string_allocator.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c" />
+    <ClCompile Include="cc\cc\dynamic\cc_string_heap_memory.c" />
     <ClCompile Include="cc\cc\dynamic\cc_vallocator.c" />
     <ClCompile Include="cc\cc\dynamic\cc_vallocator_adapter.c" />
     <ClCompile Include="cc\cc\element\cc_bucket.c" />
@@ -113,10 +115,12 @@
     <ClInclude Include="cc\cc\container\cc_vector.h" />
     <ClInclude Include="cc\cc\dynamic\cc_first_fit.h" />
     <ClInclude Include="cc\cc\dynamic\cc_first_fit_dump.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory_dump.h" />
     <ClInclude Include="cc\cc\dynamic\cc_lf_heap.h" />
     <ClInclude Include="cc\cc\dynamic\cc_lf_heap_dump.h" />
     <ClInclude Include="cc\cc\dynamic\cc_string.h" />
-    <ClInclude Include="cc\cc\dynamic\cc_string_allocator.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h" />
+    <ClInclude Include="cc\cc\dynamic\cc_string_heap_memory.h" />
     <ClInclude Include="cc\cc\dynamic\cc_vallocator.h" />
     <ClInclude Include="cc\cc\dynamic\cc_vallocator_adapter.h" />
     <ClInclude Include="cc\cc\element\cc_bucket.h" />

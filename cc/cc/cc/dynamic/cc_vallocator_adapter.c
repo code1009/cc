@@ -69,14 +69,14 @@ cc_api bool cc_first_fit_vallocator_initialize(
 //===========================================================================
 cc_api bool cc_lf_heap_vallocator_initialize(
 	cc_vallocator_t* vallocator,
-	cc_lf_heap_t* lf_heap, const void* memory_pointer, const size_t memory_size, const cc_lf_heap_bucket_descriptors_t* bucket_descriptors
+	cc_lf_heap_t* lf_heap, const void* memory_pointer, const size_t memory_size, const cc_lf_heap_bucket_descriptors_t* lf_heap_bucket_descriptors
 )
 {
 	cc_debug_assert(vallocator != NULL);
 	cc_debug_assert(lf_heap != NULL);
 	cc_debug_assert(memory_pointer != NULL);
 	cc_debug_assert(memory_size != 0);
-	cc_debug_assert(bucket_descriptors != NULL);
+	cc_debug_assert(lf_heap_bucket_descriptors != NULL);
 
 
 	bool rv;
@@ -84,7 +84,7 @@ cc_api bool cc_lf_heap_vallocator_initialize(
 	rv = cc_lf_heap_initialize(
 		lf_heap,
 		memory_pointer, memory_size,
-		bucket_descriptors
+		lf_heap_bucket_descriptors
 	);
 	if (rv == false)
 	{

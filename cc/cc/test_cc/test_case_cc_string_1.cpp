@@ -14,10 +14,10 @@ static void string_append(void)
 		<< "@string_append()" << test_tendl
 		;
 	cc_string_t s0;
-	cc_string_create(&s0, cc_default_string_allocator());
+	cc_string_create(&s0, cc_default_string_heap_memory_allocator());
 
 	cc_string_t s1;
-	cc_string_create(&s1, cc_default_string_allocator());
+	cc_string_create(&s1, cc_default_string_heap_memory_allocator());
 	cc_string_append(&s1, "<Hello,");
 	cc_string_append(&s1, "World!>");
 
@@ -48,7 +48,7 @@ static void run(void)
 {
 	string_append();
 
-	cc_default_string_allocator_dump();
+	cc_default_string_heap_memory_dump();
 
 	string_append();
 }
@@ -60,14 +60,17 @@ static void run(void)
 //===========================================================================
 void test_case_cc_string_1()
 {
-	if (!cc_default_string_allocator_initialize())
+	//----------------------------------------------------------------------
+	if (!cc_default_string_heap_memory_initialize())
 	{
 		return;
 	}
 
-	cc_default_string_allocator_dump();
 
-	cc_lf_heap_t* lf_heap = &cc_default_string_allocator()->lf_heap;
+	//----------------------------------------------------------------------
+	cc_default_string_heap_memory_dump();
+
+	cc_lf_heap_t* lf_heap = &cc_default_string_heap_memory()->lf_heap;
 	cc_first_fit_t* first_fit = &lf_heap->first_fit;
 	for (size_t i = 0; i < lf_heap->buckets.count; i++)
 	{
@@ -75,7 +78,7 @@ void test_case_cc_string_1()
 		cc_lf_heap_add_bucket_region(lf_heap, i);
 	}
 
-	cc_default_string_allocator_dump();
+	cc_default_string_heap_memory_dump();
 
 	for (size_t i = 0; i < lf_heap->buckets.count; i++)
 	{
@@ -83,11 +86,13 @@ void test_case_cc_string_1()
 		cc_lf_heap_add_bucket_region(lf_heap, i);
 	}
 
-	cc_default_string_allocator_dump();
+	cc_default_string_heap_memory_dump();
 
 	run();
 
-	cc_default_string_allocator_dump();
+	cc_default_string_heap_memory_dump();
 
-	cc_default_string_allocator_uninitialize();
+
+	//----------------------------------------------------------------------
+	cc_default_string_heap_memory_uninitialize();
 }

@@ -1,9 +1,9 @@
-﻿#ifndef cc_vallocator_adapter_h
-#define cc_vallocator_adapter_h
+﻿#ifndef cc_string_heap_memory_h
+#define cc_string_heap_memory_h
 
 /////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_vallocator_adapter.h
+// # File: cc_string_heap_memory.h
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -17,15 +17,13 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_first_fit_vallocator_initialize(
-	cc_vallocator_t* vallocator,
-	cc_first_fit_t* first_fit, const void* memory_pointer, const size_t memory_size
-);
+cc_api bool cc_default_string_heap_memory_initialize(void);
+cc_api void cc_default_string_heap_memory_uninitialize(void);
 
-cc_api bool cc_lf_heap_vallocator_initialize(
-	cc_vallocator_t* vallocator,
-	cc_lf_heap_t* lf_heap, const void* memory_pointer, const size_t memory_size, const cc_lf_heap_bucket_descriptors_t* lf_heap_bucket_descriptors
-);
+cc_api cc_heap_memory_t* cc_default_string_heap_memory(void);
+cc_api cc_vallocator_t* cc_default_string_heap_memory_allocator(void);
+
+cc_api void cc_default_string_heap_memory_dump(void);
 
 
 
@@ -33,5 +31,5 @@ cc_api bool cc_lf_heap_vallocator_initialize(
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-#endif // cc_vallocator_adapter_h
+#endif // cc_string_heap_memory_h
 

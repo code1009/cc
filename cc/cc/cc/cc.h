@@ -86,7 +86,10 @@
 #include "dynamic/cc_vallocator.h"
 #include "dynamic/cc_vallocator_adapter.h"
 
-#include "dynamic/cc_string_allocator.h"
+#include "dynamic/cc_heap_memory.h"
+#include "dynamic/cc_heap_memory_dump.h"
+
+#include "dynamic/cc_string_heap_memory.h"
 #include "dynamic/cc_string.h"
 
 #endif // (1==cc_config_dynamic)

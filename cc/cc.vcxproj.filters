@@ -192,7 +192,7 @@
     <ClCompile Include="cc\cc\dynamic\cc_vallocator.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
-    <ClCompile Include="cc\cc\dynamic\cc_string_allocator.c">
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\dynamic\cc_string.c">
@@ -214,6 +214,12 @@
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
     <ClCompile Include="cc\cc\dynamic\cc_vallocator_adapter.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_string_heap_memory.c">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="cc\cc\dynamic\cc_heap_memory_dump.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -341,7 +347,7 @@
     <ClInclude Include="cc\cc\dynamic\cc_string.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
-    <ClInclude Include="cc\cc\dynamic\cc_string_allocator.h">
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\allocator\cc_fallocator_adapter.h">
@@ -357,6 +363,12 @@
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
     <ClInclude Include="cc\cc\dynamic\cc_vallocator_adapter.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_string_heap_memory.h">
+      <Filter>cc\cc\dynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc\dynamic\cc_heap_memory_dump.h">
       <Filter>cc\cc\dynamic</Filter>
     </ClInclude>
   </ItemGroup>

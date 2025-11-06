@@ -28,7 +28,7 @@ typedef bool  (*cc_ffree_t) (void* handle, void* pointer);
 //===========================================================================
 typedef struct _cc_fallocator_t
 {
-	const void* handle;
+	void* handle;
 	cc_fallocate_t allocate;
 	cc_ffree_t free;
 }

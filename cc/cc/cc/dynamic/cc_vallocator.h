@@ -28,7 +28,7 @@ typedef bool  (*cc_vfree_t) (void* handle, void* pointer);
 //===========================================================================
 typedef struct _cc_vallocator_t
 {
-	const void* handle;
+	void* handle;
 	cc_vallocate_t allocate;
 	cc_vfree_t free;
 }

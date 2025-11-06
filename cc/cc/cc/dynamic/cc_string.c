@@ -22,12 +22,46 @@
 #include "cc_lf_heap.h"
 
 #include "cc_vallocator.h"
-#include "cc_vallocator_adapter.h"
-
-#include "cc_string_allocator.h"
 
 //===========================================================================
 #include "cc_string.h"
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+static inline void cc_string_strncpy(char* dest, const char* src, size_t size)
+{
+	cc_debug_assert(dest != NULL);
+	cc_debug_assert(src != NULL);
+
+
+	for (size_t i = 0; i < size; i++)
+	{
+		dest[i] = src[i];
+	}
+}
+
+static inline size_t cc_string_strlen(const char* src)
+{
+	if (src == NULL)
+	{
+		return 0;
+	}
+
+
+	size_t length = 0;
+	char* p = (char*)src;
+	while (*p != '\0')
+	{
+		p++;
+		length++;
+	}
+
+	return length;
+}
 
 
 
@@ -48,7 +82,7 @@ static inline char* cc_string_allocate(cc_string_t* ctx, const size_t size)
 	cc_debug_assert(size != 0);
 
 	
-	return (char*)ctx->allocator->iallocator.allocate(&ctx->allocator->lf_heap, size);
+	return (char*)ctx->allocator->allocate(ctx->allocator->handle, size);
 }
 
 static inline bool cc_string_free(cc_string_t* ctx, char* data)
@@ -57,40 +91,9 @@ static inline bool cc_string_free(cc_string_t* ctx, char* data)
 	cc_debug_assert(data != NULL);
 
 
-	bool rv = ctx->allocator->iallocator.free(&ctx->allocator->lf_heap, data);
+	bool rv = ctx->allocator->free(ctx->allocator->handle, data);
 	cc_debug_assert(rv != false);
 	return rv;
-}
-
-static inline void cc_string_strncpy(char* dest, const char* src, size_t size)
-{
-	cc_debug_assert(dest != NULL);
-	cc_debug_assert(src != NULL);
-
-
-	for (size_t i = 0; i < size; i++)
-	{
-		dest[i] = src[i];
-	}
-}
-
-static inline size_t cc_string_strlen(const char* src)
-{
-	if (src == NULL)
-	{
-		return 0;
-	}
-	
-	
-	size_t length = 0;
-	char* p = (char*)src;
-	while (*p != '\0')
-	{
-		p++;
-		length++;
-	}
-
-	return length;
 }
 
 static inline char* cc_string_reallocate(cc_string_t* ctx, char* old_data, const size_t old_size, const size_t new_size)
@@ -117,7 +120,7 @@ static inline char* cc_string_reallocate(cc_string_t* ctx, char* old_data, const
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_string_create(cc_string_t* ctx, cc_string_allocator_t* allocator)
+cc_api bool cc_string_create(cc_string_t* ctx, cc_vallocator_t* allocator)
 {
 	cc_debug_assert(ctx != NULL);
 	cc_debug_assert(allocator != NULL);

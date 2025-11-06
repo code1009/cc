@@ -1,6 +1,6 @@
 ﻿/////////////////////////////////////////////////////////////////////////////
 // 
-// # File: cc_string_allocator.c
+// # File: cc_string_heap_memory.c
 // 
 // # Created by: code1009
 // # Created on: 09-18, 2025.
@@ -24,15 +24,13 @@
 #include "cc_first_fit.h"
 #include "cc_lf_heap.h"
 
-#include "../allocator/cc_simple_segregated_storage_dump.h"
-#include "cc_first_fit_dump.h"
-#include "cc_lf_heap_dump.h"
-
 #include "cc_vallocator.h"
 #include "cc_vallocator_adapter.h"
 
+#include "cc_heap_memory.h"
+
 //===========================================================================
-#include "cc_string_allocator.h"
+#include "cc_string_heap_memory.h"
 
 
 
@@ -40,45 +38,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline int64_t cc_offset_address(void* pointer, uintptr_t base_address)
-{
-	uintptr_t address = (uintptr_t)pointer;
-	
-	if (address >= base_address)
-	{
-		return (int64_t)(address - base_address);
-	}
-	return -1;
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-cc_api void cc_string_allocator_dump(cc_string_allocator_t* string_allocator, size_t number, uintptr_t base_address)
-{
-	//-----------------------------------------------------------------------
-	printf("# [%lld] %p(%4lld): string_allocator\n", (int64_t)number, string_allocator, cc_offset_address(string_allocator, base_address));
-
-
-	//-----------------------------------------------------------------------
-	cc_lf_heap_dump(&string_allocator->lf_heap, number, (uintptr_t)(&string_allocator->lf_heap.first_fit.memory_pointer[0]));
-}
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-//===========================================================================
-#define cc_string_allocator_lf_heap_bucket_count 4
+#define cc_default_string_heap_memory_lf_heap_bucket_count 4
 
 #if (1==cc_config_platform_64bit)
-#define cc_string_allocator_memory_size ( \
+#define cc_default_string_heap_memory_buffer_size ( \
 	0 \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_string_allocator_lf_heap_bucket_count) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_default_string_heap_memory_lf_heap_bucket_count) \
 	\
     + ( \
 	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 16 * 27 /*+  0*/)) \
@@ -91,9 +56,9 @@ cc_api void cc_string_allocator_dump(cc_string_allocator_t* string_allocator, si
 #endif
 
 #if (1==cc_config_platform_32bit)
-#define cc_string_allocator_memory_size ( \
+#define cc_default_string_heap_memory_buffer_size ( \
 	0 \
-	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_string_allocator_lf_heap_bucket_count) \
+	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_t) * cc_default_string_heap_memory_lf_heap_bucket_count) \
 	\
     + ( \
 	+ sizeof(cc_first_fit_block_head_t) + (sizeof(cc_lf_heap_bucket_region_head_t) + ( 16 * 29 /*+  8*/)) \
@@ -111,9 +76,9 @@ cc_api void cc_string_allocator_dump(cc_string_allocator_t* string_allocator, si
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const void* memory_pointer, const size_t memory_size)
+static inline bool cc_string_heap_memory_initialize(cc_heap_memory_t* heap_memory, const void* memory_pointer, const size_t memory_size)
 {
-	cc_lf_heap_bucket_descriptor_t lf_heap_bucket_descriptor_elements[cc_string_allocator_lf_heap_bucket_count] =
+	cc_lf_heap_bucket_descriptor_t lf_heap_bucket_descriptor_elements[cc_default_string_heap_memory_lf_heap_bucket_count] =
 	{
 #if (1==cc_config_platform_64bit)
 		// cc_first_fit_block_head_t:16 + cc_lf_heap_bucket_region_head_t:64 = 80
@@ -145,12 +110,16 @@ cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const voi
 	lf_heap_bucket_descriptors.count = sizeof(lf_heap_bucket_descriptor_elements) / sizeof(cc_lf_heap_bucket_descriptor_t);
 
 
-	return cc_lf_heap_vallocator_initialize(
-		&ctx->iallocator,
-		&ctx->lf_heap,
+	return cc_heap_memory_initialize(
+		heap_memory,
 		memory_pointer, memory_size,
 		&lf_heap_bucket_descriptors
 	);
+}
+
+static inline void cc_string_heap_memory_uninitialize(cc_heap_memory_t* heap_memory)
+{
+	cc_heap_memory_uninitialize(heap_memory);
 }
 
 
@@ -159,34 +128,52 @@ cc_api bool cc_string_allocator_initialize(cc_string_allocator_t* ctx, const voi
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static cc_string_allocator_t _cc_default_string_allocator;
-static uint8_t _default_cc_string_allocator_memory[cc_string_allocator_memory_size];
+static cc_heap_memory_t _default_string_heap_memory;
+static uint8_t          _default_string_heap_memory_buffer[cc_default_string_heap_memory_buffer_size];
 
 //===========================================================================
-cc_api bool cc_default_string_allocator_initialize(void)
+cc_api bool cc_default_string_heap_memory_initialize(void)
 {
-	return cc_string_allocator_initialize(&_cc_default_string_allocator, &_default_cc_string_allocator_memory[0], sizeof(_default_cc_string_allocator_memory));
+	return cc_string_heap_memory_initialize(&_default_string_heap_memory, &_default_string_heap_memory_buffer[0], sizeof(_default_string_heap_memory_buffer));
 }
 
-cc_api void cc_default_string_allocator_uninitialize(void)
+cc_api void cc_default_string_heap_memory_uninitialize(void)
 {
-	cc_lf_heap_uninitialize(&_cc_default_string_allocator.lf_heap);
+	cc_string_heap_memory_uninitialize(&_default_string_heap_memory);
 }
 
-cc_api cc_string_allocator_t* cc_default_string_allocator(void)
+//===========================================================================
+cc_api cc_heap_memory_t* cc_default_string_heap_memory(void)
 {
-	return &_cc_default_string_allocator;
+	return &_default_string_heap_memory;
 }
 
-cc_api void cc_default_string_allocator_dump(void)
+cc_api cc_vallocator_t* cc_default_string_heap_memory_allocator(void)
+{
+	return &_default_string_heap_memory.allocator;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
+#include "../allocator/cc_simple_segregated_storage_dump.h"
+#include "cc_first_fit_dump.h"
+#include "cc_lf_heap_dump.h"
+#include "cc_heap_memory_dump.h"
+
+//===========================================================================
+cc_api void cc_default_string_heap_memory_dump(void)
 {
 	//-----------------------------------------------------------------------
 	printf("\n");
-	printf("# default_string_allocator \n");
+	printf("# default_string_heap_memory \n");
 
 
 	//-----------------------------------------------------------------------
-	cc_string_allocator_dump(&_cc_default_string_allocator, 0, 0);
+	cc_heap_memory_dump(&_default_string_heap_memory, 0, 0);
 
 
 	//-----------------------------------------------------------------------

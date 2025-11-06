@@ -19,7 +19,7 @@
 //===========================================================================
 typedef struct _cc_string_t
 {
-	cc_string_allocator_t* allocator;
+	cc_vallocator_t* allocator;
 	size_t length;
 	size_t capacity;
 	char* data;
@@ -31,7 +31,7 @@ typedef struct _cc_string_t
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-cc_api bool cc_string_create(cc_string_t* ctx, cc_string_allocator_t* allocator);
+cc_api bool cc_string_create(cc_string_t* ctx, cc_vallocator_t* allocator);
 cc_api bool cc_string_destroy(cc_string_t* ctx);
 
 cc_api bool cc_string_reserve(cc_string_t* ctx, size_t capacity);
