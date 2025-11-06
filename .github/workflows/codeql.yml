@@ -42,7 +42,7 @@ jobs:
           CL: "/Zi /Od"
         run: |
           REM Replace MySolution.sln with your actual solution file and set Platform if needed
-          msbuild "MySolution.sln" /p:Configuration=Debug /p:Platform=x64 /p:DebugSymbols=true /p:DebugType=full /p:Optimize=false /m
+          msbuild "cc.sln" /p:Configuration=Debug /p:Platform=x64 /p:DebugSymbols=true /p:DebugType=full /p:Optimize=false /m
 
       # If your repository contains multiple solutions or you need to build multiple configs,
       # add additional msbuild lines or loop over solutions/configs.
