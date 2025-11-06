@@ -353,7 +353,7 @@ static void test_case_cc_string()
 //===========================================================================
 static void test_run()
 {
-#if 0
+#if 1
 	test_suite_cc_version();
 
 //	test_suite_cc_code_template();
