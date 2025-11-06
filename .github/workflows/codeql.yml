@@ -22,19 +22,6 @@ jobs:
           languages: cpp
           queries: security-and-quality
 
-      # (Optional) Restore NuGet packages if your solution uses packages.config / NuGet restore
-      - name: Restore NuGet packages (optional)
-        shell: pwsh
-        run: |
-          if (Test-Path *.sln) {
-            Write-Host "Restoring NuGet packages..."
-            nuget restore
-          } else {
-            Write-Host "No .sln found in repo root; skipping nuget restore."
-          }
-
-      # If you use vcpkg or other dependency managers, install deps here before build.
-
       # Ensure compiler emits debug info and disables optimizations for better analysis.
       # We pass MSBuild properties and set CL env to append flags to cl.exe invocations.
       - name: Build solution (MSBuild)
