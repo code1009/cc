@@ -67,16 +67,24 @@ cc_api void cc_simple_segregated_storage_dump(cc_simple_segregated_storage_t* si
 	//-----------------------------------------------------------------------
 	cc_simple_segregated_storage_chunk_t* free_chunk;
 	size_t free_chunk_count = 0;
-
+	
+	size_t free_chunk_index;
+	size_t free_chunk_next_index;
 
 	free_chunk = simple_segregated_storage->free_chunk_head;
 	while (free_chunk != NULL)
 	{
+		free_chunk_index = cc_simple_segregated_storage_get_pointer_index(simple_segregated_storage, free_chunk);
+		free_chunk_next_index = cc_simple_segregated_storage_get_pointer_index(simple_segregated_storage, free_chunk->next_free_chunk);
+
+
 		printf(
-			"- chunk[%3lld] pointer = %p(%4lld) free\n",
+			"- free_chunk [%3lld]   = %p(%4lld): index=%3lld, next_free_chunk = %3lld : %p(%4lld)\n",
 			(int64_t)free_chunk_count,
-			(void*)free_chunk, cc_offset_address(free_chunk, base_address)
-		);
+			(void*)free_chunk, cc_offset_address(free_chunk, base_address), 
+			(int64_t)free_chunk_index, (int64_t)free_chunk_next_index,
+			(void*)free_chunk->next_free_chunk, cc_offset_address(free_chunk->next_free_chunk, base_address)
+			);
 		
 		free_chunk_count++;
 

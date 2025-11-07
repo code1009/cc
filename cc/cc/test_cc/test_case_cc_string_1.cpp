@@ -8,18 +8,31 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static void string_append(void)
+static void string_append(bool memory_leack)
 {
 	test_out
 		<< "@string_append()" << test_tendl
 		;
+	test_out << "=============================================================================" << test_tendl;
+
+
+	cc_string_t s;
+	cc_string_create(&s, cc_default_string_heap_memory_allocator());
+	cc_string_append(&s, "Hello");
+
+
+
 	cc_string_t s0;
 	cc_string_create(&s0, cc_default_string_heap_memory_allocator());
 
 	cc_string_t s1;
 	cc_string_create(&s1, cc_default_string_heap_memory_allocator());
-	cc_string_append(&s1, "<Hello,");
-	cc_string_append(&s1, "World!>");
+	cc_string_append(&s1, "<Hello");
+	cc_string_append(&s1, "World>");
+	cc_string_destroy(&s1);
+
+	cc_string_create(&s1, cc_default_string_heap_memory_allocator());
+	cc_string_append(&s1, "<World>");
 
 
 	for (size_t i = 0; i < 10; i++)
@@ -33,24 +46,36 @@ static void string_append(void)
 			;
 	}
 
-	cc_string_destroy(&s1);
+	if (memory_leack == false)
+	{
+		cc_string_destroy(&s1);
+	}
 
-	test_out
-		<< "s0: data="
-		<< cc_string_c_str(&s0) << test_tendl
-		;
+	test_out << "s0: data=" << cc_string_c_str(&s0) << test_tendl;
 
-	cc_string_destroy(&s0);
+
+
+	if (memory_leack == false)
+	{
+		cc_string_destroy(&s);
+	}
+	else
+	{
+		test_out << "Memory Leak Test: Skip cc_string_destroy(&s)" << test_tendl;
+	}
+
+
+	test_out << "=============================================================================" << test_tendl;
 }
 
 //===========================================================================
 static void run(void)
 {
-	string_append();
+	string_append(false);
 
 	cc_default_string_heap_memory_dump();
 
-	string_append();
+	string_append(true);
 }
 
 

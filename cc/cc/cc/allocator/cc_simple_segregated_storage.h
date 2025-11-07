@@ -55,6 +55,7 @@ cc_api size_t cc_simple_segregated_storage_memory_size(const size_t data_size, c
 
 cc_api bool cc_simple_segregated_storage_validate_pointer(const cc_simple_segregated_storage_t* ctx, const void* pointer);
 cc_api bool cc_simple_segregated_storage_is_free_chunk(const cc_simple_segregated_storage_t* ctx, const void* pointer);
+cc_api size_t cc_simple_segregated_storage_get_pointer_index(const cc_simple_segregated_storage_t* ctx, const void* pointer);
 
 
 

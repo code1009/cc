@@ -164,6 +164,27 @@ cc_api bool cc_simple_segregated_storage_is_free_chunk(const cc_simple_segregate
 	return false;
 }
 
+cc_api size_t cc_simple_segregated_storage_get_pointer_index(const cc_simple_segregated_storage_t* ctx, const void* pointer)
+{
+	//-----------------------------------------------------------------------
+	cc_debug_assert(ctx != NULL);
+
+
+	//-----------------------------------------------------------------------
+	uintptr_t begin = (uintptr_t)(ctx->memory_pointer);
+	uintptr_t current = (uintptr_t)pointer;
+	if (begin > current)
+	{
+		return cc_invalid_index;;
+	}
+	size_t index = (current - begin) / ctx->chunk_size;
+	if (index >= ctx->max_count)
+	{
+		return cc_invalid_index;
+	}
+	return index;
+}
+
 
 
 
@@ -287,7 +308,7 @@ cc_api bool cc_simple_segregated_storage_free(cc_simple_segregated_storage_t* ct
 		cc_debug_assert(0);
 		return false;
 	}
-	if (false == cc_simple_segregated_storage_is_free_chunk(ctx, pointer))
+	if (true == cc_simple_segregated_storage_is_free_chunk(ctx, pointer))
 	{
 		cc_debug_assert(0);
 		return false;
