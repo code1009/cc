@@ -284,6 +284,16 @@ cc_api bool cc_first_fit_is_block_allocated(const cc_first_fit_t* ctx, const cc_
 	return cc_first_fit_block_head_is_allocated((cc_first_fit_block_head_t*)block);
 }
 
+cc_api void* cc_first_fit_get_block_payload_pointer(const cc_first_fit_t* ctx, const cc_first_fit_block_head_t* block)
+{
+	cc_debug_assert(ctx != NULL);
+	cc_debug_assert(block != NULL);
+
+
+	ctx;
+	return cc_first_fit_block_payload_pointer((cc_first_fit_block_head_t*)block);
+}
+
 //===========================================================================
 cc_api cc_first_fit_block_head_t* cc_first_fit_read_block(const cc_first_fit_t* ctx, const void* pointer)
 {
@@ -411,7 +421,6 @@ cc_api bool cc_first_fit_initialize(cc_first_fit_t* ctx, const void* memory_poin
 	ctx->end_block = end_block;
 	ctx->min_ever_free_size = begin_block_size;
 	ctx->free_size = begin_block_size;
-	ctx->first_pointer_address = (uintptr_t)cc_first_fit_block_payload_pointer(begin_block);
 
 	ctx->count = 0;
 

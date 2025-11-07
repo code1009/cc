@@ -307,7 +307,7 @@ cc_api bool cc_lf_heap_validate_pointer(const cc_lf_heap_t* ctx, const void* poi
 	uintptr_t end;
 	uintptr_t current;
 
-	begin = (uintptr_t)ctx->first_fit.first_pointer_address;
+	begin = (uintptr_t)ctx->first_fit.memory_pointer;
 	end = (uintptr_t)ctx->first_fit.end_block;
 	current = (uintptr_t)pointer;
 	if (begin > current)
@@ -420,12 +420,17 @@ cc_api bool cc_lf_heap_initialize(cc_lf_heap_t* ctx, const void* memory_pointer,
 
 
 	//-----------------------------------------------------------------------
+	size_t simple_segregated_storage_memory_size;	
+
 	uintptr_t begin_address = (uintptr_t)ctx->first_fit.memory_pointer;
-	uintptr_t end_address = ctx->first_fit.first_pointer_address;
+	uintptr_t end_address = (uintptr_t)cc_first_fit_get_block_payload_pointer(&ctx->first_fit, (cc_first_fit_block_head_t*)ctx->first_fit.memory_pointer);
 	size_t first_fit_block_head_size = end_address - begin_address;
-	size_t simple_segregated_storage_memory_size;
+
 	size_t bucket_region_size;
+
+
 	size_t required_memory_size;
+
 	for (size_t i =0; i < bucket_descriptors->count; i++)
 	{
 		if (bucket_descriptors->elements[i].size == 0)

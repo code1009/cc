@@ -39,7 +39,6 @@ typedef struct _cc_first_fit_t
 	cc_first_fit_block_head_t* end_block;
 	size_t min_ever_free_size;
 	size_t free_size;
-	uintptr_t first_pointer_address;
 
 	cc_ssize_t count;
 }
@@ -53,6 +52,7 @@ cc_first_fit_t;
 //===========================================================================
 cc_api size_t cc_first_fit_get_block_size(const cc_first_fit_t* ctx, const cc_first_fit_block_head_t* block);
 cc_api bool cc_first_fit_is_block_allocated(const cc_first_fit_t* ctx, const cc_first_fit_block_head_t* block);
+cc_api void* cc_first_fit_get_block_payload_pointer(const cc_first_fit_t* ctx, const cc_first_fit_block_head_t* block);
 
 cc_api cc_first_fit_block_head_t* cc_first_fit_read_block(const cc_first_fit_t* ctx, const void* pointer);
 

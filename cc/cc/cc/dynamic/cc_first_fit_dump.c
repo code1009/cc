@@ -65,17 +65,18 @@ cc_api void cc_first_fit_dump(cc_first_fit_t* first_fit, size_t number, uintptr_
 	//-----------------------------------------------------------------------
 	cc_first_fit_block_head_t* begin_block = (cc_first_fit_block_head_t*)first_fit->memory_pointer;
 	cc_first_fit_block_head_t* end_block   = first_fit->end_block;
+	
+	uintptr_t begin_block_payload_pointer_address = (uintptr_t)cc_first_fit_get_block_payload_pointer(first_fit, begin_block);
 
 	uintptr_t begin_block_address = (uintptr_t)first_fit->memory_pointer;
 	uintptr_t end_block_address   = (uintptr_t)first_fit->end_block;
 
 	uintptr_t max_free_size  = end_block_address - begin_block_address;
-	uintptr_t pointer_offset = first_fit->first_pointer_address - begin_block_address;
+	uintptr_t pointer_offset = begin_block_payload_pointer_address - begin_block_address;
 
 
 	//-----------------------------------------------------------------------
 	printf("- max_free_size      = %lld       \n", (int64_t)max_free_size);
-	printf("- first_pointer      = %p(%4lld)  \n", (void*)first_fit->first_pointer_address, cc_offset_address((void*)first_fit->first_pointer_address, base_address));
 	printf("- pointer_offset     = %lld       \n", (int64_t)pointer_offset);
 	printf("- begin_block        = %p(%4lld)  \n", (void*)begin_block, cc_offset_address(begin_block, base_address));
 	printf("- end_block          = %p(%4lld)  \n", (void*)end_block, cc_offset_address(end_block, base_address));
