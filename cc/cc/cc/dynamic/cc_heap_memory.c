@@ -90,7 +90,7 @@ cc_api void* cc_heap_memory_allocate(cc_heap_memory_t* ctx, const size_t size)
 	cc_debug_assert(size != 0);
 
 
-	return ctx->allocator.allocate(&ctx->allocator.handle, size);
+	return ctx->allocator.allocate(ctx->allocator.handle, size);
 }
 
 cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, void* data)
@@ -99,7 +99,7 @@ cc_api bool cc_heap_memory_free(cc_heap_memory_t* ctx, void* data)
 	cc_debug_assert(data != NULL);
 
 
-	bool rv = ctx->allocator.free(&ctx->allocator.handle, data);
+	bool rv = ctx->allocator.free(ctx->allocator.handle, data);
 	cc_debug_assert(rv != false);
 
 	return rv;
