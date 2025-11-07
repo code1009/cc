@@ -8,16 +8,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static inline size_t cc_string_allocated_size(cc_string_t* s)
-{
-	size_t current = 1;
-
-	
-	while (current < (s->capacity))
-		current <<= 1;
-	return current;
-}
-
 static void string_append(bool memory_leack)
 {
 	test_out
@@ -57,6 +47,7 @@ static void string_append(bool memory_leack)
 			<< test_tendl
 			;
 	}
+	cc_string_append_n(&s0, s0.data, s0.length);
 
 
 	if (memory_leack == false)
