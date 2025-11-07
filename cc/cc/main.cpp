@@ -353,14 +353,16 @@ static void test_case_cc_string()
 //===========================================================================
 static void test_run()
 {
-#if 0
 	test_suite_cc_version();
 
 //	test_suite_cc_code_template();
 //	test_suite_cc_assert();
 		
+#if 1
 	test_suite_cc_vector();
+#endif
 
+#if 1
 	test_suite_cc_deque();
 	test_suite_cc_queue();
 	test_suite_cc_stack();
@@ -382,7 +384,9 @@ static void test_run()
 	test_case_cc_lf_heap_1();
 #endif
 
+#if 1
 	test_case_cc_string();
+#endif
 }
 
 
