@@ -375,11 +375,11 @@ static void test_run()
 //	test_suite_cc_code_template();
 //	test_suite_cc_assert();
 		
-#if 0
+#if 1
 	test_suite_cc_vector();
 #endif
 
-#if 0
+#if 1
 	test_suite_cc_deque();
 	test_suite_cc_queue();
 	test_suite_cc_stack();
@@ -398,7 +398,7 @@ static void test_run()
 	test_suite_cc_sort();
 #endif
 
-#if 0
+#if 1
 	test_suite_cc_first_fit();
 	test_suite_cc_lf_heap();
 	test_suite_cc_string();

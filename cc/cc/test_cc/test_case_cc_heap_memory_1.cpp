@@ -210,6 +210,7 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
         test_scoped_timer timer(oss, " cc free    ");
         cc_free(ptrs);
     }
+    oss << " cc count=" << cc << std::endl;
     ptrs.clear();
 
 
@@ -232,15 +233,8 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
         test_scoped_timer timer(oss, "crt free    ");
         crt_free(ptrs);
     }
+    oss << "crt count=" << crt << std::endl;
     ptrs.clear();
-
-
-    //-----------------------------------------------------------------------
-    oss
-        << "cc  count=" << cc 
-        << ", crt count=" << crt
-        << std::endl
-        ;
 
 
     //-----------------------------------------------------------------------
@@ -380,7 +374,7 @@ static void t3(void)
 
     //-----------------------------------------------------------------------
     {
-        test_scoped_timer timer(oss, " cc allocate ");
+        test_scoped_timer timer(oss, " cc allocate");
 		size_t count = random_sizes.size();
         for (size_t i = 0; i < count; i++)
         {
@@ -389,7 +383,7 @@ static void t3(void)
         }
     }
     {
-        test_scoped_timer timer(oss, " cc free     ");
+        test_scoped_timer timer(oss, " cc free    ");
 		size_t count = ptrs.size();
         for (size_t i = 0; i < count; i++)
         {
@@ -397,12 +391,13 @@ static void t3(void)
         }
     }
 	cc = ptrs.size();
+    oss << " cc count=" << cc << std::endl;
 	ptrs.clear();
 
 
     //-----------------------------------------------------------------------
     {
-        test_scoped_timer timer(oss, " crt malloc  ");
+        test_scoped_timer timer(oss, "crt malloc  ");
         size_t count = random_sizes.size();
         for (size_t i = 0; i < count; i++)
         {
@@ -411,7 +406,7 @@ static void t3(void)
         }
     }
     {
-        test_scoped_timer timer(oss, " crt free    ");
+        test_scoped_timer timer(oss, "crt free    ");
         size_t count = ptrs.size();
         for (size_t i = 0; i < count; i++)
         {
@@ -419,15 +414,8 @@ static void t3(void)
         }
     }
 	crt = ptrs.size();
-	ptrs.clear();
-
-
-    //-----------------------------------------------------------------------
-    oss
-        << "cc  count=" << cc
-        << ", crt count=" << crt
-        << std::endl
-        ;
+    oss << "crt count=" << crt << std::endl;
+    ptrs.clear();
 
 
     //-----------------------------------------------------------------------
