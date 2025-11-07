@@ -33,7 +33,7 @@ static uint8_t* _cc_heap_memory_buffer_pointer = NULL;
 static cc_heap_memory_t _cc_heap_memory;
 
 //===========================================================================
-static bool create_cc_heap_memory()
+static bool cc_heap_memory_create()
 {
 	_cc_heap_memory_buffer_pointer = (uint8_t*)malloc(_cc_heap_memory_buffer_size);
     if (_cc_heap_memory_buffer_pointer == NULL)
@@ -66,8 +66,10 @@ static bool create_cc_heap_memory()
 	);
 }
 
-static void destroy_cc_heap_memory()
+static void cc_heap_memory_destroy()
 {
+	cc_heap_memory_uninitialize(&_cc_heap_memory);
+
     if (_cc_heap_memory_buffer_pointer)
     {
         free(_cc_heap_memory_buffer_pointer);
@@ -75,6 +77,23 @@ static void destroy_cc_heap_memory()
     _cc_heap_memory_buffer_pointer = NULL;
 }
 
+static void cc_heap_memory_add_bucket_region()
+{
+    cc_lf_heap_t* lf_heap = &_cc_heap_memory.lf_heap;
+    cc_first_fit_t* first_fit = &lf_heap->first_fit;
+    for (size_t i = 0; i < lf_heap->buckets.count; i++)
+    {
+        cc_lf_heap_add_bucket_region(lf_heap, i);
+    }
+}
+
+static void cc_heap_memory_reserved()
+{
+    for(size_t i = 0; i < 100; i++)
+    {
+        cc_heap_memory_add_bucket_region();
+	}
+}
 
 
 
@@ -167,10 +186,14 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
     //-----------------------------------------------------------------------
     if (cc_create)
     {
-        if (!create_cc_heap_memory())
+        if (!cc_heap_memory_create())
         {
             return;
         }
+
+#if 0
+        cc_heap_memory_reserved();
+#endif
     }
 
 	ptrs.reserve(count);
@@ -194,7 +217,7 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
     //-----------------------------------------------------------------------
     if (cc_create)
     {
-        destroy_cc_heap_memory();
+        cc_heap_memory_destroy();
     }
 
 
@@ -244,9 +267,9 @@ static void test1(void)
 
 
     //-----------------------------------------------------------------------
-    performance(oss, 16, 1000000, cc_create);
-    performance(oss, 256, 100000, cc_create);
-    performance(oss, 4096, 10000, cc_create);
+    performance(oss, 16, 100000, cc_create);
+    performance(oss, 256, 10000, cc_create);
+    performance(oss, 4096, 1000, cc_create);
 
 
     //-----------------------------------------------------------------------
@@ -256,10 +279,13 @@ static void test1(void)
 static void test2(void)
 {
     //-----------------------------------------------------------------------
-    if (!create_cc_heap_memory())
+    if (!cc_heap_memory_create())
     {
         return;
     }
+#if 0
+    cc_heap_memory_reserved();
+#endif
 
 
     //-----------------------------------------------------------------------
@@ -273,9 +299,9 @@ static void test2(void)
     oss << std::endl;
 
 
-    performance(oss, 16, 50000, cc_create);
-    performance(oss, 256, 5000, cc_create);
-    performance(oss, 4096, 500, cc_create);
+    performance(oss, 16, 100000, cc_create);
+    performance(oss, 256, 10000, cc_create);
+    performance(oss, 4096, 1000, cc_create);
 
 
     //-----------------------------------------------------------------------
@@ -288,7 +314,7 @@ static void test2(void)
 
 
     //-----------------------------------------------------------------------
-    destroy_cc_heap_memory();
+    cc_heap_memory_destroy();
 }
 
 static void run(void)
