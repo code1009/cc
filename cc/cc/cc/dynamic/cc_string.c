@@ -182,8 +182,9 @@ cc_api bool cc_string_reserve(cc_string_t* ctx, size_t capacity)
 	}
 
 	// choose growth policy (power-of-two)
-	size_t new_capacity = cc_string_next_capacity(ctx->capacity, capacity);
-	size_t new_bytes = new_capacity + 1;
+	size_t current_bytes = (ctx->capacity == 0) ? 0 : (ctx->capacity + 1);
+	size_t new_bytes = cc_string_next_capacity(current_bytes, need_bytes);
+	size_t new_capacity = (new_bytes > 0) ? (new_bytes - 1) : 0;
 
 	if (ctx->data == NULL)
 	{
