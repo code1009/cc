@@ -109,7 +109,7 @@ cc_api void cc_first_fit_dump(cc_first_fit_t* first_fit, size_t number, uintptr_
 
 
 		printf(
-			"- block[%3lld]         = %p(%4lld) size = %6lld bytes : pointer = %p(%4lld) %s \n",
+			"- block[%3lld]         = %p(%4lld) size = %6lld bytes : payload_pointer = %p(%4lld) %s \n",
 			(int64_t)block_count,
 			(void*)block, cc_offset_address(block, base_address),
 			(int64_t)block_size,

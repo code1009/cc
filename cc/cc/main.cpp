@@ -379,12 +379,11 @@ static void test_run()
 	test_suite_cc_priority_queue();
 
 	test_suite_cc_sort();
-
-	test_case_cc_first_fit();
-	test_case_cc_lf_heap_1();
 #endif
 
 #if 1
+	test_case_cc_first_fit();
+	test_case_cc_lf_heap_1();
 	test_case_cc_string();
 #endif
 }
