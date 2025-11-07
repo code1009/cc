@@ -44,13 +44,13 @@ static bool cc_heap_memory_create()
 
 	cc_lf_heap_bucket_descriptor_t lf_heap_bucket_descriptor_elements[] =
 	{
-		  8, (4096 - sizeof(cc_lf_heap_bucket_t)) /   8,
-		 16, (4096 - sizeof(cc_lf_heap_bucket_t)) /  16,
-		 32, (4096 - sizeof(cc_lf_heap_bucket_t)) /  32,
-		 64, (4096 - sizeof(cc_lf_heap_bucket_t)) /  64,
-		128, (4096 - sizeof(cc_lf_heap_bucket_t)) / 128,
-        256, (4096 - sizeof(cc_lf_heap_bucket_t)) / 256,
-        512, (4096 - sizeof(cc_lf_heap_bucket_t)) / 512
+		  8, (4096*4 - sizeof(cc_lf_heap_bucket_t)) /   8,
+		 16, (4096*4 - sizeof(cc_lf_heap_bucket_t)) /  16,
+		 32, (4096*4 - sizeof(cc_lf_heap_bucket_t)) /  32,
+		 64, (4096*4 - sizeof(cc_lf_heap_bucket_t)) /  64,
+		128, (4096*4 - sizeof(cc_lf_heap_bucket_t)) / 128,
+        256, (4096*4 - sizeof(cc_lf_heap_bucket_t)) / 256,
+        512, (4096*4 - sizeof(cc_lf_heap_bucket_t)) / 512
     };
 
 
@@ -253,7 +253,7 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static void test1(void)
+static void t1(void)
 {
     //-----------------------------------------------------------------------
     bool cc_create = true;
@@ -267,16 +267,16 @@ static void test1(void)
 
 
     //-----------------------------------------------------------------------
-    performance(oss, 16, 100000, cc_create);
-    performance(oss, 256, 10000, cc_create);
-    performance(oss, 4096, 1000, cc_create);
+    performance(oss, 16, 1000000, cc_create);
+    performance(oss, 256, 100000, cc_create);
+    performance(oss, 4096, 10000, cc_create);
 
 
     //-----------------------------------------------------------------------
     test_out << oss.str().c_str();
 }
 
-static void test2(void)
+static void t2(void)
 {
     //-----------------------------------------------------------------------
     if (!cc_heap_memory_create())
@@ -299,9 +299,139 @@ static void test2(void)
     oss << std::endl;
 
 
-    performance(oss, 16, 100000, cc_create);
-    performance(oss, 256, 10000, cc_create);
-    performance(oss, 4096, 1000, cc_create);
+    performance(oss, 16, 1000000, cc_create);
+    performance(oss, 256, 100000, cc_create);
+    performance(oss, 4096, 10000, cc_create);
+
+
+    //-----------------------------------------------------------------------
+    test_out << oss.str().c_str();
+
+
+    //-----------------------------------------------------------------------
+    cc_first_fit_dump(&_cc_heap_memory.lf_heap.first_fit, 0, 0);
+    printf("\n");
+
+
+    //-----------------------------------------------------------------------
+    cc_heap_memory_destroy();
+}
+
+static uint32_t random_range_uint32_t(uint32_t min_inclusive, uint32_t max_inclusive)
+{
+    static std::random_device rd;
+    static std::mt19937 mt(rd());
+    std::uniform_int_distribution<uint32_t> dist(min_inclusive, max_inclusive);
+    return dist(mt);
+}
+
+static std::vector<uint32_t> generate_random_sizes(size_t count)
+{
+    if (count == 0)
+    {
+        return {};
+    }
+
+    std::vector<uint32_t> sizes;
+	sizes.reserve(count);
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        uint32_t size = random_range_uint32_t(16, 512+128);
+        sizes.push_back(size);
+    }
+
+    return sizes;
+}
+
+static void t3(void)
+{
+    //-----------------------------------------------------------------------
+    if (!cc_heap_memory_create())
+    {
+        return;
+    }
+
+
+    //-----------------------------------------------------------------------
+    std::ostringstream oss;
+
+
+    //-----------------------------------------------------------------------
+    size_t cc;
+    size_t crt;
+
+
+    //-----------------------------------------------------------------------
+    std::size_t allocate_count = 100000;
+    
+    std::vector<void*> ptrs;
+	ptrs.reserve(allocate_count);
+    void* ptr;
+
+    std::vector<uint32_t> random_sizes = generate_random_sizes(allocate_count);
+
+
+    //-----------------------------------------------------------------------
+    oss << std::endl;
+    oss << "# cc_heap_memory vs crt:malloc()/free() random size performance" << std::endl;
+    oss << std::endl;
+
+
+    //-----------------------------------------------------------------------
+    {
+        test_scoped_timer timer(oss, " cc allocate ");
+		size_t count = random_sizes.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            ptr = cc_heap_memory_allocate(&_cc_heap_memory, random_sizes[i]);
+            ptrs.push_back(ptr);
+        }
+    }
+    {
+        test_scoped_timer timer(oss, " cc free     ");
+		size_t count = ptrs.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            cc_heap_memory_free(&_cc_heap_memory, ptrs[i]);
+        }
+    }
+	cc = ptrs.size();
+	ptrs.clear();
+
+
+    //-----------------------------------------------------------------------
+    {
+        test_scoped_timer timer(oss, " crt malloc  ");
+        size_t count = random_sizes.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            ptr = malloc(random_sizes[i]);
+            ptrs.push_back(ptr);
+        }
+    }
+    {
+        test_scoped_timer timer(oss, " crt free    ");
+        size_t count = ptrs.size();
+        for (size_t i = 0; i < count; i++)
+        {
+           free(ptrs[i]);
+        }
+    }
+	crt = ptrs.size();
+	ptrs.clear();
+
+
+    //-----------------------------------------------------------------------
+    oss
+        << "cc  count=" << cc
+        << ", crt count=" << crt
+        << std::endl
+        ;
+
+
+    //-----------------------------------------------------------------------
+    oss << std::endl;
 
 
     //-----------------------------------------------------------------------
@@ -319,8 +449,9 @@ static void test2(void)
 
 static void run(void)
 {
-    test1();
-    test2();
+    t1();
+    t2();
+    t3();
 }
 
 //===========================================================================
