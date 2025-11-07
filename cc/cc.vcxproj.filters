@@ -222,6 +222,9 @@
     <ClCompile Include="cc\cc\dynamic\cc_heap_memory_dump.c">
       <Filter>cc\cc\dynamic</Filter>
     </ClCompile>
+    <ClCompile Include="cc\test_cc\test_case_cc_heap_memory_1.cpp">
+      <Filter>cc\test_cc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cc\tester\test_output.hpp">
