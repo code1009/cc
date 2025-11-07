@@ -62,4 +62,28 @@ cc_api void cc_simple_segregated_storage_dump(cc_simple_segregated_storage_t* si
 	printf("- max_count          = %lld       \n", (int64_t)simple_segregated_storage->max_count);
 	printf("- chunk_size         = %lld bytes \n", (int64_t)simple_segregated_storage->chunk_size);
 	printf("- free_chunk_head    = %p(%4lld)  \n", (void*)simple_segregated_storage->free_chunk_head, cc_offset_address(simple_segregated_storage->free_chunk_head, base_address));
+
+
+	//-----------------------------------------------------------------------
+	cc_simple_segregated_storage_chunk_t* free_chunk;
+	size_t free_chunk_count = 0;
+
+
+	free_chunk = simple_segregated_storage->free_chunk_head;
+	while (free_chunk != NULL)
+	{
+		printf(
+			"- chunk[%3lld] pointer = %p(%4lld) free\n",
+			(int64_t)free_chunk_count,
+			(void*)free_chunk, cc_offset_address(free_chunk, base_address)
+		);
+		
+		free_chunk_count++;
+
+
+		free_chunk = free_chunk->next_free_chunk;
+	}
+
+
+	printf("- free_chunk_count   = %lld       \n", (int64_t)free_chunk_count);
 }
