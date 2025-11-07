@@ -8,6 +8,16 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+static inline size_t cc_string_allocated_size(cc_string_t* s)
+{
+	size_t current = 1;
+
+	
+	while (current < (s->capacity))
+		current <<= 1;
+	return current;
+}
+
 static void string_append(bool memory_leack)
 {
 	test_out
@@ -17,15 +27,17 @@ static void string_append(bool memory_leack)
 
 
 	cc_string_t s;
+	cc_string_t s0;
+	cc_string_t s1;
+
+
 	cc_string_create(&s, cc_default_string_heap_memory_allocator());
 	cc_string_append(&s, "Hello");
 
 
 
-	cc_string_t s0;
 	cc_string_create(&s0, cc_default_string_heap_memory_allocator());
 
-	cc_string_t s1;
 	cc_string_create(&s1, cc_default_string_heap_memory_allocator());
 	cc_string_append(&s1, "<Hello");
 	cc_string_append(&s1, "World>");
@@ -35,7 +47,7 @@ static void string_append(bool memory_leack)
 	cc_string_append(&s1, "<World>");
 
 
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 20; i++)
 	{
 		cc_string_append(&s0, cc_string_c_str(&s1));
 		test_out
@@ -46,13 +58,43 @@ static void string_append(bool memory_leack)
 			;
 	}
 
+
 	if (memory_leack == false)
 	{
 		cc_string_destroy(&s1);
 	}
+	else
+	{
+		test_out << "Memory Leak Test: Skip cc_string_destroy(&s1)" << test_tendl;
+	}
 
 	test_out << "s0: data=" << cc_string_c_str(&s0) << test_tendl;
 
+
+
+	if (memory_leack == false)
+	{
+		cc_string_destroy(&s0);
+	}
+	else
+	{
+		size_t alignment = sizeof(void*) * 2;
+		size_t s0_string_memory_size = s0.capacity + 1;
+		size_t s0_string_memory_aligned_size =
+			s0_string_memory_size / alignment * alignment + ((s0_string_memory_size % alignment) ? alignment : 0);
+
+		size_t s0_memory_leak_size =
+			sizeof(cc_first_fit_block_head_t) +
+			s0_string_memory_aligned_size;
+			;
+
+		uintptr_t s0_address = (uintptr_t)&s0.data[0];
+
+		test_out << "Memory Leak Test: Skip cc_string_destroy(&s0):"
+			<< " s0_memory_leak_size=" << s0_memory_leak_size
+			<< " s0.data =" << (void*)s0_address
+			<< test_tendl;
+	}
 
 
 	if (memory_leack == false)

@@ -108,13 +108,13 @@ cc_api void cc_first_fit_dump(cc_first_fit_t* first_fit, size_t number, uintptr_
 
 
 		printf(
-			"- block[%3lld]         = %p(%4lld): pointer = %p(%4lld) size = %6lld bytes %s \n",
+			"- block[%3lld]         = %p(%4lld) size = %6lld bytes : pointer = %p(%4lld) %s \n",
 			(int64_t)block_count,
 			(void*)block, cc_offset_address(block, base_address),
-			(void*)(address), cc_offset_address((void*)(address), base_address),
 			(int64_t)block_size,
+			(void*)(address), cc_offset_address((void*)(address), base_address),
 			(block_is_allocated ? "allocated" : "free     ")
-		);
+			);
 
 
 		block = (cc_first_fit_block_head_t*)(block_address + block_size);

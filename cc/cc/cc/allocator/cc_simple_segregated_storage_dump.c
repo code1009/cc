@@ -79,11 +79,12 @@ cc_api void cc_simple_segregated_storage_dump(cc_simple_segregated_storage_t* si
 
 
 		printf(
-			"- free_chunk [%3lld]   = %p(%4lld): index=%3lld, next_free_chunk = %3lld : %p(%4lld)\n",
+			"- free_chunk [%3lld]   = %p(%4lld)[%3lld] : next_free_chunk = %p(%4lld)[%3lld] \n",
 			(int64_t)free_chunk_count,
-			(void*)free_chunk, cc_offset_address(free_chunk, base_address), 
-			(int64_t)free_chunk_index, (int64_t)free_chunk_next_index,
-			(void*)free_chunk->next_free_chunk, cc_offset_address(free_chunk->next_free_chunk, base_address)
+			(void*)free_chunk, cc_offset_address(free_chunk, base_address),
+			(int64_t)free_chunk_index,
+			(void*)free_chunk->next_free_chunk, cc_offset_address(free_chunk->next_free_chunk, base_address),
+			(int64_t)free_chunk_next_index
 			);
 		
 		free_chunk_count++;
