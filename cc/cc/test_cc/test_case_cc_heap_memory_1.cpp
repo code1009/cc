@@ -194,9 +194,6 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
     //-----------------------------------------------------------------------
     if (cc_create)
     {
-        cc_first_fit_dump(&_cc_heap_memory.lf_heap.first_fit, 0, 0);
-		printf("\n");
-
         destroy_cc_heap_memory();
     }
 
@@ -233,7 +230,7 @@ static void performance(std::ostream& oss, size_t size, size_t count, bool cc_cr
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
-static void run(void)
+static void test1(void)
 {
     std::ostringstream oss;
 
@@ -254,11 +251,16 @@ static void run(void)
 
     //-----------------------------------------------------------------------
     test_out << oss.str().c_str();
-    oss.str("");
+}
+
+static void test2(void)
+{
+    std::ostringstream oss;
+
+    bool cc_create;
 
 
-    //-----------------------------------------------------------------------
-    oss << std::endl;
+	//-----------------------------------------------------------------------
     oss << "# cc_heap_memory vs crt:malloc()/free() performance" << std::endl;
     oss << std::endl;
 
@@ -281,6 +283,12 @@ static void run(void)
 
     //-----------------------------------------------------------------------
     test_out << oss.str().c_str();
+}
+
+static void run(void)
+{
+    test1();
+    test2();
 }
 
 //===========================================================================
