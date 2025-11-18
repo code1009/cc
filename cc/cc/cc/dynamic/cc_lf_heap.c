@@ -707,6 +707,7 @@ cc_api bool cc_lf_heap_free(cc_lf_heap_t* ctx, const void* pointer)
 
 	//-----------------------------------------------------------------------
 	uintptr_t pointer_address = (uintptr_t)pointer;
+	size_t bucket_region_head_aligned_size = cc_lf_heap_bucket_region_head_aligned_size();
 
 
 	//-----------------------------------------------------------------------
@@ -734,7 +735,7 @@ cc_api bool cc_lf_heap_free(cc_lf_heap_t* ctx, const void* pointer)
 		}
 
 
-		if ( ((address + sizeof(cc_lf_heap_bucket_region_head_t)) <= pointer_address) && (pointer_address < (address + block_size)))
+		if ( ((address + bucket_region_head_aligned_size) <= pointer_address) && (pointer_address < (address + block_size)))
 		{
 			bool rv = cc_lf_heap_free_from_bucket(ctx, (cc_lf_heap_bucket_region_head_t*)block_payload_pointer, pointer);
 			if (rv)
