@@ -437,7 +437,7 @@ cc_api bool cc_lf_heap_add_bucket_region(cc_lf_heap_t* ctx, size_t index)
 	{
 		return false;
 	}
-	if (ctx->buckets.count == 0)
+	if (ctx->buckets.count <= index)
 	{
 		return false;
 	}
