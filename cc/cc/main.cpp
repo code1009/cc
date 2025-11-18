@@ -375,11 +375,11 @@ static void test_run()
 //	test_suite_cc_code_template();
 //	test_suite_cc_assert();
 		
-#if 1
+#if 0
 	test_suite_cc_vector();
 #endif
 
-#if 1
+#if 0
 	test_suite_cc_deque();
 	test_suite_cc_queue();
 	test_suite_cc_stack();

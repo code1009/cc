@@ -296,6 +296,95 @@ static inline void* cc_lf_heap_allocate_from_bucket(cc_lf_heap_bucket_t* bucket)
 
 /////////////////////////////////////////////////////////////////////////////
 //===========================================================================
+static inline cc_lf_heap_bucket_t* cc_lf_heap_get_bucket(const cc_lf_heap_t* ctx, const size_t size)
+{
+	//-----------------------------------------------------------------------
+	cc_debug_assert(ctx != NULL);
+
+
+	//-----------------------------------------------------------------------
+	for (size_t i = 0; i < ctx->buckets.count; i++)
+	{
+		if (size == ctx->buckets.elements[i].descriptor.size)
+		{
+			return &ctx->buckets.elements[i];
+		}
+	}
+
+	return NULL;
+}
+
+static bool cc_lf_heap_free_from_bucket(cc_lf_heap_t* ctx, cc_lf_heap_bucket_region_head_t* bucket_region, const void* pointer)
+{
+	//-----------------------------------------------------------------------
+	cc_debug_assert(ctx != NULL);
+	cc_debug_assert(bucket_region != NULL);
+	cc_debug_assert(pointer != NULL);
+
+
+	//-----------------------------------------------------------------------
+	cc_lf_heap_bucket_t* bucket = cc_lf_heap_get_bucket(ctx, bucket_region->simple_segregated_storage.chunk_size);
+	if (bucket == NULL)
+	{
+		return false;
+	}
+
+
+	//-----------------------------------------------------------------------
+	cc_lf_heap_bucket_region_head_t* current = bucket->regions;
+	cc_lf_heap_bucket_region_head_t* previous = NULL;
+	while (current)
+	{
+		if (current == bucket_region)
+		{
+			bool rv = cc_simple_segregated_storage_free(&current->simple_segregated_storage, pointer);
+			if (rv == false)
+			{
+				return false;
+			}
+
+
+			if (current->simple_segregated_storage.count == 0)
+			{
+				if (previous == NULL)
+				{
+					bucket->regions = (cc_lf_heap_bucket_region_head_t*)current->next;
+				}
+				else
+				{
+					previous->next = current->next;
+				}
+
+
+				if (bucket->cache_region == current)
+				{
+					bucket->cache_region = NULL;
+				}
+
+
+				bool rv = cc_first_fit_free(&ctx->first_fit, current);
+				if (rv == false)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+
+		previous = current;
+		current = current->next;
+	}
+
+	return false;
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//===========================================================================
 cc_api bool cc_lf_heap_validate_pointer(const cc_lf_heap_t* ctx, const void* pointer)
 {
 	cc_debug_assert(ctx != NULL);
@@ -599,107 +688,65 @@ cc_api bool cc_lf_heap_free(cc_lf_heap_t* ctx, const void* pointer)
 
 
 	//-----------------------------------------------------------------------
-	for (size_t i=0; i<ctx->buckets.count; i++)
+	uintptr_t begin;
+	uintptr_t end;
+	uintptr_t current;
+
+	begin = (uintptr_t)ctx->first_fit.memory_pointer;
+	end = (uintptr_t)ctx->first_fit.end_block;
+	current = (uintptr_t)cc_first_fit_read_block(&ctx->first_fit, pointer);
+	if (begin > current)
 	{
-		cc_lf_heap_bucket_t* bucket = &ctx->buckets.elements[i];
-
-
-		if (bucket->cache_region != NULL)
-		{
-			if (cc_simple_segregated_storage_validate_pointer(&bucket->cache_region->simple_segregated_storage, pointer))
-			{
-				bool rv = cc_simple_segregated_storage_free(&bucket->cache_region->simple_segregated_storage, pointer);
-				if (rv)
-				{
-					ctx->count--;
-					if (bucket->cache_region->simple_segregated_storage.count == 0)
-					{
-						cc_lf_heap_bucket_region_head_t* cache_region = bucket->cache_region;
-						bucket->cache_region = NULL;
-
-
-						cc_lf_heap_bucket_region_head_t* current = bucket->regions;
-						cc_lf_heap_bucket_region_head_t* previous = NULL;
-						while (current)
-						{
-							if (current == cache_region)
-							{
-								if (previous == NULL)
-								{
-									bucket->regions = (cc_lf_heap_bucket_region_head_t*)current->next;
-								}
-								else
-								{
-									previous->next = current->next;
-								}
-								cc_first_fit_free(&ctx->first_fit, (void*)current);
-								break;
-							}
-							previous = current;
-							current = (cc_lf_heap_bucket_region_head_t*)current->next;
-						}
-					}
-					return true;
-				}
-				return false;
-			}
-		}
-
-
-		cc_lf_heap_bucket_region_head_t* current = bucket->regions;
-		cc_lf_heap_bucket_region_head_t* previous = NULL;
-		while (current)
-		{
-			if (cc_simple_segregated_storage_validate_pointer(&current->simple_segregated_storage, pointer))
-			{
-				bool rv = cc_simple_segregated_storage_free(&current->simple_segregated_storage, pointer);
-				if (rv)
-				{
-					ctx->count--;
-
-					if (current->simple_segregated_storage.count == 0)
-					{
-						if (previous == NULL)
-						{
-							bucket->regions = (cc_lf_heap_bucket_region_head_t*)current->next;
-						}
-						else
-						{
-							previous->next = current->next;
-						}
-
-
-						if (bucket->cache_region == current)
-						{
-							bucket->cache_region = NULL;
-						}
-
-
-						cc_first_fit_free(&ctx->first_fit, (void*)current);
-					}
-
-					return true;
-				}
-				return false;
-			}
-			previous = current;
-
-
-			current = (cc_lf_heap_bucket_region_head_t*)current->next;
-		}
+		return false;
+	}
+	if (end <= current)
+	{
+		return false;
 	}
 
 
 	//-----------------------------------------------------------------------
-	if (cc_first_fit_validate_pointer(&ctx->first_fit, pointer))
+	uintptr_t pointer_address = (uintptr_t)pointer;
+
+
+	//-----------------------------------------------------------------------
+	cc_first_fit_block_head_t* block;
+	uintptr_t address;
+	size_t block_size;
+	void* block_payload_pointer;
+
+
+	address = begin;
+	while (address != end)
 	{
-		bool rv = cc_first_fit_free(&ctx->first_fit, pointer);
-		if (rv)
+		block = (cc_first_fit_block_head_t*)address;
+		block_size = cc_first_fit_get_block_size(&ctx->first_fit, block);
+		block_payload_pointer = cc_first_fit_get_block_payload_pointer(&ctx->first_fit, block);
+		if (pointer == block_payload_pointer)
 		{
-			ctx->count--;
-			return true;
+			bool rv = cc_first_fit_free(&ctx->first_fit, pointer);
+			if (rv)
+			{
+				ctx->count--;
+				return true;
+			}
+			return false;
 		}
-		return false;
+
+
+		if ( ((address + sizeof(cc_lf_heap_bucket_region_head_t)) <= pointer_address) && (pointer_address < (address + block_size)))
+		{
+			bool rv = cc_lf_heap_free_from_bucket(ctx, (cc_lf_heap_bucket_region_head_t*)block_payload_pointer, pointer);
+			if (rv)
+			{
+				ctx->count--;
+				return true;
+			}
+			return false;
+		}
+
+
+		address += block_size;
 	}
 
 
