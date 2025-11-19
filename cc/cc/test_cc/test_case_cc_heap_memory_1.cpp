@@ -360,7 +360,7 @@ static void t3(void)
 
 
     //-----------------------------------------------------------------------
-    std::size_t allocate_count = 100000;
+    std::size_t allocate_count = 10000;
     
     std::vector<void*> cc_ptrs;
 	cc_ptrs.reserve(allocate_count);

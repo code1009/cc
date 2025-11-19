@@ -801,10 +801,8 @@ cc_api bool cc_lf_heap_free(cc_lf_heap_t* ctx, const void* pointer)
 
 
 	//-----------------------------------------------------------------------
-#if (1==cc_config_debug)
 	rv = cc_first_fit_validate_pointer(&ctx->first_fit, pointer);
 	if (rv)
-#endif
 	{
 		rv = cc_first_fit_free(&ctx->first_fit, pointer);
 		if (rv)
