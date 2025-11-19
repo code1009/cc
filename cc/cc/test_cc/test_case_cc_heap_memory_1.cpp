@@ -15,6 +15,9 @@
 #include <vector>
 #include <unordered_map>
 
+#include <algorithm>
+#include <numeric>
+
 #include "../tester/test_timer.hpp"
 
 
@@ -359,8 +362,13 @@ static void t3(void)
     //-----------------------------------------------------------------------
     std::size_t allocate_count = 100000;
     
-    std::vector<void*> ptrs;
-	ptrs.reserve(allocate_count);
+    std::vector<void*> cc_ptrs;
+	cc_ptrs.reserve(allocate_count);
+
+    std::vector<void*> crt_ptrs;
+    crt_ptrs.reserve(allocate_count);
+
+
     void* ptr;
 
     std::vector<uint32_t> random_sizes = generate_random_sizes(allocate_count);
@@ -379,20 +387,9 @@ static void t3(void)
         for (size_t i = 0; i < count; i++)
         {
             ptr = cc_heap_memory_allocate(&_cc_heap_memory, random_sizes[i]);
-            ptrs.push_back(ptr);
+            cc_ptrs.push_back(ptr);
         }
     }
-    {
-        test_scoped_timer timer(oss, " cc free    ");
-		size_t count = ptrs.size();
-        for (size_t i = 0; i < count; i++)
-        {
-            cc_heap_memory_free(&_cc_heap_memory, ptrs[i]);
-        }
-    }
-	cc = ptrs.size();
-    oss << " cc count=" << cc << std::endl;
-	ptrs.clear();
 
 
     //-----------------------------------------------------------------------
@@ -402,20 +399,75 @@ static void t3(void)
         for (size_t i = 0; i < count; i++)
         {
             ptr = malloc(random_sizes[i]);
-            ptrs.push_back(ptr);
+            crt_ptrs.push_back(ptr);
         }
     }
+
+
+    //-----------------------------------------------------------------------
+#if 1
     {
-        test_scoped_timer timer(oss, "crt free    ");
-        size_t count = ptrs.size();
+        size_t count = cc_ptrs.size();
+        if (count == crt_ptrs.size() && count > 1)
+        {
+            std::vector<size_t> indices(count);
+            std::iota(indices.begin(), indices.end(), 0);
+
+            std::random_device rd;
+            std::mt19937 mt(rd());
+            std::shuffle(indices.begin(), indices.end(), mt);
+
+            std::vector<void*> cc_shuffled;
+            std::vector<void*> crt_shuffled;
+            cc_shuffled.reserve(count);
+            crt_shuffled.reserve(count);
+
+            for (size_t i = 0; i < count; ++i)
+            {
+                size_t idx = indices[i];
+                cc_shuffled.push_back(cc_ptrs[idx]);
+                crt_shuffled.push_back(crt_ptrs[idx]);
+            }
+
+            cc_ptrs.swap(cc_shuffled);
+            crt_ptrs.swap(crt_shuffled);
+        }
+    }
+#endif
+
+
+    //-----------------------------------------------------------------------
+    {
+        test_scoped_timer timer(oss, " cc free    ");
+		size_t count = cc_ptrs.size();
         for (size_t i = 0; i < count; i++)
         {
-           free(ptrs[i]);
+            cc_heap_memory_free(&_cc_heap_memory, cc_ptrs[i]);
         }
     }
-	crt = ptrs.size();
+
+
+    //-----------------------------------------------------------------------
+    {
+        test_scoped_timer timer(oss, "crt free    ");
+        size_t count = crt_ptrs.size();
+        for (size_t i = 0; i < count; i++)
+        {
+           free(crt_ptrs[i]);
+        }
+    }
+
+
+    //-----------------------------------------------------------------------
+    cc = cc_ptrs.size();
+    oss << " cc count=" << cc << std::endl;
+    cc_ptrs.clear();
+    
+
+    //-----------------------------------------------------------------------
+    crt = crt_ptrs.size();
     oss << "crt count=" << crt << std::endl;
-    ptrs.clear();
+    crt_ptrs.clear();
 
 
     //-----------------------------------------------------------------------
