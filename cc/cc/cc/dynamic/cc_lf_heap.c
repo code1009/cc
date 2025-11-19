@@ -323,6 +323,12 @@ static bool cc_lf_heap_free_bucket_region(cc_lf_heap_t* ctx, cc_lf_heap_bucket_t
 			}
 
 
+			if (current == bucket->cache_region)
+			{
+				bucket->cache_region = NULL;
+			}
+
+
 			rv = cc_first_fit_free(&ctx->first_fit, current);
 			if (rv == false)
 			{
@@ -368,6 +374,12 @@ static bool cc_lf_heap_free_from_bucket_region(cc_lf_heap_t* ctx, cc_lf_heap_buc
 					previous->next = current->next;
 
 
+					if (current == bucket->cache_region)
+					{
+						bucket->cache_region = NULL;
+					}
+
+
 					rv = cc_first_fit_free(&ctx->first_fit, current);
 					if (rv == false)
 					{
@@ -411,7 +423,6 @@ static bool cc_lf_heap_free_from_bucket(cc_lf_heap_t* ctx, cc_lf_heap_bucket_t* 
 		rv = cc_lf_heap_free_from_bucket_region(ctx, bucket, NULL, bucket->cache_region, pointer);
 		if (rv)
 		{
-			bucket->cache_region = NULL;
 			return true;
 		}
 	}
